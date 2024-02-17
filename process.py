@@ -1,5 +1,8 @@
 #!/usr/bin/python3
 
+# Used to process the information from the drive sheet. Download as cvs and remove the header
+# Copy the output to the data.js file
+
 import json
 
 fs = open("songs.csv", "r")
@@ -22,6 +25,5 @@ while line:
     line = fs.readline()
 
 fs.close() 
-
 
 print(json.dumps(songs, indent=4))
