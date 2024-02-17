@@ -56,8 +56,7 @@ function populateSongs(songs) {
     $("#songs").html("");
     for ( var i=0; i < songs.length; i++ ) {
         s = songs[i];
-        $("#songs").append('<a id="songs_' + (i+1) + '" href="#" onclick="startClickTrack(' + s.bpm + ')" class="list-group-item list-group-item-action list-group-item-dark"><p class="h1">' + 
+        $("#songs").append('<a id="songs_' + (i+1) + '" href="javascript:startClickTrack(' + s.bpm + ')" class="list-group-item list-group-item-action list-group-item-dark"><p class="h1">' + 
         (i+1) + '. ' + s.title + '</p><p>' + s.artist + ' (' + s.bpm + ' BPM)</p><p>' + s.description + '</p></a>');
-        console.log(s);
     }
 }
