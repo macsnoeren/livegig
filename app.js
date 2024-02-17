@@ -3,10 +3,10 @@
    Live gig application!
 */
 
-
 var _bpm = 80;
 var _ctStarted = false;
 var _counter = 0;
+var _autoStop = 10;
 
 function startClickTrack(b) {
     _bpm = b;
@@ -15,6 +15,10 @@ function startClickTrack(b) {
         _counter = 0;
         _ctStarted = true;
         executeClickTrack();
+
+        if ( _autoStop != 0 ) {
+            setTimeout(stopClickTrack, _autoStop*1000);
+        }
     }
 }
 
