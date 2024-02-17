@@ -1,0 +1,30 @@
+body {
+    background-color: #000;
+}
+
+.dot {
+    padding-top: 22px;
+    margin-left: 10px;
+    border: 3px solid #F00;
+    height: 100px;
+    width: 100px;
+    background-color: #bbb;
+    border-radius: 50%;
+    text-align: center;
+    font-size:xx-large;
+    display: inline-block;
+}
+
+.bpm {
+    padding-top: 22px;
+    margin-left: 10px;
+    height: 100px;
+    width: 100px;
+    text-align: center;
+    font-size:xx-large;
+    display: inline-block;
+}
+
+#songs {
+    margin-top:150px;
+}
