@@ -10,6 +10,9 @@ var _autoStopTime = 10; // seconds
 var _autoStop = 10;
 var _soundOn = false;
 
+// Test
+var _tsPrevious = 0;
+
 var clap = new Audio()
 clap.src = 'sounds/clap-2-95736.mp3'
 clap.preload = 'auto'
@@ -30,16 +33,23 @@ function startClickTrack(b) {
 }
 
 function executeClickTrack () {
+    var ts = Date.now();
+
     if ( _ctStarted ) {
-        if ( _soundOn ) {
-            var cts = clap.cloneNode();
-            cts.play();
+        if ( _tsPrevious == 0 || (ts - _tsPrevious) > (1000*60/_bpm) ) {
+            console.log("Timing: " + (ts - _tsPrevious) + " ms");
+            _tsPrevious = ts;
+            if ( _soundOn ) {
+                var cts = clap.cloneNode();
+                cts.play();
+            }
+
+            resetColorClickTrackDisplay();
+            setColorClickTrackDisplay(_counter);
+            _counter = (_counter + 1) % 4;
         }
 
-        resetColorClickTrackDisplay();
-        setColorClickTrackDisplay(_counter);
-        _counter = (_counter + 1) % 4;    
-        setTimeout(executeClickTrack, 1000*60/_bpm);
+        setTimeout(executeClickTrack, 0); // Schedule as soon as possible to create high precision timing!
     }
 }
 
