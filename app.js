@@ -40,8 +40,11 @@ function executeClickTrack () {
             console.log("Timing: " + (ts - _tsPrevious) + " ms");
             _tsPrevious = ts;
             if ( _soundOn ) {
-                var cts = clap.cloneNode();
-                cts.play();
+                //var cts = clap.cloneNode();
+                //cts.currentTime = 0;
+                //cts.play();
+                clap.currentTime = 0;
+                clap.play();
             }
 
             resetColorClickTrackDisplay();
