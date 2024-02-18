@@ -6,6 +6,7 @@
 var _bpm = 80;
 var _ctStarted = false;
 var _counter = 0;
+var _autoStopTime = 10; // seconds
 var _autoStop = 10;
 
 function startClickTrack(b) {
@@ -72,4 +73,14 @@ function populateAvailableLists () {
 
 function populateList(l) {
     populateSongs(getListSongs(l));
+}
+
+function toggleAutoMode () {
+    if ( $("#automode").is(":checked") ) {
+        console.log("enable automode");
+        _autoStop = _autoStopTime;
+    } else {
+        console.log("disable automode");
+        _autoStop = 0;
+    }
 }
