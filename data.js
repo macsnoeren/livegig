@@ -40,12 +40,14 @@ function getSongs() {
     return _songs;
 }
 
+// Add who starts!
 var _songs = [
     {
         "id": 0,
         "title": "Take a chance on me",
         "artist": "Abba",
         "bpm": "107",
+        "starts": "Zang",
         "description": "Abba_Take a chance on me (04:04)"
     },
     {
@@ -53,6 +55,7 @@ var _songs = [
         "title": "Waterloo",
         "artist": "Abba",
         "bpm": "148",
+        "starts": "",
         "description": "Abba_Waterloo (02:49)"
     },
     {
@@ -60,6 +63,7 @@ var _songs = [
         "title": "Mama mia",
         "artist": "Abba",
         "bpm": "140",
+        "starts": "",
         "description": "Abba_Mama mia (03:45)"
     },
     {
@@ -67,6 +71,7 @@ var _songs = [
         "title": "Highway to hell",
         "artist": "ACDC",
         "bpm": "116",
+        "starts": "Bob",
         "description": "ACDC_Highway to hell (03:28)"
     },
     {
@@ -74,6 +79,7 @@ var _songs = [
         "title": "Whole lotta Rosie",
         "artist": "ACDC",
         "bpm": "159",
+        "starts": "Maurice",
         "description": "ACDC_Whole lotta Rosie (05:34)"
     },
     {
@@ -81,6 +87,7 @@ var _songs = [
         "title": "Rolling in the deep",
         "artist": "Adele",
         "bpm": "105",
+        "starts": "Bob",
         "description": "Adele_Rolling in the deep (03:48)"
     },
     {
@@ -88,6 +95,7 @@ var _songs = [
         "title": "You oughta know",
         "artist": "Alanis Morissette",
         "bpm": "105",
+        "starts": "Maurice",
         "description": "Alanis Morissette_You oughta know (04:10)"
     },
     {
@@ -95,6 +103,7 @@ var _songs = [
         "title": "This is the life",
         "artist": "Amy McDonalds",
         "bpm": "95",
+        "starts": "Bob",
         "description": "Amy McDonalds_This is the life (03:54)"
     },
     {
@@ -102,6 +111,7 @@ var _songs = [
         "title": "Valerie",
         "artist": "Amy Winehouse ",
         "bpm": "106",
+        "starts": "Maurice",
         "description": "Amy Winehouse _Valerie (03:45)"
     },
     {
@@ -109,6 +119,7 @@ var _songs = [
         "title": "Leef (met I will survive)",
         "artist": "Andre Hazes Jr ",
         "bpm": "121",
+        "starts": "Harold",
         "description": "Andre Hazes Jr _Leef (met I will survive) (03:38)"
     },
     {
@@ -116,6 +127,7 @@ var _songs = [
         "title": "Why tell me why",
         "artist": "Anita Meyer ",
         "bpm": "113",
+        "starts": "Harold",
         "description": "Anita Meyer _Why tell me why (03:32)"
     },
     {
@@ -123,6 +135,7 @@ var _songs = [
         "title": "Nobody's wife",
         "artist": "Anouk",
         "bpm": "98",
+        "starts": "Bob",
         "description": "Anouk_Nobody's wife (03:26)"
     },
     {
@@ -130,6 +143,7 @@ var _songs = [
         "title": "So hard",
         "artist": "Anouk",
         "bpm": "129",
+        "starts": "Bob",
         "description": "Anouk_So hard (04:27)"
     },
     {
@@ -137,6 +151,7 @@ var _songs = [
         "title": "RU kidding me",
         "artist": "Anouk ",
         "bpm": "89",
+        "starts": "Bob",
         "description": "Anouk _RU kidding me (03:20)"
     },
     {
@@ -144,6 +159,7 @@ var _songs = [
         "title": "Good god",
         "artist": "Anouk ",
         "bpm": "164",
+        "starts": "Maurice",
         "description": "Anouk _Good god (02:36)"
     },
     {
@@ -151,6 +167,7 @@ var _songs = [
         "title": "Think",
         "artist": "Aretha Ericlin ",
         "bpm": "129",
+        "starts": "Harold",
         "description": "Aretha Ericlin _Think (03:21)"
     },
     {
@@ -158,6 +175,7 @@ var _songs = [
         "title": "Wake me up",
         "artist": "Avici",
         "bpm": "124",
+        "starts": "Bob",
         "description": "Avici_Wake me up (03:30)"
     },
     {
@@ -165,6 +183,7 @@ var _songs = [
         "title": "I Gotta Feeling",
         "artist": "Black Eyed Peas",
         "bpm": "128",
+        "starts": "",
         "description": "Black Eyed Peas_I Gotta Feeling (04:05)"
     },
     {
@@ -172,6 +191,7 @@ var _songs = [
         "title": "Living on a prayer",
         "artist": "Bon jovi",
         "bpm": "123",
+        "starts": "Harold",
         "description": "Bon jovi_Living on a prayer (04:09)"
     },
     {
@@ -179,6 +199,7 @@ var _songs = [
         "title": "Love a bad name",
         "artist": "Bon jovi",
         "bpm": "123",
+        "starts": "Harold",
         "description": "Bon jovi_Love a bad name (03:43)"
     },
     {
@@ -186,6 +207,7 @@ var _songs = [
         "title": "Uptown funk",
         "artist": "Bruno Mars",
         "bpm": "115",
+        "starts": "Harold",
         "description": "Bruno Mars_Uptown funk (04:30)"
     },
     {
@@ -193,6 +215,7 @@ var _songs = [
         "title": "Ain't nobody",
         "artist": "Chaka Khan",
         "bpm": "100",
+        "starts": "",
         "description": "Chaka Khan_Ain't nobody (04:41)"
     },
     {
@@ -200,6 +223,7 @@ var _songs = [
         "title": "Afraid of the dark",
         "artist": "Chef'Special",
         "bpm": "167",
+        "starts": "",
         "description": "Chef'Special_Afraid of the dark (03:07)"
     },
     {
@@ -207,6 +231,7 @@ var _songs = [
         "title": "Mag ik dan bij jou",
         "artist": "Claudia de Brey",
         "bpm": "133",
+        "starts": "Harold",
         "description": "Claudia de Brey_Mag ik dan bij jou (03:24)"
     },
     {
@@ -214,6 +239,7 @@ var _songs = [
         "title": "Viva la vida",
         "artist": "Coldplay",
         "bpm": "138",
+        "starts": "",
         "description": "Coldplay_Viva la vida (04:02)"
     },
     {
@@ -221,6 +247,7 @@ var _songs = [
         "title": "Dansen op de vulkaan",
         "artist": "Dijk de",
         "bpm": "150",
+        "starts": "Maurice",
         "description": "Dijk de_Dansen op de vulkaan (04:27)"
     },
     {
@@ -228,6 +255,7 @@ var _songs = [
         "title": "ik kan het niet alleen",
         "artist": "Dijk de",
         "bpm": "142",
+        "starts": "Maurice",
         "description": "Dijk de_ik kan het niet alleen (03:59)"
     },
     {
@@ -235,6 +263,7 @@ var _songs = [
         "title": "Als ze er niet is",
         "artist": "Dijk de",
         "bpm": "84",
+        "starts": "",
         "description": "Dijk de_Als ze er niet is (03:32)"
     },
     {
@@ -242,6 +271,7 @@ var _songs = [
         "title": "Love me just a little bit more",
         "artist": "Dolly Dots",
         "bpm": "96",
+        "starts": "Bob",
         "description": "Dolly Dots_Love me just a little bit more (03:33)"
     },
     {
@@ -249,6 +279,7 @@ var _songs = [
         "title": "Jolene",
         "artist": "Dolly Parton",
         "bpm": "110",
+        "starts": "Bob",
         "description": "Dolly Parton_Jolene (02:42)"
     },
     {
@@ -256,6 +287,7 @@ var _songs = [
         "title": "Working 9 to 5",
         "artist": "Dolly Parton",
         "bpm": "105",
+        "starts": "",
         "description": "Dolly Parton_Working 9 to 5 (02:42)"
     },
     {
@@ -263,6 +295,7 @@ var _songs = [
         "title": "Bad Girls",
         "artist": "Donna Summer",
         "bpm": "121",
+        "starts": "",
         "description": "Donna Summer_Bad Girls (04:55)"
     },
     {
@@ -270,6 +303,7 @@ var _songs = [
         "title": "Long train running",
         "artist": "Dooby Brothers ",
         "bpm": "117",
+        "starts": "Bob",
         "description": "Dooby Brothers _Long train running (03:05)"
     },
     {
@@ -277,6 +311,7 @@ var _songs = [
         "title": "Listen to the music",
         "artist": "Dooby Brothers ",
         "bpm": "106",
+        "starts": "Bob",
         "description": "Dooby Brothers _Listen to the music (03:21)"
     },
     {
@@ -284,6 +319,7 @@ var _songs = [
         "title": "\"Earth",
         "artist": " Wind & Fire_September (03:35)\"",
         "bpm": "Onderdeel medley Disco",
+        "starts": "126",
         "description": "\"Earth"
     },
     {
@@ -291,6 +327,7 @@ var _songs = [
         "title": "\"Earth",
         "artist": " Wind & Fire_Boogie Wonderland (04:48)\"",
         "bpm": "Onderdeel medley Disco",
+        "starts": "132",
         "description": "\"Earth"
     },
     {
@@ -298,6 +335,7 @@ var _songs = [
         "title": "Perfect",
         "artist": "Ed Sheeran ",
         "bpm": "95",
+        "starts": "Bob",
         "description": "Ed Sheeran _Perfect (04:23)"
     },
     {
@@ -305,6 +343,7 @@ var _songs = [
         "title": "Sisters are doin' it for themselves",
         "artist": "Eurithmics ",
         "bpm": "136",
+        "starts": "Harold",
         "description": "Eurithmics _Sisters are doin' it for themselves (05:57)"
     },
     {
@@ -312,6 +351,7 @@ var _songs = [
         "title": "The final count down",
         "artist": "Europe",
         "bpm": "118",
+        "starts": "",
         "description": "Europe_The final count down (05:09)"
     },
     {
@@ -319,6 +359,7 @@ var _songs = [
         "title": "Jesus he knows me",
         "artist": "Genesis ",
         "bpm": "95",
+        "starts": "Harold",
         "description": "Genesis _Jesus he knows me (04:17)"
     },
     {
@@ -326,6 +367,7 @@ var _songs = [
         "title": "Una paloma blanca",
         "artist": "George Baker",
         "bpm": "133",
+        "starts": "Maurice",
         "description": "George Baker_Una paloma blanca (03:32)"
     },
     {
@@ -333,6 +375,7 @@ var _songs = [
         "title": "Heavy cross",
         "artist": "Gossip ",
         "bpm": "120",
+        "starts": "Bob",
         "description": "Gossip _Heavy cross (04:03)"
     },
     {
@@ -340,6 +383,7 @@ var _songs = [
         "title": "Brabant",
         "artist": "Guus Meeuwis",
         "bpm": "82",
+        "starts": "",
         "description": "Guus Meeuwis_Brabant (03:30)"
     },
     {
@@ -347,6 +391,7 @@ var _songs = [
         "title": "Jump",
         "artist": "Halen van ",
         "bpm": "130",
+        "starts": "Harold",
         "description": "Halen van _Jump (04:02)"
     },
     {
@@ -354,6 +399,7 @@ var _songs = [
         "title": "Atemlos durch die Nacht",
         "artist": "Helene Fischer",
         "bpm": "128",
+        "starts": "Bob",
         "description": "Helene Fischer_Atemlos durch die Nacht (04:30)"
     },
     {
@@ -361,6 +407,7 @@ var _songs = [
         "title": "I love it",
         "artist": "Icona pop ",
         "bpm": "126",
+        "starts": "Harold",
         "description": "Icona pop _I love it (02:37)"
     },
     {
@@ -368,6 +415,7 @@ var _songs = [
         "title": "The Trooper",
         "artist": "Iron Maiden",
         "bpm": "160",
+        "starts": "Maurice",
         "description": "Iron Maiden_The Trooper (04:13)"
     },
     {
@@ -375,6 +423,7 @@ var _songs = [
         "title": "Hold back the river",
         "artist": "James Bay",
         "bpm": "135",
+        "starts": "Bob",
         "description": "James Bay_Hold back the river (03:59)"
     },
     {
@@ -382,6 +431,7 @@ var _songs = [
         "title": "I feel good",
         "artist": "James Brown",
         "bpm": "143",
+        "starts": "Marco",
         "description": "James Brown_I feel good (02:46)"
     },
     {
@@ -389,6 +439,7 @@ var _songs = [
         "title": "Dance Across The Floor",
         "artist": "Jimmy Bo Horne",
         "bpm": "112",
+        "starts": "",
         "description": "Jimmy Bo Horne_Dance Across The Floor (02:41)"
     },
     {
@@ -396,6 +447,7 @@ var _songs = [
         "title": "Een geit in het caf\u00e9",
         "artist": "Johnny Purple",
         "bpm": "136",
+        "starts": "Harold",
         "description": "Johnny Purple_Een geit in het caf\u00e9 (03:58)"
     },
     {
@@ -403,6 +455,7 @@ var _songs = [
         "title": "Son of a preacher man",
         "artist": "Joss Stone",
         "bpm": "80",
+        "starts": "Maurice",
         "description": "Joss Stone_Son of a preacher man (02:29)"
     },
     {
@@ -410,6 +463,7 @@ var _songs = [
         "title": "Super duper love",
         "artist": "Joss Stone ",
         "bpm": "95",
+        "starts": "Maurice",
         "description": "Joss Stone _Super duper love (04:20)"
     },
     {
@@ -417,6 +471,7 @@ var _songs = [
         "title": "Oya L\u00e9l\u00e9",
         "artist": "K3",
         "bpm": "135",
+        "starts": "",
         "description": "K3_Oya L\u00e9l\u00e9 (03:45)"
     },
     {
@@ -424,6 +479,7 @@ var _songs = [
         "title": "Walking on sunshine",
         "artist": "Katrina & The Waves",
         "bpm": "110",
+        "starts": "Maurice",
         "description": "Katrina & The Waves_Walking on sunshine (03:59)"
     },
     {
@@ -431,6 +487,7 @@ var _songs = [
         "title": "Underneath the tree",
         "artist": "Kelly Klarkson",
         "bpm": "160",
+        "starts": "Harold",
         "description": "Kelly Klarkson_Underneath the tree (03:50)"
     },
     {
@@ -438,6 +495,7 @@ var _songs = [
         "title": "War",
         "artist": "Kensington ",
         "bpm": "126",
+        "starts": "Maurice",
         "description": "Kensington _War (02:57)"
     },
     {
@@ -445,6 +503,7 @@ var _songs = [
         "title": "I've got the music in me",
         "artist": "Kiki Dee",
         "bpm": "119",
+        "starts": "Eric",
         "description": "Kiki Dee_I've got the music in me (05:02)"
     },
     {
@@ -452,6 +511,7 @@ var _songs = [
         "title": "Op een onbewoond eiland",
         "artist": "Kinderen voor kinderen",
         "bpm": "72",
+        "starts": "",
         "description": "Kinderen voor kinderen_Op een onbewoond eiland (03:01)"
     },
     {
@@ -459,6 +519,7 @@ var _songs = [
         "title": "Sex on fire",
         "artist": "Kings of Leon",
         "bpm": "153",
+        "starts": "Bob",
         "description": "Kings of Leon_Sex on fire (03:23)"
     },
     {
@@ -466,6 +527,7 @@ var _songs = [
         "title": "Always Remember Us This Way",
         "artist": "Lady Gaga",
         "bpm": "130",
+        "starts": "Harold",
         "description": "Lady Gaga_Always Remember Us This Way (03:30)"
     },
     {
@@ -473,6 +535,7 @@ var _songs = [
         "title": "Narcotic",
         "artist": "Liquido",
         "bpm": "102",
+        "starts": "Maurice",
         "description": "Liquido_Narcotic (03:56)"
     },
     {
@@ -480,6 +543,7 @@ var _songs = [
         "title": "Like a prayer",
         "artist": "Madonna",
         "bpm": "111",
+        "starts": "Harold",
         "description": "Madonna_Like a prayer (05:43)"
     },
     {
@@ -487,6 +551,7 @@ var _songs = [
         "title": "Dance with somebody",
         "artist": "Mando Diao",
         "bpm": "150",
+        "starts": "Maurice",
         "description": "Mando Diao_Dance with somebody (04:02)"
     },
     {
@@ -494,6 +559,7 @@ var _songs = [
         "title": "I was made for lovin you",
         "artist": "Maria mena",
         "bpm": "128",
+        "starts": "Bob",
         "description": "Maria mena_I was made for lovin you (04:31)"
     },
     {
@@ -501,6 +567,7 @@ var _songs = [
         "title": "All I want for Christmas",
         "artist": "Mariah Carey",
         "bpm": "150",
+        "starts": "Harold",
         "description": "Mariah Carey_All I want for Christmas (04:01)"
     },
     {
@@ -508,6 +575,7 @@ var _songs = [
         "title": "Shackles",
         "artist": "Mary Mary",
         "bpm": "100",
+        "starts": "Harold",
         "description": "Mary Mary_Shackles (03:18)"
     },
     {
@@ -515,6 +583,7 @@ var _songs = [
         "title": "Billie Jean",
         "artist": "Michael Jackson",
         "bpm": "120",
+        "starts": "Bob",
         "description": "Michael Jackson_Billie Jean (04:54)"
     },
     {
@@ -522,6 +591,7 @@ var _songs = [
         "title": "Beat it",
         "artist": "Micheal Jackson",
         "bpm": "139",
+        "starts": "",
         "description": "Micheal Jackson_Beat it (04:18)"
     },
     {
@@ -529,6 +599,7 @@ var _songs = [
         "title": "Lady marmelade",
         "artist": "Patty labelle",
         "bpm": "115",
+        "starts": "Maurice",
         "description": "Patty labelle_Lady marmelade (03:41)"
     },
     {
@@ -536,6 +607,7 @@ var _songs = [
         "title": "Raise your glass",
         "artist": "Pink",
         "bpm": "122",
+        "starts": "Bob",
         "description": "Pink_Raise your glass (03:00)"
     },
     {
@@ -543,6 +615,7 @@ var _songs = [
         "title": "Jump",
         "artist": "Pointer sisters",
         "bpm": "130",
+        "starts": "Harold",
         "description": "Pointer sisters_Jump (04:23)"
     },
     {
@@ -550,6 +623,7 @@ var _songs = [
         "title": "Non non rien change",
         "artist": "Poppy's les",
         "bpm": "95",
+        "starts": "Bob",
         "description": "Poppy's les_Non non rien change (03:10)"
     },
     {
@@ -557,6 +631,7 @@ var _songs = [
         "title": "Purple Rain",
         "artist": "Prince",
         "bpm": "113",
+        "starts": "",
         "description": "Prince_Purple Rain (08:14)"
     },
     {
@@ -564,6 +639,7 @@ var _songs = [
         "title": "Don't stop me now",
         "artist": "Queen ",
         "bpm": "156",
+        "starts": "Harold",
         "description": "Queen _Don't stop me now (03:29)"
     },
     {
@@ -571,6 +647,7 @@ var _songs = [
         "title": "Du Hast",
         "artist": "Rammstein",
         "bpm": "125",
+        "starts": "Harold",
         "description": "Rammstein_Du Hast (03:54)"
     },
     {
@@ -578,6 +655,7 @@ var _songs = [
         "title": "Angels",
         "artist": "Robbie Williams ",
         "bpm": "150",
+        "starts": "Harold",
         "description": "Robbie Williams _Angels (04:25)"
     },
     {
@@ -585,6 +663,7 @@ var _songs = [
         "title": "Coming home",
         "artist": "Sheppard",
         "bpm": "145",
+        "starts": "iedereen",
         "description": "Sheppard_Coming home (03:38)"
     },
     {
@@ -592,6 +671,7 @@ var _songs = [
         "title": "Don't you (forget about me)",
         "artist": "Simple minds",
         "bpm": "111",
+        "starts": "",
         "description": "Simple minds_Don't you (forget about me) (04:23)"
     },
     {
@@ -599,6 +679,7 @@ var _songs = [
         "title": "We are family",
         "artist": "Sister Sledge",
         "bpm": "119",
+        "starts": "",
         "description": "Sister Sledge_We are family (03:37)"
     },
     {
@@ -606,6 +687,7 @@ var _songs = [
         "title": "Boys don't cry",
         "artist": "The Cure",
         "bpm": "169",
+        "starts": "Bob",
         "description": "The Cure_Boys don't cry (02:38)"
     },
     {
@@ -613,6 +695,7 @@ var _songs = [
         "title": "Iedereen is van de wereld",
         "artist": "The scene",
         "bpm": "118",
+        "starts": "Bob",
         "description": "The scene_Iedereen is van de wereld (03:48)"
     },
     {
@@ -620,6 +703,7 @@ var _songs = [
         "title": "Disco inferno",
         "artist": "The Trammps",
         "bpm": "131",
+        "starts": "Eric",
         "description": "The Trammps_Disco inferno (04:20)"
     },
     {
@@ -627,6 +711,7 @@ var _songs = [
         "title": "River Deep",
         "artist": "Tina Turner",
         "bpm": "83",
+        "starts": "Harold",
         "description": "Tina Turner_River Deep (03:53)"
     },
     {
@@ -634,6 +719,7 @@ var _songs = [
         "title": "Proud mary",
         "artist": "Tina Turner",
         "bpm": "171",
+        "starts": "Eric",
         "description": "Tina Turner_Proud mary (05:27)"
     },
     {
@@ -641,6 +727,7 @@ var _songs = [
         "title": "Nutbush City Limits",
         "artist": "Tina Turner",
         "bpm": "150",
+        "starts": "Bob",
         "description": "Tina Turner_Nutbush City Limits (03:20)"
     },
     {
@@ -648,6 +735,7 @@ var _songs = [
         "title": "Lola Montez",
         "artist": "Volbeat",
         "bpm": "152",
+        "starts": "Bob",
         "description": "Volbeat_Lola Montez (04:28)"
     },
     {
@@ -655,6 +743,7 @@ var _songs = [
         "title": "Shut up and dance",
         "artist": "Walk the Moon",
         "bpm": "128",
+        "starts": "Bob",
         "description": "Walk the Moon_Shut up and dance (03:19)"
     },
     {
@@ -662,6 +751,7 @@ var _songs = [
         "title": "Play that funky music",
         "artist": "Wild Cherry",
         "bpm": "110",
+        "starts": "Eric",
         "description": "Wild Cherry_Play that funky music (04:55)"
     },
     {
@@ -669,6 +759,7 @@ var _songs = [
         "title": "Met jou kan ik het aan",
         "artist": "Emma en Anouk",
         "bpm": "",
+        "starts": "Maurice",
         "description": "Emma en Anouk_Met jou kan ik het aan (00:00)"
     },
     {
@@ -676,6 +767,7 @@ var _songs = [
         "title": "Be more kind",
         "artist": "Frank Turner",
         "bpm": "136",
+        "starts": "Harold",
         "description": "Frank Turner_Be more kind (04:07)"
     },
     {
@@ -683,6 +775,7 @@ var _songs = [
         "title": "Black Velvet",
         "artist": "Alannah Myles",
         "bpm": "91",
+        "starts": "Eric",
         "description": "Alannah Myles_Black Velvet (04:47)"
     },
     {
@@ -690,6 +783,7 @@ var _songs = [
         "title": "Sexy als ik dans",
         "artist": "Nielson",
         "bpm": "94",
+        "starts": "Bob",
         "description": "Nielson_Sexy als ik dans (03:35)"
     },
     {
@@ -697,6 +791,7 @@ var _songs = [
         "title": "Lang zal ze leven",
         "artist": "Lang zal ze leven",
         "bpm": "102",
+        "starts": "Zang",
         "description": "Lang zal ze leven_Lang zal ze leven (00:30)"
     },
     {
@@ -704,6 +799,7 @@ var _songs = [
         "title": "Seven Nation Army",
         "artist": "The White Stripes",
         "bpm": "124",
+        "starts": "Eric",
         "description": "The White Stripes_Seven Nation Army (03:51)"
     },
     {
@@ -711,6 +807,7 @@ var _songs = [
         "title": "Bright Eyes",
         "artist": "Ronde",
         "bpm": "124",
+        "starts": "Maurice",
         "description": "Ronde_Bright Eyes (02:51)"
     },
     {
@@ -718,6 +815,7 @@ var _songs = [
         "title": "Noodgeval",
         "artist": "Goldband",
         "bpm": "139",
+        "starts": "Maurice",
         "description": "Goldband_Noodgeval (03:34)"
     }
 ];

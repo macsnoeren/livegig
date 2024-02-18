@@ -18,6 +18,7 @@ while line:
         "title": record[2],
         "artist": record[1],
         "bpm": record[5],
+        "starts": record[7],
         "description": record[0],
     }
     songs.append(r)
