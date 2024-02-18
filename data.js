@@ -11,7 +11,7 @@ function getLists () {
         },
         {
             "title": "Setlijst A",
-            "songs": [1, 2, 3, 4, 5, 6],
+            "songs": [1, 2, 3, 4, 5, 6, 0],
         },
         {
             "title": "Setlijst B",

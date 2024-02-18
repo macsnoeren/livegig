@@ -60,3 +60,16 @@ function populateSongs(songs) {
         (i+1) + '. ' + s.title + '</p><p>' + s.artist + ' (' + s.bpm + ' BPM)</p><p>' + s.description + '</p></a>');
     }
 }
+
+function populateAvailableLists () {
+    $("#availablelists").html("");
+
+    for ( var i=0; i < getLists().length; i++ ) {
+        s = getLists()[i];
+        $("#availablelists").append('<li><a class="dropdown-item" href="javascript:populateList(' + i + ')">' + s.title + '</a></li>');
+    }    
+}
+
+function populateList(l) {
+    populateSongs(getListSongs(l));
+}

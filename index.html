@@ -22,6 +22,17 @@
                     <div class="bpm text-light">BPM</div>
                     <button type="button" class="btn btn-primary btn-lg" onclick="startClickTrack(_bpm)">START</button>
                     <button type="button" class="btn btn-danger btn-lg" onclick="stopClickTrack()">STOP</button>
+                    <span class="dropdown">
+                        <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                            Available lists
+                        </a>
+                        
+                        <ul id="availablelists" class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                            <li><a class="dropdown-item" href="#">Action</a></li>
+                            <li><a class="dropdown-item" href="#">Another action</a></li>
+                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        </ul>
+                    </span>
                 </div>
             </div>
         </nav>
@@ -38,6 +49,7 @@
         <script src="data.js"></script>
         <script>
             populateSongs(getSongs());
+            populateAvailableLists();
         </script>
     </body>
 </html>
