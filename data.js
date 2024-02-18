@@ -11,7 +11,7 @@ function getLists () {
         },
         {
             "title": "Setlijst A",
-            "songs": [1, 2, 3, 4, 5, 6, 0],
+            "songs": [97, 82, 69, 51, 98, 99, 48, 100, 95, 87, 101, 20, 88, 62, 60, 102],
         },
         {
             "title": "Setlijst B",
@@ -817,6 +817,54 @@ var _songs = [
         "bpm": "139",
         "starts": "Maurice",
         "description": "Goldband_Noodgeval (03:34)"
-    }
+    },
+    {
+        "id": 97,
+        "title": "Music was my first love",
+        "artist": "John Miles",
+        "bpm": "91",
+        "starts": "Harold",
+        "description": "John_Miles_Music_was_my_first_love"
+    },
+    {
+        "id": 98,
+        "title": "Disco medley",
+        "artist": "-",
+        "bpm": "80",
+        "starts": "Maurice",
+        "description": "Tempo onbekend"
+    },
+    {
+        "id": 99,
+        "title": "Stop",
+        "artist": "Sam Brown",
+        "bpm": "186",
+        "starts": "Harold",
+        "description": "6/8"
+    },
+    {
+        "id": 100,
+        "title": "Tina Turner Medley",
+        "artist": "Tina Turner",
+        "bpm": "100",
+        "starts": "Harold",
+        "description": "Tempo onbekend"
+    },
+    {
+        "id": 101,
+        "title": "Abba Medley",
+        "artist": "Abba",
+        "bpm": "100",
+        "starts": "Zang",
+        "description": "Tempo onbekend"
+    },
+    {
+        "id": 102,
+        "title": "Anouk Medley",
+        "artist": "Anouk",
+        "bpm": "100",
+        "starts": "Bob",
+        "description": "Tempo onbekend"
+    },
 ];
 
