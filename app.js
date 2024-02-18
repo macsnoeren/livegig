@@ -37,7 +37,7 @@ function executeClickTrack () {
 
     if ( _ctStarted ) {
         if ( _tsPrevious == 0 || (ts - _tsPrevious) > (1000*60/_bpm-2) ) { // The -2 is to get more precision
-            //console.log("Timing: " + (ts - _tsPrevious) + " ms");
+            console.log("Timing: " + (ts - _tsPrevious) + " ms");
             _tsPrevious = ts;
             if ( _soundOn ) {
                 var cts = clap.cloneNode();
