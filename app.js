@@ -71,7 +71,7 @@ function setColorClickTrackDisplay(i) {
 }
 
 function setClickTrackBPMDisplay(b) {
-    $("#clicktrack_bpm").text(b);
+    $("#clicktrack_bpm").text(b + " BPM");
 }
 
 function populateSongs(songs) {
