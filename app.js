@@ -8,6 +8,12 @@ var _ctStarted = false;
 var _counter = 0;
 var _autoStopTime = 10; // seconds
 var _autoStop = 10;
+var _soundOn = false;
+
+var clap = new Audio()
+clap.src = 'sounds/clap-2-95736.mp3'
+clap.preload = 'auto'
+clap.load()
 
 function startClickTrack(b) {
     _bpm = b;
@@ -25,6 +31,11 @@ function startClickTrack(b) {
 
 function executeClickTrack () {
     if ( _ctStarted ) {
+        if ( _soundOn ) {
+            var cts = clap.cloneNode();
+            cts.play();
+        }
+
         resetColorClickTrackDisplay();
         setColorClickTrackDisplay(_counter);
         _counter = (_counter + 1) % 4;    
@@ -77,10 +88,16 @@ function populateList(l) {
 
 function toggleAutoMode () {
     if ( $("#automode").is(":checked") ) {
-        console.log("enable automode");
         _autoStop = _autoStopTime;
     } else {
-        console.log("disable automode");
         _autoStop = 0;
+    }
+}
+
+function toggleSoundMode () {
+    if ( $("#soundmode").is(":checked") ) {
+        _soundOn = true;
+    } else {
+        _soundOn = false;
     }
 }
