@@ -10,12 +10,13 @@ function getLists () {
             "songs": [],
         },
         {
-            "title": "Setlijst A",
-            "songs": [97, 82, 69, 51, 98, 99, 48, 100, 95, 87, 101, 20, 88, 62, 60, 102],
+            "title": "Setlijst 1",
+            "songs": [97, 82, 69, 95, 87, 51, 88, 23, 60, 6, 102, 100, 103, 20, 62, 44],
+            
         },
         {
-            "title": "Setlijst B",
-            "songs": [7, 8, 1, 2, 5, 3],
+            "title": "Setlijst 2",
+            "songs": [64, 104, 98, 101, 5, 86, 75, 99, 48, 96, 10, 25, 81, 105, 106, 42, 24],
         },
     ];
 }
@@ -431,7 +432,7 @@ var _songs = [
         "title": "I feel good",
         "artist": "James Brown",
         "bpm": "143",
-        "starts": "Marco",
+        "starts": "Zang",
         "description": "James Brown_I feel good (02:46)"
     },
     {
@@ -454,7 +455,7 @@ var _songs = [
         "id": 51,
         "title": "Son of a preacher man",
         "artist": "Joss Stone",
-        "bpm": "80",
+        "bpm": "85",
         "starts": "Maurice",
         "description": "Joss Stone_Son of a preacher man (02:29)"
     },
@@ -864,6 +865,38 @@ var _songs = [
         "artist": "Anouk",
         "bpm": "100",
         "starts": "Bob",
+        "description": "Tempo onbekend"
+    },
+    {
+        "id": 103,
+        "title": "Queen Medley",
+        "artist": "Queen",
+        "bpm": "100",
+        "starts": "Harold",
+        "description": "Tempo onbekend"
+    },
+    {
+        "id": 104,
+        "title": "Bon Jovi Medley",
+        "artist": "Bon Jovi",
+        "bpm": "100",
+        "starts": "Harold",
+        "description": "Tempo onbekend"
+    },
+    {
+        "id": 105,
+        "title": "ACDC Medley",
+        "artist": "ACDC",
+        "bpm": "100",
+        "starts": "Bob",
+        "description": "Tempo onbekend"
+    },
+    {
+        "id": 106,
+        "title": "Hardcore Medley",
+        "artist": "Hardcore",
+        "bpm": "100",
+        "starts": "Harold",
         "description": "Tempo onbekend"
     },
 ];
