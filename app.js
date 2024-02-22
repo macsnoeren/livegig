@@ -36,7 +36,14 @@ function executeClickTrack () {
     var ts = Date.now();
 
     if ( _ctStarted ) {
-        if ( _tsPrevious == 0 || (ts - _tsPrevious) > (1000*60/_bpm-2) ) { // The -2 is to get more precision
+
+        // Improve precision by waiting when the timing is close enough, in this case 20ms before the actual
+        // timing is required. Then wait inside the method until the actual timing is there.
+        if ( _tsPrevious == 0 || (ts - _tsPrevious) > (1000*60/_bpm) - 20 ) { // precision on 20 ms
+            while ( (ts - _tsPrevious) < (1000*60/_bpm)) { // Not <=, so the timing is more accurate.
+                ts = Date.now();
+            }
+
             $("#debug").text("Timing: " + (ts - _tsPrevious) + " ms");
             _tsPrevious = ts;
             if ( _soundOn ) {
