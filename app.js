@@ -6,11 +6,9 @@
 var _bpm = 80;
 var _ctStarted = false;
 var _counter = 0;
-var _autoStopTime = 10; // seconds
-var _autoStop = 10;
+var _autoStopTime = 25; // seconds
+var _autoStop = 0;
 var _soundOn = false;
-
-// Test
 var _tsPrevious = 0;
 
 var clap = new Audio()
@@ -33,23 +31,18 @@ function startClickTrack(b) {
 }
 
 function executeClickTrack () {
-    var ts = Date.now();
+    var ts = performance.now();
 
     if ( _ctStarted ) {
-
         // Improve precision by waiting when the timing is close enough, in this case 20ms before the actual
         // timing is required. Then wait inside the method until the actual timing is there.
+        // Further improvement due to the use of performance.now(). It is 0.1ms accuracy. 
         if ( _tsPrevious == 0 || (ts - _tsPrevious) > (1000*60/_bpm) - 20 ) { // precision on 20 ms
             while ( (ts - _tsPrevious) < (1000*60/_bpm)) { // Not <=, so the timing is more accurate.
-                ts = Date.now();
+                ts = performance.now();
             }
 
-            $("#debug").text("Timing: " + (ts - _tsPrevious) + " ms");
-            _tsPrevious = ts;
             if ( _soundOn ) {
-                //var cts = clap.cloneNode();
-                //cts.currentTime = 0;
-                //cts.play();
                 clap.currentTime = 0;
                 clap.play();
             }
@@ -57,6 +50,9 @@ function executeClickTrack () {
             resetColorClickTrackDisplay();
             setColorClickTrackDisplay(_counter);
             _counter = (_counter + 1) % 4;
+
+            $("#debug").text("Timing: " + (ts - _tsPrevious).toFixed(1) + " ms");
+            _tsPrevious = ts;
         }
 
         setTimeout(executeClickTrack, 0); // Schedule as soon as possible to create high precision timing!
