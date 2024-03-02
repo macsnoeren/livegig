@@ -30,7 +30,7 @@ function nextFrame() {
         img = img.replace(/\(/g, '\\\('); // For background-image URL curly braces are not shown
         img = img.replace(/\)/g, '\\\)');
         
-        if ( img.search(/mp4$/) >= 0 ) { // Video found!
+        if ( img.search(/mp4$/) >= 0 || img.search(/webm$/) >= 0 ) { // Video found!
             console.log('Show video: ' + img);
             diaStartVideo(img);
             _diaVideo = true;
@@ -91,14 +91,14 @@ function stopVideo() {
 
 function diaStartVideo(video) {
     $('#background-video').get(0).pause();
-    //$('#background-video').get(0).src = video;
+    $('#background-video').get(0).src = video;
     $('#background-video').get(0).load();
     $('#background-video').get(0).play();
     showVideo(true);
 }
 
 function diaStopVideo(video) {
-    //stopVideo();
+    stopVideo();
     showVideo(false);
     //$('#background-video').get(0).src = 'videos/test.mp4';
     //$('#background-video').get(0).load();
