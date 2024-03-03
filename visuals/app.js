@@ -8,12 +8,13 @@ var _totalImages = _images.length;
 var _diaTime = 10000;
 var _diaRun = false;
 var _diaVideo = false;
+var _timeout;
 
 function preloadImages () {
-    for ( let i=0; i < _images.length; i++ ) {
-        let img = new Image();
-        img.src = 'images/dias/' + _images[i];
-    }
+//    for ( let i=0; i < _images.length; i++ ) {
+    let img = new Image();
+    img.src = 'images/dias/' + _images[_counter];
+//    }
 }
 
 function startDiaShow() {
@@ -26,7 +27,9 @@ function startDiaShow() {
 
 function nextFrame() {
     if ( _diaRun ) {
-        let img = 'images/dias/' + encodeURIComponent(_images[_counter].trim()); // Encoding so files are shown
+        //let img = 'images/dias/' + encodeURIComponent(_images[_counter].trim()); // Encoding so files are shown
+        let img = 'images/dias/' + _images[_counter];
+        img = img.replace(/ /g, '%20');
         img = img.replace(/\(/g, '\\\('); // For background-image URL curly braces are not shown
         img = img.replace(/\)/g, '\\\)');
         
@@ -46,13 +49,16 @@ function nextFrame() {
 
         _counter++;
         if ( _counter >= _totalImages ) {
+            let img = new Image(); // Preload next image
+            img.src = 'images/dias/' + _images[0]; 
             _counter = 0;
+        
+        } else {
+            let img = new Image(); // Preload next image
+            img.src = 'images/dias/' + _images[_counter+1];
         }
 
-        setTimeout(nextFrame, _diaTime);
-   
-    } else {
-        blackScreen();
+        _timeout = setTimeout(nextFrame, _diaTime);
     }
 }
 
@@ -61,6 +67,8 @@ function blackScreen () {
     showLogo(false);
     showVideo(false);
     stopVideo();
+    _diaRun = false;
+    clearTimeout(_timeout);
 }
 
 function showLogo(state) {
@@ -104,3 +112,19 @@ function diaStopVideo(video) {
     //$('#background-video').get(0).load();
 }
 
+function showStillImage(img) {
+    img = img.replace(/ /g, '%20');
+    img = img.replace(/\(/g, '\\\('); // For background-image URL curly braces are not shown
+    img = img.replace(/\)/g, '\\\)');
+    blackScreen();
+    showLogo(true);
+    console.log('Show still image: ' + img);
+    $('body').css('background-image', "url(" + img + ")");
+}
+
+function showStillVideo(video) {
+    blackScreen();
+    showLogo(true);
+    console.log('Show still video: ' + video);
+    diaStartVideo(video);
+}
