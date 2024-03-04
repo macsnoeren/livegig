@@ -18,6 +18,7 @@ function preloadImages () {
 }
 
 function startDiaShow() {
+    clearTimeout(_timeout);
     _diaRun = true;
     showLogo(true);
     showVideo(false);

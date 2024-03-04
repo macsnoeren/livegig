@@ -4,7 +4,6 @@ var _images = [
     "SHA4719.jpg",
     "SHA4731.jpg",
     "SHA4735.jpg",
-    "test.mp4",
     "SHA4760.jpg",
     "SHA4772.jpg",
     "SHA4779.jpg",

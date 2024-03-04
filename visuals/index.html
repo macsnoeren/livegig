@@ -17,10 +17,27 @@
         <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
         <script src="data.js"></script>
         <script src="app.js"></script>
-        <script>
-            preloadImages();
-            $('body').css('background-image', "url('images/loader.gif')");
-            setTimeout(startDiaShow, 5000);
-        </script>
+	<script src="/socket.io/socket.io.js"></script>
+	<script>
+          preloadImages();
+          //$('body').css('background-image', "url('images/loader.gif')");
+          //setTimeout(startDiaShow, 5000);
+	  startDiaShow();
+
+	  const socket = io();
+	  socket.on('command', (msg) => {
+	      console.log(msg);
+	      if ( msg.function == "showDiaShow" ) {
+		  startDiaShow();
+	      } else if ( msg.function == "blackScreen" ) {
+		  blackScreen();
+	      } else if ( msg.function == "showStillImage" ) {
+		  showStillImage(msg.file);
+	      } else if ( msg.function == "showStillVideo" ) {
+		  showStillVideo(msg.file);
+	      }
+	  });
+
+	</script>
     </body>
 </html>
