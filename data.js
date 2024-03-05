@@ -831,9 +831,9 @@ var _songs = [
         "id": 98,
         "title": "Disco medley",
         "artist": "-",
-        "bpm": "80",
+        "bpm": "112",
         "starts": "Maurice",
-        "description": "Tempo onbekend"
+        "description": "Let's dance"
     },
     {
         "id": 99,
@@ -863,9 +863,9 @@ var _songs = [
         "id": 102,
         "title": "Anouk Medley",
         "artist": "Anouk",
-        "bpm": "100",
+        "bpm": "98",
         "starts": "Bob",
-        "description": "Tempo onbekend"
+        "description": "Nobody's wife"
     },
     {
         "id": 103,
