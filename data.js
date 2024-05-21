@@ -53,8 +53,6 @@ function getSongs(sorted = false) {
         return 0;
     });
 
-    console.log("sorted!");
-
     return songs;
 }
 
@@ -338,7 +336,7 @@ var _songs = [
         "artist": "Earth Wind & Fire",
         "bpm": "Onderdeel medley Disco",
         "starts": "126",
-        "description": "\"Earth"
+        "description": ""
     },
     {
         "id": 35,
@@ -346,7 +344,7 @@ var _songs = [
         "artist": "Earth Wind & Fire",
         "bpm": "Onderdeel medley Disco",
         "starts": "132",
-        "description": "\"Earth"
+        "description": ""
     },
     {
         "id": 36,
