@@ -6,8 +6,8 @@
 var _bpm = 80;
 var _ctStarted = false;
 var _counter = 0;
-var _autoStopTime = 25; // seconds
-var _autoStop = 0;
+var _autoStopTime = 25;         // Seconds
+var _autoStop = _autoStopTime;  // Enable auto stop at the start, automode is on by default #bugfix
 var _soundOn = false;
 var _tsPrevious = 0;
 

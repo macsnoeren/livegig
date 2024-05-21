@@ -23,7 +23,7 @@ function getLists () {
 
 function getListSongs (list) {
     if ( list == 0 ) {
-        return getSongs();
+        return getSongs(true);
     }
 
     songs = [];
@@ -37,8 +37,25 @@ function getListSongs (list) {
     return songs;
 }
 
-function getSongs() {
-    return _songs;
+function getSongs(sorted = false) {
+    if ( !sorted ) {
+        return _songs;
+    }
+
+    songs = JSON.parse(JSON.stringify(_songs)); // deep copy, so underlying structure _songs not changed!
+
+    songs.sort( function(a, b) {
+        var keyA = a.title.toUpperCase();
+        var keyB = b.title.toUpperCase();
+
+        if (keyA < keyB) return -1;
+        if (keyA > keyB) return 1;
+        return 0;
+    });
+
+    console.log("sorted!");
+
+    return songs;
 }
 
 // Add who starts!
@@ -317,16 +334,16 @@ var _songs = [
     },
     {
         "id": 34,
-        "title": "\"Earth",
-        "artist": " Wind & Fire_September (03:35)\"",
+        "title": "September",
+        "artist": "Earth Wind & Fire",
         "bpm": "Onderdeel medley Disco",
         "starts": "126",
         "description": "\"Earth"
     },
     {
         "id": 35,
-        "title": "\"Earth",
-        "artist": " Wind & Fire_Boogie Wonderland (04:48)\"",
+        "title": "Boogie Wonderland",
+        "artist": "Earth Wind & Fire",
         "bpm": "Onderdeel medley Disco",
         "starts": "132",
         "description": "\"Earth"
