@@ -16,7 +16,7 @@ function getLists () {
         },
         {
             "title": "Setlijst 2",
-            "songs": [64, 104, 98, 102, 99, 48, 96, 10, 25, 81, 105, 106, 42, 98, 61],
+            "songs": [64, 104, 98, 101, 99, 48, 96, 10, 25, 81, 105, 106, 42, 106, 61],
         },
     ];
 }
@@ -920,7 +920,7 @@ var _songs = [
         "artist": "Suzan en Freek",
         "bpm": "110",
         "starts": "Bob",
-        "description": "I | C1 | R1 | C2 | R2 | B | R3"
+        "description": "Intro | C1 | R1 | C2 | R2 | B | R3 <br>Starten R1 tweede rondje<br>C2 laatste rondje stil en eerste rondje B stil<br>R3 anders spelen."
     },
 ];
 
