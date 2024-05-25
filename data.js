@@ -11,12 +11,12 @@ function getLists () {
         },
         {
             "title": "Setlijst 1",
-            "songs": [97, 82, 69, 95, 87, 51, 88, 23, 60, 6, 102, 100, 103, 20, 62, 44],
+            "songs": [82, 69, 107, 87, 51, 88, 5, 6, 102, 100, 103, 20, 62, 44, 97],
             
         },
         {
             "title": "Setlijst 2",
-            "songs": [64, 104, 98, 101, 5, 86, 75, 99, 48, 96, 10, 25, 81, 105, 106, 42, 24],
+            "songs": [64, 104, 98, 102, 99, 48, 96, 10, 25, 81, 105, 106, 42, 98, 61],
         },
     ];
 }
@@ -913,6 +913,14 @@ var _songs = [
         "bpm": "100",
         "starts": "Harold",
         "description": "Tempo onbekend"
+    },
+    {
+        "id": 107,
+        "title": "Goud",
+        "artist": "Suzan en Freek",
+        "bpm": "110",
+        "starts": "Bob",
+        "description": "I | C1 | R1 | C2 | R2 | B | R3"
     },
 ];
 
