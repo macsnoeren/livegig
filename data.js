@@ -10,13 +10,13 @@ function getLists () {
             "songs": [],
         },
         {
-            "title": "Setlijst 1",
-            "songs": [82, 69, 107, 87, 51, 88, 5, 6, 102, 100, 103, 20, 62, 44, 97],
+            "title": "Goirle zingt",
+            "songs": [108, 26, 82, 107, 11, 87, 69, 98, 48, 103, 64],
             
         },
         {
-            "title": "Setlijst 2",
-            "songs": [64, 104, 98, 101, 99, 48, 96, 10, 25, 81, 105, 106, 42, 61],
+            "title": "Eindlijst",
+            "songs": [29, 96, 104, 99, 27, 20, 100, 75, 105, 44, 24],
         },
     ];
 }
@@ -448,7 +448,7 @@ var _songs = [
         "artist": "James Brown",
         "bpm": "143",
         "starts": "Zang",
-        "description": "James Brown_I feel good (02:46)"
+        "description": "James Brown_I feel good (02:46)<br>6x - 3x - pauze!"
     },
     {
         "id": 49,
@@ -921,6 +921,14 @@ var _songs = [
         "bpm": "110",
         "starts": "Bob",
         "description": "Intro | C1 | R1 | C2 | R2 | B | R3 <br>Starten R1 tweede rondje<br>C2 laatste rondje stil en eerste rondje B stil<br>R3 anders spelen."
+    },
+    {
+        "id": 108,
+        "title": "Let me entertain you",
+        "artist": "Robby Williams",
+        "bpm": "125",
+        "starts": "Harold",
+        "description": ""
     },
 ];
 
