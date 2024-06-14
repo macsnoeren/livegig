@@ -928,7 +928,7 @@ var _songs = [
         "artist": "Robby Williams",
         "bpm": "125",
         "starts": "Harold",
-        "description": ""
+        "description": "Intro | Zang (hihat) | R1 (drum) | C1 | R2 | C2 | B1 (rustig) | R3 | C3 | I (stil) | R4 | (solo) | outro"
     },
 ];
 
