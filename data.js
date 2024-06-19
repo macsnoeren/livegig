@@ -10,13 +10,13 @@ function getLists () {
             "songs": [],
         },
         {
-            "title": "Goirle zingt",
-            "songs": [108, 26, 98, 107, 11, 87, 69, 82, 48, 103, 64],
+            "title": "Set 1",
+            "songs": [82, 69, 87, 88, 107, 60, 6, 103, 83, 20, 62, 44, 109],
             
         },
         {
-            "title": "Eindlijst",
-            "songs": [100, 29, 104, 99, 20, 96, 9, 44, 105, 24, 42],
+            "title": "Set 2",
+            "songs": [98, 64, 104, 99, 48, 96, 92, 25, 81, 10, 9, 53, 24, 42],
         },
     ];
 }
@@ -929,6 +929,14 @@ var _songs = [
         "bpm": "125",
         "starts": "Harold",
         "description": "Intro | Zang (hihat) | R1 (drum) | C1 | R2 | C2 | B1 (rustig) | R3 | C3 | I (stil) | R4 | (solo) | outro"
+    },
+    {
+        "id": 109,
+        "title": "Engelbewaarder",
+        "artist": "Marco Schuitmaker",
+        "bpm": "130",
+        "starts": "Maurice",
+        "description": ""
     },
 ];
 
