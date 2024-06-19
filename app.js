@@ -156,7 +156,7 @@ function addToSetlist(id) {
 
 function createNewSetlist () {
     setlists = getSetlists();
-    setlists[$('#$setlist-name')[0].value] = _createSetListList;
+    setlists[$('#setlist-name')[0].value] = _createSetListList;
     store("setlists", setlists);
     console.log("Create new setlist with name: " + $('$setlist-name').value);
 }
@@ -166,5 +166,5 @@ function clearNewSetlist () {
 }
 
 function updateSetListList () {
-    $('#setlist-content').html(_createSetListList);
+    $('#setlist-content').html(_createSetListList.join(", "));
 }
