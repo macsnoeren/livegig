@@ -11,6 +11,7 @@ var _autoStop = _autoStopTime;  // Enable auto stop at the start, automode is on
 var _soundOn = false;
 var _tsPrevious = 0;
 var _createSetListList = [];
+var _setlists = [];
 
 var clap = new Audio()
 clap.src = 'sounds/clap-2-95736.mp3'
@@ -157,8 +158,10 @@ function addToSetlist(id) {
 function createNewSetlist () {
     setlists = getSetlists();
     setlists[$('#setlist-name')[0].value] = _createSetListList;
+    _setlists = setlists;
+    console.log(setlists);
     store("setlists", setlists);
-    console.log("Create new setlist with name: " + $('#setlist-name').value);
+    console.log("Create new setlist with name: " + $('#setlist-name')[0].value);
 }
 
 function clearNewSetlist () {
