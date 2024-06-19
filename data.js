@@ -936,7 +936,7 @@ var _songs = [
         "artist": "Marco Schuitmaker",
         "bpm": "130",
         "starts": "Maurice",
-        "description": ""
+        "description": "Intro | C1 | C2 | R1 | C3 | C4 | R2 | B1 | R3 |"
     },
 ];
 
