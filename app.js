@@ -10,6 +10,7 @@ var _autoStopTime = 25;         // Seconds
 var _autoStop = _autoStopTime;  // Enable auto stop at the start, automode is on by default #bugfix
 var _soundOn = false;
 var _tsPrevious = 0;
+var _createSetListList = [];
 
 var clap = new Audio()
 clap.src = 'sounds/clap-2-95736.mp3'
@@ -89,6 +90,16 @@ function populateSongs(songs) {
     }
 }
 
+function populateSongsForSetlist(songs) {
+    $("#songs").html("");
+    for ( var i=0; i < songs.length; i++ ) {
+        s = songs[i];
+        $("#songs").append('<table><tr><td><a id="songs_' + (i+1) + '" href="javascript:startClickTrack(' + s.bpm + ')" class="list-group-item list-group-item-action list-group-item-dark"><p class="h1">' + 
+        (i+1) + '. ' + s.title + '</p><p>' + s.artist + ' (' + s.bpm + ' BPM), who starts: <b>' + s.starts + '</b> - (id: ' + s.id  + ')</p><p>' + s.description + '</p></a>' +
+        '</td><td><button type="button" class="btn btn-primary btn-lg" onclick="addToSetlist(' + s.id + ')">+</button></td></tr>');
+    }
+}
+
 function populateAvailableLists () {
     $("#availablelists").html("");
 
@@ -116,4 +127,39 @@ function toggleSoundMode () {
     } else {
         _soundOn = false;
     }
+}
+
+// Function that stores the value to a belonging key in the local storage.
+function store(key, value) {
+    localStorage.setItem(key, value);
+}
+
+// Function that retrieves the value to a belonging key from the local storage.
+function retrieve(key) {
+    return localStorage.getItem(key);
+}
+
+function getSetlists () {
+    setlists = retrieve("setlists");
+    if ( setlists == null ) {
+        setlists = [];
+        store("setlists", setlists);
+    }
+    return setlists;
+}
+
+function addToSetlist(id) {
+    _createSetListList.push(id);
+    console.log("add to setlist: " + id);
+}
+
+function createNewSetlist () {
+    setlists = getSetlists();
+    setlists[$('$setlist-name').value] = _createSetListList;
+    store("setlists", setlists);
+    console.log("Create new setlist with name: " + $('$setlist-name').value);
+}
+
+function clearNewSetlist () {
+    _createSetListList = [];
 }
