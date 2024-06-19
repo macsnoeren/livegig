@@ -150,16 +150,21 @@ function getSetlists () {
 
 function addToSetlist(id) {
     _createSetListList.push(id);
+    updateSetListList();
     console.log("add to setlist: " + id);
 }
 
 function createNewSetlist () {
     setlists = getSetlists();
-    setlists[$('$setlist-name').value] = _createSetListList;
+    setlists[$('#$setlist-name')[0].value] = _createSetListList;
     store("setlists", setlists);
     console.log("Create new setlist with name: " + $('$setlist-name').value);
 }
 
 function clearNewSetlist () {
     _createSetListList = [];
+}
+
+function updateSetListList () {
+    $('#setlist-content').html(_createSetListList);
 }
