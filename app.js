@@ -143,7 +143,7 @@ function retrieve(key) {
 function getSetlists () {
     setlists = retrieve("setlists");
     if ( setlists == null ) {
-        setlists = [];
+        setlists = {};
         store("setlists", setlists);
     }
     return setlists;
@@ -159,8 +159,8 @@ function createNewSetlist () {
     setlists = getSetlists();
     setlists[$('#setlist-name')[0].value] = _createSetListList;
     _setlists = setlists;
-    console.log(setlists);
-    store("setlists", setlists);
+    console.log("SETLIST: " + setlists);
+    //store("setlists", setlists);
     console.log("Create new setlist with name: " + $('#setlist-name')[0].value);
 }
 
