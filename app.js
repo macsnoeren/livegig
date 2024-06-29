@@ -143,10 +143,13 @@ function retrieve(key) {
 function getSetlists () {
     setlists = retrieve("setlists");
     if ( setlists == null ) {
-        setlists = {};
-        store("setlists", setlists);
+        return {};
     }
-    return setlists;
+    return JSON.parse(setlists);
+}
+
+function storeSetlists (setlists) {
+    store("setlists", JSON.stringify(setlists));
 }
 
 function addToSetlist(id) {
@@ -157,11 +160,14 @@ function addToSetlist(id) {
 
 function createNewSetlist () {
     setlists = getSetlists();
-    setlists[$('#setlist-name')[0].value] = _createSetListList;
+    nameSetlist = $('#setlist-name')[0].value;
+    setlists[nameSetlist] = _createSetListList;
+    console.log("SETLISTS" + JSON.stringify(setlists));
     _setlists = setlists;
-    console.log("SETLIST: " + setlists);
-    //store("setlists", setlists);
-    console.log("Create new setlist with name: " + $('#setlist-name')[0].value);
+    storeSetlists(setlists);
+    console.log("Create new setlist with name: " + nameSetlist);
+    console.log("With the songs: " + _createSetListList.join(", "));
+    
 }
 
 function clearNewSetlist () {
