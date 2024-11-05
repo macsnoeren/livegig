@@ -938,5 +938,53 @@ var _songs = [
         "starts": "Maurice",
         "description": "Intro | C1 | C2 | R1 | C3 | C4 | R2 | B1 | R3 |"
     },
+    {
+        "id": 110,
+        "title": "Genau dieses gefuhl",
+        "artist": "Helene Fischer",
+        "bpm": "206",
+        "starts": "-",
+        "description": "-"
+    },
+    {
+        "id": 111,
+        "title": "Billy jean",
+        "artist": "Michel Jackson",
+        "bpm": "117",
+        "starts": "-",
+        "description": "-"
+    },
+    {
+        "id": 112,
+        "title": "You're the one that I want",
+        "artist": "Grease",
+        "bpm": "107",
+        "starts": "-",
+        "description": "-"
+    },
+    {
+        "id": 113,
+        "title": "Terug in de tijd",
+        "artist": "Yves Berendse",
+        "bpm": "123",
+        "starts": "-",
+        "description": "-"
+    },
+    {
+        "id": 114,
+        "title": "Bload zweet en tranen",
+        "artist": "Andre Hazes",
+        "bpm": "68",
+        "starts": "-",
+        "description": "-"
+    },
+    {
+        "id": 115,
+        "title": "De laatste",
+        "artist": "Amer en Snelle",
+        "bpm": "122",
+        "starts": "-",
+        "description": "-"
+    },
 ];
 
