@@ -948,14 +948,6 @@ var _songs = [
     },
     {
         "id": 111,
-        "title": "Billy jean",
-        "artist": "Michel Jackson",
-        "bpm": "117",
-        "starts": "-",
-        "description": "-"
-    },
-    {
-        "id": 112,
         "title": "You're the one that I want",
         "artist": "Grease",
         "bpm": "107",
@@ -963,7 +955,7 @@ var _songs = [
         "description": "-"
     },
     {
-        "id": 113,
+        "id": 112,
         "title": "Terug in de tijd",
         "artist": "Yves Berendse",
         "bpm": "123",
@@ -971,7 +963,7 @@ var _songs = [
         "description": "-"
     },
     {
-        "id": 114,
+        "id": 113,
         "title": "Bload zweet en tranen",
         "artist": "Andre Hazes",
         "bpm": "68",
@@ -979,7 +971,7 @@ var _songs = [
         "description": "-"
     },
     {
-        "id": 115,
+        "id": 114,
         "title": "De laatste",
         "artist": "Amer en Snelle",
         "bpm": "122",
@@ -987,4 +979,3 @@ var _songs = [
         "description": "-"
     },
 ];
-
