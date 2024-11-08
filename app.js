@@ -10,6 +10,8 @@ var _autoStopTime = 25;         // Seconds
 var _autoStop = _autoStopTime;  // Enable auto stop at the start, automode is on by default #bugfix
 var _soundOn = false;
 var _tsPrevious = 0;
+var _createSetListList = [];
+var _setlists = [];
 
 var clap = new Audio()
 clap.src = 'sounds/clap-2-95736.mp3'
@@ -89,6 +91,16 @@ function populateSongs(songs) {
     }
 }
 
+function populateSongsForSetlist(songs) {
+    $("#songs").html("");
+    for ( var i=0; i < songs.length; i++ ) {
+        s = songs[i];
+        $("#songs").append('<table><tr><td><a id="songs_' + (i+1) + '" href="javascript:startClickTrack(' + s.bpm + ')" class="list-group-item list-group-item-action list-group-item-dark"><p class="h1">' + 
+        (i+1) + '. ' + s.title + '</p><p>' + s.artist + ' (' + s.bpm + ' BPM), who starts: <b>' + s.starts + '</b> - (id: ' + s.id  + ')</p><p>' + s.description + '</p></a>' +
+        '</td><td><button type="button" class="btn btn-primary btn-lg" onclick="addToSetlist(' + s.id + ')">+</button></td></tr>');
+    }
+}
+
 function populateAvailableLists () {
     $("#availablelists").html("");
 
@@ -116,4 +128,52 @@ function toggleSoundMode () {
     } else {
         _soundOn = false;
     }
+}
+
+// Function that stores the value to a belonging key in the local storage.
+function store(key, value) {
+    localStorage.setItem(key, value);
+}
+
+// Function that retrieves the value to a belonging key from the local storage.
+function retrieve(key) {
+    return localStorage.getItem(key);
+}
+
+function getSetlists () {
+    setlists = retrieve("setlists");
+    if ( setlists == null ) {
+        return {};
+    }
+    return JSON.parse(setlists);
+}
+
+function storeSetlists (setlists) {
+    store("setlists", JSON.stringify(setlists));
+}
+
+function addToSetlist(id) {
+    _createSetListList.push(id);
+    updateSetListList();
+    console.log("add to setlist: " + id);
+}
+
+function createNewSetlist () {
+    setlists = getSetlists();
+    nameSetlist = $('#setlist-name')[0].value;
+    setlists[nameSetlist] = _createSetListList;
+    console.log("SETLISTS" + JSON.stringify(setlists));
+    _setlists = setlists;
+    storeSetlists(setlists);
+    console.log("Create new setlist with name: " + nameSetlist);
+    console.log("With the songs: " + _createSetListList.join(", "));
+    
+}
+
+function clearNewSetlist () {
+    _createSetListList = [];
+}
+
+function updateSetListList () {
+    $('#setlist-content').html(_createSetListList.join(", "));
 }
