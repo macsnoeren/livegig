@@ -11,12 +11,12 @@ function getLists () {
         },
         {
             "title": "Set 1",
-            "songs": [82, 69, 95, 7, 52, 51, 6, 107, 102, 100, 20, 44, 92, 60],
+            "songs": [110, 44, 97, 82, 66, 107, 52, 63, 25, 28, 32, 5, 20, 67, 100, 95, 77, 60, 104],
             
         },
         {
             "title": "Set 2",
-            "songs": [29, 64, 104, 98, 88, 99, 27, 48, 81, 96, 10, 9, 26, 105, 42],
+            "songs": [98, 87, 10, 101, 8, 53, 9, 111, 96, 72, 112, 113, 81, 106, 24, 36, 114],
         },
     ];
 }
@@ -596,11 +596,11 @@ var _songs = [
     },
     {
         "id": 67,
-        "title": "Billie Jean",
+        "title": "Billy Jean",
         "artist": "Michael Jackson",
         "bpm": "120",
         "starts": "Bob",
-        "description": "Michael Jackson_Billie Jean (04:54)"
+        "description": "Michael Jackson_Billie Jean (04:54), Into | C1 | B1 | R1 | C2 | B2 | R2 | OUTRO"
     },
     {
         "id": 68,
@@ -944,7 +944,7 @@ var _songs = [
         "artist": "Helene Fischer",
         "bpm": "206",
         "starts": "-",
-        "description": "-"
+        "description": "Intro | C1 (stop) | R1 | C2 | R2 | OUTRO"
     },
     {
         "id": 111,
@@ -952,7 +952,7 @@ var _songs = [
         "artist": "Grease",
         "bpm": "107",
         "starts": "-",
-        "description": "-"
+        "description": "Intro | C1 | C2 | R1 | C3 | C4 | R2 (2x)"
     },
     {
         "id": 112,
@@ -964,11 +964,11 @@ var _songs = [
     },
     {
         "id": 113,
-        "title": "Bload zweet en tranen",
+        "title": "Bloed zweet en tranen",
         "artist": "Andre Hazes",
         "bpm": "68",
         "starts": "-",
-        "description": "-"
+        "description": "Intro | C1 (rand) | R1 | C2 | R2 | B | R | R (solo)"
     },
     {
         "id": 114,
