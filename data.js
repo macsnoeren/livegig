@@ -11,12 +11,12 @@ function getLists () {
         },
         {
             "title": "Set 1",
-            "songs": [110, 44, 97, 82, 66, 107, 52, 25, 28, 32, 63, 5, 20, 67, 100, 95, 77, 60, 104],
+            "songs": [108, 66, 107, 52, 25, 32, 6, 99, 67, 100, 28, 95, 103, 44, 101, 60],
             
         },
         {
             "title": "Set 2",
-            "songs": [98, 87, 10, 101, 8, 53, 9, 111, 96, 72, 112, 113, 81, 106, 24, 36, 114],
+            "songs": [98, 87, 10, 113, 48, 111, 96, 72, 112, 81, 104, 75, 106, 24, 36, 114],
         },
     ];
 }
@@ -855,8 +855,8 @@ var _songs = [
         "title": "Stop",
         "artist": "Sam Brown",
         "bpm": "186",
-        "starts": "Harold",
-        "description": "6/8"
+        "starts": "Harold 6/8",
+        "description": ""
     },
     {
         "id": 100,
@@ -942,8 +942,8 @@ var _songs = [
         "id": 110,
         "title": "Genau dieses gefuhl",
         "artist": "Helene Fischer",
-        "bpm": "206",
-        "starts": "-",
+        "bpm": "103",
+        "starts": "Maurice",
         "description": "Intro | C1 (stop) | R1 | C2 | R2 | OUTRO"
     },
     {
@@ -951,7 +951,7 @@ var _songs = [
         "title": "You're the one that I want",
         "artist": "Grease",
         "bpm": "107",
-        "starts": "-",
+        "starts": "Maurice",
         "description": "Intro | C1 | C2 | R1 | C3 | C4 | R2 (2x)"
     },
     {
@@ -959,7 +959,7 @@ var _songs = [
         "title": "Terug in de tijd",
         "artist": "Yves Berendse",
         "bpm": "123",
-        "starts": "-",
+        "starts": "Harold",
         "description": "-"
     },
     {
@@ -967,7 +967,7 @@ var _songs = [
         "title": "Bloed zweet en tranen",
         "artist": "Andre Hazes",
         "bpm": "68",
-        "starts": "-",
+        "starts": "Maurice 6/8",
         "description": "Intro | C1 (rand) | R1 | C2 | R2 | B | R | R (solo)"
     },
     {
@@ -975,7 +975,7 @@ var _songs = [
         "title": "De laatste",
         "artist": "Amer en Snelle",
         "bpm": "122",
-        "starts": "-",
+        "starts": "Harold",
         "description": "-"
     },
 ];
