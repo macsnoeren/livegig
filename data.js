@@ -920,7 +920,7 @@ var _songs = [
         "artist": "Suzan en Freek",
         "bpm": "110",
         "starts": "Bob",
-        "description": "Intro | C1 | R1 | C2 | R2 | B | R3 <br>Starten R1 tweede rondje<br>C2 laatste rondje stil en eerste rondje B stil<br>R3 anders spelen."
+        "description": "Intro | C1 | R1 | C2 | R2 | B | R3 <br>Starten C1 tweede rondje<br>C2 laatste rondje stil en eerste rondje B stil<br>R3 anders spelen."
     },
     {
         "id": 108,
