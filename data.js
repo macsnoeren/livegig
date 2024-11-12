@@ -960,7 +960,7 @@ var _songs = [
         "artist": "Yves Berendse",
         "bpm": "123",
         "starts": "Harold",
-        "description": "-"
+        "description": "Intro | R | C (bas start) | R | B (toms) | R"
     },
     {
         "id": 113,
@@ -976,6 +976,6 @@ var _songs = [
         "artist": "Amer en Snelle",
         "bpm": "122",
         "starts": "Harold",
-        "description": "-"
+        "description": "Rekening nog niet betaald een stop"
     },
 ];
