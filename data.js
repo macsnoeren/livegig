@@ -978,4 +978,28 @@ var _songs = [
         "starts": "Harold",
         "description": "Rekening nog niet betaald een stop"
     },
+    {
+        "id": 115,
+        "title": "Die with a smile",
+        "artist": "Lady Gaga",
+        "bpm": "158",
+        "starts": "Bob",
+        "description": "Intro | C1 | R | I | C2 | R | B | Outro"
+    },
+    {
+        "id": 116,
+        "title": "Ik wil dat je liegt",
+        "artist": "Hannah Mae",
+        "bpm": "107",
+        "starts": "Bob",
+        "description": ""
+    },
+    {
+        "id": 117,
+        "title": "The Time of my life",
+        "artist": "Bill Medley",
+        "bpm": "109",
+        "starts": "Zang",
+        "description": ""
+    },
 ];
