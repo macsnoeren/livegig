@@ -11,7 +11,7 @@ function getLists () {
         },
         {
             "title": "Set 1",
-            "songs": [ 69, 7, 66, 116, 67, 51, 98, 6, 102, 29, 28, 15, 110, 60],
+            "songs": [69, 7, 66, 116, 67, 51, 98, 6, 102, 29, 28, 15, 118, 60],
             
         },
         {
@@ -1000,6 +1000,14 @@ var _songs = [
         "artist": "Bill Medley",
         "bpm": "109",
         "starts": "Zang",
+        "description": ""
+    },
+    {
+        "id": 118,
+        "title": "Jaren 80 Medley",
+        "artist": "?",
+        "bpm": "",
+        "starts": "Harold",
         "description": ""
     },
 ];
