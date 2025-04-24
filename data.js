@@ -1010,4 +1010,28 @@ var _songs = [
         "starts": "Harold",
         "description": ""
     },
+    {
+        "id": 119,
+        "title": "Sinds 1 dag of 2 (32 jaar)",
+        "artist": "Doe Maar",
+        "bpm": "114",
+        "starts": "Gitaar",
+        "description": ""
+    },
+    {
+        "id": 120,
+        "title": "Islands in the Stream (ATIx)",
+        "artist": "Dolly Parton",
+        "bpm": "204",
+        "starts": "Drum",
+        "description": ""
+    },
+    {
+        "id": 121,
+        "title": "Is dit alles",
+        "artist": "Doe Maar",
+        "bpm": "121",
+        "starts": "Drum",
+        "description": ""
+    },
 ];
