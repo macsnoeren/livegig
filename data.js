@@ -18,6 +18,10 @@ function getLists () {
             "title": "Set 2",
             "songs": [97, 100, 10, 25, 96, 113, 117, 111, 81, 112, 53, 24, 42],
         },
+        {
+            "title": "ATIx Huisband",
+            "songs": [121, 120, 119, 81],
+        },
     ];
 }
 
