@@ -1026,7 +1026,7 @@ var _songs = [
         "id": 120,
         "title": "Islands in the Stream (ATIx)",
         "artist": "Dolly Parton",
-        "bpm": "204",
+        "bpm": "102",
         "starts": "Drum",
         "description": ""
     },
