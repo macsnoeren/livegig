@@ -1038,4 +1038,172 @@ var _songs = [
         "starts": "Drum",
         "description": ""
     },
+    {
+        "id": 122,
+        "title": "Locked out of Heaven",
+        "artist": "Bruno Mars",
+        "bpm": "144",
+        "starts": "Drum",
+        "description": "Dubbel aftikken - na 3de tel tweede keer start"
+    },
+    {
+        "id": 123,
+        "title": "Stil in mij",
+        "artist": "Van Dik Hout",
+        "bpm": "99",
+        "starts": "Gitaar",
+        "description": ""
+    },
+    {
+        "id": 124,
+        "title": "Rain down on me",
+        "artist": "Kane",
+        "bpm": "133",
+        "starts": "Gitaar",
+        "description": ""
+    },
+    {
+        "id": 125,
+        "title": "I want you to want me",
+        "artist": "Cheap Trick",
+        "bpm": "93",
+        "starts": "Drum",
+        "description": "Drum intro"
+    },
+    {
+        "id": 126,
+        "title": "Hard to handle",
+        "artist": "Black Crowes",
+        "bpm": "104",
+        "starts": "Drum",
+        "description": "Drum intro"
+    },
+    {
+        "id": 127,
+        "title": "Bad case of loving you",
+        "artist": "Robert Palmer",
+        "bpm": "146",
+        "starts": "Drum",
+        "description": "Drum voorslag"
+    },
+    {
+        "id": 128,
+        "title": "I will follow",
+        "artist": "U2",
+        "bpm": "155",
+        "starts": "Gitaar",
+        "description": ""
+    },
+    {
+        "id": 129,
+        "title": "Murder on the dancefloor",
+        "artist": "Sophie Ellis-Bextor",
+        "bpm": "117",
+        "starts": "Toetsen",
+        "description": ""
+    },
+    {
+        "id": 130,
+        "title": "Wannabee",
+        "artist": "Spice Girls",
+        "bpm": "110",
+        "starts": "Drum",
+        "description": ""
+    },
+    {
+        "id": 131,
+        "title": "Rock this town",
+        "artist": "Straycats",
+        "bpm": "202",
+        "starts": "Gitaar",
+        "description": ""
+    },
+    {
+        "id": 132,
+        "title": "Smoorverliefd",
+        "artist": "Doe Maar",
+        "bpm": "167",
+        "starts": "Bas",
+        "description": ""
+    },
+    {
+        "id": 133,
+        "title": "Ik wil je",
+        "artist": "De Kreuners",
+        "bpm": "156",
+        "starts": "Drum",
+        "description": "Voorslag"
+    },
+    {
+        "id": 134,
+        "title": "Never be clever",
+        "artist": "Herman Brood",
+        "bpm": "138",
+        "starts": "Gitaar",
+        "description": ""
+    },
+    {
+        "id": 135,
+        "title": "Sweet Child of Mine",
+        "artist": "Guns and Roses",
+        "bpm": "123",
+        "starts": "Gitaar",
+        "description": ""
+    },
+    {
+        "id": 136,
+        "title": "Girl",
+        "artist": "Anouk",
+        "bpm": "135",
+        "starts": "Drum",
+        "description": ""
+    },
+    {
+        "id": 137,
+        "title": "I will follow",
+        "artist": "U2",
+        "bpm": "155",
+        "starts": "Gitaar",
+        "description": ""
+    },
+    {
+        "id": 138,
+        "title": "Born to be wild",
+        "artist": "Steppenwolf",
+        "bpm": "146",
+        "starts": "Drum",
+        "description": "Drum voorslag"
+    },
+    {
+        "id": 139,
+        "title": "Are you gonna go my way",
+        "artist": "Lenny Kravitz",
+        "bpm": "129",
+        "starts": "Drum",
+        "description": ""
+    },
+    {
+        "id": 140,
+        "title": "Zombie",
+        "artist": "The Cranberries",
+        "bpm": "84",
+        "starts": "Gitaar",
+        "description": ""
+    },
+    {
+        "id": 141,
+        "title": "Weak",
+        "artist": "Skunk Anansie",
+        "bpm": "95",
+        "starts": "Drum",
+        "description": "Drum intro"
+    },
+    {
+        "id": 142,
+        "title": "Vertigo",
+        "artist": "U2",
+        "bpm": "140",
+        "starts": "Drum",
+        "description": ""
+    },
 ];
