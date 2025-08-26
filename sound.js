@@ -1,8 +1,18 @@
-/* Blast! - Live
-   Author: Maurice Snoeren (drummer of Blast!)
-   Live gig data!
+/*
+This file is part of Blast! software for live gig performances, called BlastLive.
 
-   https://anthony-dandrea.medium.com/low-latency-web-audio-doesnt-have-to-be-hard-7e602a772319
+BlastLive is free software: you can redistribute it and/or modify it under the terms
+of the GNU General Public License as published by the Free Software Foundation, either
+version 3 of the License, or (at your option) any later version.
+
+BlastLive is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Foobar. 
+If not, see <https://www.gnu.org/licenses/>.
+
+https://anthony-dandrea.medium.com/low-latency-web-audio-doesnt-have-to-be-hard-7e602a772319
 */
 
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
