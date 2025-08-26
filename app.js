@@ -56,13 +56,12 @@ function executeClickTrack () {
                 ts = performance.now();
             }
 
+            resetColorClickTrackDisplay();
             if ( _soundOn ) {
                 clap.currentTime = 0;
                 //clap.play();
                 createSource(() => {});
             }
-
-            resetColorClickTrackDisplay();
             setColorClickTrackDisplay(_counter);
             _counter = (_counter + 1) % 4;
 
