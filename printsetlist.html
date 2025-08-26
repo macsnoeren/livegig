@@ -22,8 +22,12 @@
         <script>
             p = getURLParams();
             songs = getListSongs(p["list"]);
-            setListName = getLists()[p["list"]].title;
-            populateSongsForTotalList(songs);
+            if ( songs == undefined || songs.length < 1 ) {
+                setListName = "Lijst onbekend...";
+            } else {
+                setListName = getLists()[p["list"]].title;
+                populateSongsForTotalList(songs);
+            }
             $('#setlist_title').html(setListName);
         </script>
     </body>
