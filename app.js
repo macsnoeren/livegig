@@ -58,7 +58,8 @@ function executeClickTrack () {
 
             if ( _soundOn ) {
                 clap.currentTime = 0;
-                clap.play();
+                //clap.play();
+                createSource(() => {});
             }
 
             resetColorClickTrackDisplay();
