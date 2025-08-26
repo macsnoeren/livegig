@@ -8,7 +8,7 @@
 
     <body>     
         <div class="container">
-            <h1>Blast - Totale lijst</h1> 
+            <h1>Blast: <div id="setlist_title"></div></h1> 
             <div id="songs" class="list-group">
                 --
             </div>
@@ -21,8 +21,10 @@
         <script src="data.js" type="text/javascript" crossorigin="anonymous"></script>
         <script>
             p = getURLParams();
-            populateSongsForTotalList(getListSongs(p["list"]));
-            //populateAvailableLists();
+            songs = getListSongs(p["list"])
+            setlistName = getLists()[p["list"]].title;
+            populateSongsForTotalList();
+            $('#setlist-title')[0].value = setListName;
         </script>
     </body>
 </html>
