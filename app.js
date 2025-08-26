@@ -111,6 +111,15 @@ function populateSongsForTotalList(songs) {
     }
 }
 
+function populateSongsForPrintSetlist(songs) {
+    $("#songs").html("");
+    for ( var i=0; i < songs.length; i++ ) {
+        s = songs[i];
+        $("#songs").append('<table><tr><td>' + 
+        (i+1) + '. ' + s.title + ' (' + s.artist + ') - start: ' + s.starts + '</td></tr></table>');
+    }
+}
+
 function populateAvailableLists () {
     $("#availablelists").html("");
 
