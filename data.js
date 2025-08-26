@@ -23,7 +23,7 @@ function getLists () {
         },
         {
             "title": "Repetitie set 1",
-            "songs": [69, 15, 107, 51, 88, 32, 116, 95, 25, 81, 101, 111, 117, 100, 60],
+            "songs": [69, 15, 107, 51, 88, 32, 116, 95, 25, 120, 101, 111, 117, 100, 60],
             
         },
         {
@@ -1032,6 +1032,26 @@ var _songs = [
     },
     {
         "id": 120,
+        "title": "Your love",
+        "artist": "The Outfield",
+        "bpm": "130",
+        "starts": "Bob",
+        "description": ""
+    },
+    {
+        "id": 121,
+        "title": "Rain down on me",
+        "artist": "Kane",
+        "bpm": "133",
+        "starts": "Gitaar",
+        "description": ""
+    },
+];
+
+/*
+
+    {
+        "id": 120,
         "title": "Islands in the Stream (ATIx)",
         "artist": "Dolly Parton",
         "bpm": "102",
@@ -1062,14 +1082,7 @@ var _songs = [
         "starts": "Gitaar",
         "description": ""
     },
-    {
-        "id": 124,
-        "title": "Rain down on me",
-        "artist": "Kane",
-        "bpm": "133",
-        "starts": "Gitaar",
-        "description": ""
-    },
+
     {
         "id": 125,
         "title": "I want you to want me",
@@ -1214,4 +1227,4 @@ var _songs = [
         "starts": "Drum",
         "description": ""
     },
-];
+*/
