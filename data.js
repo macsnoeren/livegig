@@ -255,7 +255,7 @@ var _songs = [
         "title": "Viva la vida",
         "artist": "Coldplay",
         "bpm": "138",
-        "starts": "",
+        "starts": "Harold",
         "description": "Coldplay_Viva la vida (04:02)"
     },
     {
@@ -399,7 +399,7 @@ var _songs = [
         "title": "Brabant",
         "artist": "Guus Meeuwis",
         "bpm": "82",
-        "starts": "",
+        "starts": "Bob",
         "description": "Guus Meeuwis_Brabant (03:30)"
     },
     {
@@ -967,8 +967,8 @@ var _songs = [
         "title": "Bloed zweet en tranen",
         "artist": "Andre Hazes",
         "bpm": "68",
-        "starts": "Maurice 6/8",
-        "description": "Intro | C1 (rand) | R1 | C2 | R2 | B | R | R (solo)"
+        "starts": "Maurice",
+        "description": "6/8 => Intro | C1 (rand) | R1 | C2 | R2 | B | R | R (solo)"
     },
     {
         "id": 114,
