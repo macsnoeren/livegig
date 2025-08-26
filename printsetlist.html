@@ -26,7 +26,7 @@
                 setListName = "Lijst onbekend...";
             } else {
                 setListName = getLists()[p["list"]].title;
-                populateSongsForSetlist(songs);
+                populateSongsForPrintSetlist(songs); // Better function
             }
             $('#setlist_title').html(setListName);
         </script>
