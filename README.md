@@ -1,8 +1,11 @@
 # Live gig (beta version)
 
 [Live Gig Online](https://macsnoeren.github.io/livegig/#)
+
 [Total set list](https://macsnoeren.github.io/livegig/listtotal.html)
-[Print set list](https://macsnoeren.github.io/livegig/printsetlist.html)
+
+[Print set list](https://macsnoeren.github.io/livegig/printsetlist.html?list=set1)
+
 [Create set list](https://macsnoeren.github.io/livegig/setlists.html)
 
 [Live Visuals](https://blast.jmnl.nl/visuals/)
