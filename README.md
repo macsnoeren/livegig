@@ -4,7 +4,7 @@
 
 [Total set list](https://macsnoeren.github.io/livegig/listtotal.html)
 
-[Print set list](https://macsnoeren.github.io/livegig/printsetlist.html?list=set1)
+[Print set list](https://macsnoeren.github.io/livegig/printsetlist.html?list=0)
 
 [Create set list](https://macsnoeren.github.io/livegig/setlists.html)
 
