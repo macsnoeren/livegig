@@ -23,22 +23,13 @@ function getLists () {
         },
         {
             "title": "Set 1",
-            "songs": [69, 66, 8, 52, 15, 51, 88, 32, 25, 101, 111, 20, 83, 60],
+            "songs": [82, 107, 95, 116, 101, 100, 64, 45, 7, 20, 62, 122, 48, 44, 60, 99],
             
         },
         {
             "title": "Set 2",
-            "songs": [57, 82, 104, 29, 120, 113, 33, 48, 112, 81, 10, 105, 84, 36],
+            "songs": [97, 120, 104, 113, 112, 92, 81, 123, 86, 58, 75, 111, 28, 10, 15, 24, 84, 42],
             
-        },
-        {
-            "title": "Repetitie set 1",
-            "songs": [69, 15, 107, 51, 88, 32, 116, 95, 25, 120, 101, 111, 117, 100, 60],
-            
-        },
-        {
-            "title": "Repetitie set 2",
-            "songs": [98, 82, 64, 104, 102, 75, 113, 48, 72, 112, 81, 10, 24, 42, 36],
         },
     ];
 }
@@ -1054,6 +1045,22 @@ var _songs = [
         "artist": "Kane",
         "bpm": "133",
         "starts": "Gitaar",
+        "description": ""
+    },
+    {
+        "id": 122,
+        "title": "Verdammt ich lieb dich",
+        "artist": "Matthias Reim",
+        "bpm": "100",
+        "starts": "Gitaar",
+        "description": ""
+    },
+    {
+        "id": 123,
+        "title": "Echte Liefde Is Te Koop",
+        "artist": "Samuel Welten",
+        "bpm": "131",
+        "starts": "Toetsen / Zang",
         "description": ""
     },
 ];
