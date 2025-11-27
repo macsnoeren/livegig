@@ -13,6 +13,8 @@ You should have received a copy of the GNU General Public License along with Foo
 If not, see <https://www.gnu.org/licenses/>.
 
 Author Maurice Snoeren (drummer of Blast!)
+Setlist 1 "songs": [82, 107, 95, 116, 101, 103, 64, 45, 7, 20, 62, 122, 48, 44, 60, 99],
+Setlist 2 "songs": [97, 120, 104, 113, 112, 92, 81, 123, 86, 58, 75, 111, 28, 10, 15, 24, 84, 42],  
 */
 
 function getLists () {
@@ -23,12 +25,12 @@ function getLists () {
         },
         {
             "title": "Set 1",
-            "songs": [82, 107, 95, 116, 101, 100, 64, 45, 7, 20, 62, 122, 48, 44, 60, 99],
+            "songs": [82, 107, 95, 116, 101, 103, 64, 45, 7, 20, 44, 60],
             
         },
         {
             "title": "Set 2",
-            "songs": [97, 120, 104, 113, 112, 92, 81, 123, 86, 58, 75, 111, 28, 10, 15, 24, 84, 42],
+            "songs": [97, 120, 104, 62, 29, 48, 44, 113, 10, 15, 24, 84, 42, 36],
             
         },
     ];
