@@ -4,6 +4,7 @@ const path = require('path');
 
 const DB_PATH = path.join(__dirname, 'data', 'livegig.db');
 let db;
+let _adminExists = false; // cached – flips to true once an admin is created, never back
 
 function getDb() {
     if (!db) {
@@ -12,6 +13,14 @@ function getDb() {
         db.pragma('foreign_keys = ON');
     }
     return db;
+}
+
+function hasAdmin() {
+    if (_adminExists) return true;
+    const db = getDb();
+    const row = db.prepare("SELECT COUNT(*) as c FROM users WHERE role = 'admin'").get();
+    _adminExists = row.c > 0;
+    return _adminExists;
 }
 
 function initDatabase() {
@@ -58,23 +67,22 @@ function initDatabase() {
         );
     `);
 
-    seedAdminUser(db);
     seedSystemSongs(db);
-    seedDefaultSetlists(db);
+    // Note: default setlists are seeded after first admin is created via /setup
 
     console.log('Database initialised at', DB_PATH);
 }
 
-function seedAdminUser(db) {
-    const existing = db.prepare('SELECT id FROM users WHERE role = ?').get('admin');
-    if (existing) return;
-
-    const username = process.env.ADMIN_USERNAME || 'admin';
-    const password = process.env.ADMIN_PASSWORD || 'admin123';
+function createFirstAdmin(username, password) {
+    const db = getDb();
+    if (hasAdmin()) throw new Error('Admin already exists');
     const hash = bcrypt.hashSync(password, 10);
-
-    db.prepare('INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)').run(username, hash, 'admin');
-    console.log(`Admin user created: ${username}`);
+    const result = db.prepare('INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)').run(username, hash, 'admin');
+    const adminId = result.lastInsertRowid;
+    _adminExists = true;
+    seedDefaultSetlists(db, adminId);
+    console.log(`First admin created: ${username}`);
+    return { id: adminId, username, role: 'admin' };
 }
 
 function seedSystemSongs(db) {
@@ -219,20 +227,14 @@ function seedSystemSongs(db) {
     console.log(`Seeded ${songs.length} system songs`);
 }
 
-function seedDefaultSetlists(db) {
+function seedDefaultSetlists(db, adminId) {
     const count = db.prepare('SELECT COUNT(*) as c FROM setlists').get();
     if (count.c > 0) return;
 
-    const admin = db.prepare('SELECT id FROM users WHERE role = ?').get('admin');
-    if (!admin) return;
-
     const { v4: uuidv4 } = require('uuid');
 
-    // Set 1 – song titles that map to original data.js IDs (0-indexed positions in seed array)
-    // Original IDs: [82, 107, 95, 116, 101, 103, 64, 45, 7, 20, 62, 29, 48, 44, 60]
-    // In our DB, the seeded songs start at id=1 (autoincrement), so DB id = data.js id + 1
+    // DB song IDs = data.js id + 1  (autoincrement starts at 1)
     const set1Songs = [83, 108, 96, 117, 102, 104, 65, 46, 8, 21, 63, 30, 49, 45, 61];
-    // Original IDs: [97, 120, 104, 113, 112, 81, 123, 86, 53, 75, 111, 10, 15, 24, 84, 42]
     const set2Songs = [98, 121, 105, 114, 113, 82, 124, 87, 54, 76, 112, 11, 16, 25, 85, 43];
 
     const insertSetlist = db.prepare(
@@ -246,16 +248,14 @@ function seedDefaultSetlists(db) {
         const result = insertSetlist.run(userId, title, uuidv4());
         const setlistId = result.lastInsertRowid;
         songIds.forEach((songId, pos) => {
-            // Only insert if song exists
             const song = db.prepare('SELECT id FROM songs WHERE id = ?').get(songId);
             if (song) insertSong.run(setlistId, songId, pos);
         });
-        return setlistId;
     });
 
-    createSetlist(admin.id, 'Set 1', set1Songs);
-    createSetlist(admin.id, 'Set 2', set2Songs);
+    createSetlist(adminId, 'Set 1', set1Songs);
+    createSetlist(adminId, 'Set 2', set2Songs);
     console.log('Seeded default setlists (Set 1, Set 2)');
 }
 
-module.exports = { getDb, initDatabase };
+module.exports = { getDb, initDatabase, hasAdmin, createFirstAdmin };

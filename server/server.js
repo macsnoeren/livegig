@@ -10,7 +10,7 @@ const { Server } = require('socket.io');
 const path = require('path');
 const cors = require('cors');
 
-const { initDatabase } = require('./database');
+const { initDatabase, hasAdmin } = require('./database');
 const authRoutes = require('./routes/auth');
 const songRoutes = require('./routes/songs');
 const setlistRoutes = require('./routes/setlists');
@@ -25,6 +25,14 @@ const io = new Server(server);
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Redirect to /setup.html when no admin exists yet (skip API and static assets)
+app.use((req, res, next) => {
+    if (hasAdmin()) return next();
+    if (req.path.startsWith('/api/') || req.path === '/setup.html') return next();
+    res.redirect('/setup.html');
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 // API routes
@@ -60,6 +68,6 @@ io.on('connection', (socket) => {
 
 // Start
 initDatabase();
-server.listen(PORT, () => {
-    console.log(`LiveGig running on http://localhost:${PORT}`);
+server.listen(PORT, '0.0.0.0', () => {
+    console.log(`LiveGig running on http://0.0.0.0:${PORT}`);
 });
