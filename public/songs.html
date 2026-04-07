@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="nl">
+<head>
+    <title>LiveGig - Nummers</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #111; color: #eee; }
+        .navbar { background-color: #1a1a1a; border-bottom: 1px solid #333; }
+        .table-dark { background-color: #1e1e1e; }
+        .table-dark td, .table-dark th { border-color: #333; }
+        .badge-system { background-color: #6c757d; font-size: 0.65rem; }
+        .badge-own { background-color: #0d6efd; font-size: 0.65rem; }
+        .search-box { background: #2a2a2a; border: 1px solid #444; color: #eee; }
+        .search-box:focus { background: #2a2a2a; color: #eee; border-color: #666; box-shadow: none; }
+    </style>
+</head>
+<body>
+<nav class="navbar fixed-top px-3">
+    <div class="d-flex align-items-center gap-3 w-100">
+        <a href="/index.html" class="text-decoration-none">
+            <span class="fs-5 fw-bold text-white">LIVE<span class="text-danger">GIG</span></span>
+        </a>
+        <span class="text-secondary">/ Nummers</span>
+        <div class="ms-auto d-flex gap-2">
+            <a href="/setlists.html" class="btn btn-outline-secondary btn-sm">Setlijsten</a>
+            <span id="admin-link" style="display:none"><a href="/admin.html" class="btn btn-outline-warning btn-sm">Admin</a></span>
+            <button onclick="logout()" class="btn btn-outline-danger btn-sm">Uitloggen</button>
+        </div>
+    </div>
+</nav>
+
+<div class="container" style="padding-top: 80px; padding-bottom: 40px;">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-0">Nummers <span id="song-count" class="text-secondary fs-6"></span></h4>
+        <button class="btn btn-danger" onclick="openModal()">+ Nummer toevoegen</button>
+    </div>
+
+    <input type="text" id="search" class="form-control search-box mb-3" placeholder="Zoeken op titel of artiest...">
+
+    <div class="table-responsive">
+        <table class="table table-dark table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Titel</th>
+                    <th>Artiest</th>
+                    <th>BPM</th>
+                    <th>Start</th>
+                    <th>Beschrijving</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="song-list"></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal fade" id="songModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-light border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title" id="modal-title">Nummer toevoegen</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="edit-id">
+                <div class="mb-2">
+                    <label class="form-label">Titel *</label>
+                    <input type="text" id="edit-title" class="form-control bg-secondary text-light border-0">
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">Artiest</label>
+                    <input type="text" id="edit-artist" class="form-control bg-secondary text-light border-0">
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">BPM</label>
+                    <input type="text" id="edit-bpm" class="form-control bg-secondary text-light border-0">
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">Wie start</label>
+                    <input type="text" id="edit-starts" class="form-control bg-secondary text-light border-0">
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">Beschrijving / notities</label>
+                    <textarea id="edit-description" class="form-control bg-secondary text-light border-0" rows="3"></textarea>
+                </div>
+                <div id="admin-system-check" style="display:none">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="edit-system">
+                        <label class="form-check-label text-secondary" for="edit-system">Systeemnummer (zichtbaar voor alle gebruikers)</label>
+                    </div>
+                </div>
+                <div id="modal-error" class="alert alert-danger py-1 mt-2" style="display:none"></div>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
+                <button type="button" class="btn btn-danger" onclick="saveSong()">Opslaan</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="api.js"></script>
+<script>
+if (!requireLogin()) throw new Error('Not logged in');
+
+const _user = getStoredUser();
+if (_user && _user.role === 'admin') {
+    document.getElementById('admin-link').style.display = 'inline';
+    document.getElementById('admin-system-check').style.display = 'block';
+}
+
+let _songs = [];
+const modal = new bootstrap.Modal(document.getElementById('songModal'));
+
+function escHtml(s) {
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function loadSongs() {
+    _songs = await api.getSongs();
+    renderSongs(_songs);
+}
+
+function renderSongs(songs) {
+    document.getElementById('song-count').textContent = `(${songs.length})`;
+    const tbody = document.getElementById('song-list');
+    tbody.innerHTML = '';
+
+    songs.forEach(s => {
+        const isOwn = s.user_id === (_user ? _user.id : -1);
+        const isSystem = s.user_id === null;
+        const canEdit = _user.role === 'admin' || isOwn;
+
+        const badge = isSystem
+            ? `<span class="badge badge-system ms-1">systeem</span>`
+            : `<span class="badge badge-own ms-1">eigen</span>`;
+
+        const editBtn = canEdit
+            ? `<button class="btn btn-outline-secondary btn-sm me-1" onclick="openModal(${s.id})">&#9998;</button>`
+            : '';
+        const delBtn = canEdit
+            ? `<button class="btn btn-outline-danger btn-sm" onclick="deleteSong(${s.id})">&#128465;</button>`
+            : '';
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${escHtml(s.title)}${badge}</td>
+            <td>${escHtml(s.artist)}</td>
+            <td>${escHtml(s.bpm)}</td>
+            <td>${escHtml(s.starts)}</td>
+            <td class="text-secondary small">${escHtml(s.description)}</td>
+            <td class="text-end" style="white-space:nowrap">${editBtn}${delBtn}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+document.getElementById('search').addEventListener('input', function() {
+    const q = this.value.toLowerCase();
+    renderSongs(_songs.filter(s =>
+        s.title.toLowerCase().includes(q) || s.artist.toLowerCase().includes(q)
+    ));
+});
+
+function openModal(id) {
+    document.getElementById('edit-id').value = id || '';
+    document.getElementById('edit-title').value = '';
+    document.getElementById('edit-artist').value = '';
+    document.getElementById('edit-bpm').value = '';
+    document.getElementById('edit-starts').value = '';
+    document.getElementById('edit-description').value = '';
+    document.getElementById('edit-system').checked = false;
+    document.getElementById('modal-error').style.display = 'none';
+    document.getElementById('modal-title').textContent = id ? 'Nummer bewerken' : 'Nummer toevoegen';
+
+    if (id) {
+        const s = _songs.find(x => x.id === id);
+        if (s) {
+            document.getElementById('edit-title').value = s.title;
+            document.getElementById('edit-artist').value = s.artist;
+            document.getElementById('edit-bpm').value = s.bpm;
+            document.getElementById('edit-starts').value = s.starts;
+            document.getElementById('edit-description').value = s.description;
+            document.getElementById('edit-system').checked = s.user_id === null;
+        }
+    }
+    modal.show();
+}
+
+async function saveSong() {
+    const id = document.getElementById('edit-id').value;
+    const data = {
+        title: document.getElementById('edit-title').value.trim(),
+        artist: document.getElementById('edit-artist').value.trim(),
+        bpm: document.getElementById('edit-bpm').value.trim(),
+        starts: document.getElementById('edit-starts').value.trim(),
+        description: document.getElementById('edit-description').value.trim(),
+        system: document.getElementById('edit-system').checked,
+    };
+    const errEl = document.getElementById('modal-error');
+    errEl.style.display = 'none';
+
+    try {
+        if (id) {
+            await api.updateSong(id, data);
+        } else {
+            await api.createSong(data);
+        }
+        modal.hide();
+        await loadSongs();
+    } catch(e) {
+        errEl.textContent = e.message;
+        errEl.style.display = 'block';
+    }
+}
+
+async function deleteSong(id) {
+    const s = _songs.find(x => x.id === id);
+    if (!confirm(`"${s ? s.title : id}" verwijderen?`)) return;
+    try {
+        await api.deleteSong(id);
+        await loadSongs();
+    } catch(e) {
+        alert(e.message);
+    }
+}
+
+loadSongs();
+</script>
+</body>
+</html>

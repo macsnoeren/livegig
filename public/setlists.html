@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="nl">
+<head>
+    <title>LiveGig - Setlijsten</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #111; color: #eee; }
+        .navbar { background-color: #1a1a1a; border-bottom: 1px solid #333; }
+        .card-dark { background-color: #1e1e1e; border: 1px solid #333; border-radius: 8px; }
+        .song-item { background-color: #2a2a2a; border: 1px solid #333; border-radius: 4px; padding: 8px 12px; cursor: grab; }
+        .song-item:active { cursor: grabbing; }
+        .song-picker { max-height: 400px; overflow-y: auto; background: #1a1a1a; }
+        .song-picker-item { cursor: pointer; border-bottom: 1px solid #2a2a2a; padding: 8px 12px; }
+        .song-picker-item:hover { background: #2a2a2a; }
+        .search-box { background: #2a2a2a; border: 1px solid #444; color: #eee; }
+        .search-box:focus { background: #2a2a2a; color: #eee; border-color: #666; box-shadow: none; }
+        .public-url { font-size: 0.8rem; color: #6c757d; word-break: break-all; }
+    </style>
+</head>
+<body>
+<nav class="navbar fixed-top px-3">
+    <div class="d-flex align-items-center gap-3 w-100">
+        <a href="/index.html" class="text-decoration-none">
+            <span class="fs-5 fw-bold text-white">LIVE<span class="text-danger">GIG</span></span>
+        </a>
+        <span class="text-secondary">/ Setlijsten</span>
+        <div class="ms-auto d-flex gap-2">
+            <a href="/songs.html" class="btn btn-outline-secondary btn-sm">Nummers</a>
+            <span id="admin-link" style="display:none"><a href="/admin.html" class="btn btn-outline-warning btn-sm">Admin</a></span>
+            <button onclick="logout()" class="btn btn-outline-danger btn-sm">Uitloggen</button>
+        </div>
+    </div>
+</nav>
+
+<div class="container" style="padding-top: 80px; padding-bottom: 40px;">
+    <div class="row">
+        <!-- Left: existing setlists -->
+        <div class="col-lg-5 mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="mb-0">Mijn setlijsten</h4>
+                <button class="btn btn-danger btn-sm" onclick="openNewSetlist()">+ Nieuw</button>
+            </div>
+            <div id="setlist-cards"></div>
+        </div>
+
+        <!-- Right: setlist editor -->
+        <div class="col-lg-7">
+            <div id="editor" style="display:none">
+                <div class="card-dark p-3 mb-3">
+                    <div class="d-flex gap-2 mb-3">
+                        <input type="text" id="sl-title" class="form-control bg-secondary text-light border-0" placeholder="Naam setlijst">
+                        <button class="btn btn-danger" onclick="saveSetlist()">Opslaan</button>
+                        <button class="btn btn-secondary" onclick="closeEditor()">Annuleren</button>
+                    </div>
+
+                    <h6 class="text-secondary">Nummers in setlijst <span id="song-count" class="text-light"></span></h6>
+                    <div id="selected-songs" class="d-flex flex-column gap-1 mb-3" style="min-height: 40px;"></div>
+
+                    <!-- Song picker -->
+                    <input type="text" id="picker-search" class="form-control search-box mb-1" placeholder="Nummer zoeken om toe te voegen...">
+                    <div class="song-picker rounded" id="song-picker"></div>
+                </div>
+                <div id="editor-error" class="alert alert-danger py-1" style="display:none"></div>
+            </div>
+            <div id="editor-placeholder" class="text-secondary text-center mt-5">
+                <p>Selecteer een setlijst om te bewerken, of maak een nieuwe aan.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="api.js"></script>
+<script>
+if (!requireLogin()) throw new Error('Not logged in');
+
+const _user = getStoredUser();
+if (_user && _user.role === 'admin') document.getElementById('admin-link').style.display = 'inline';
+
+let _setlists = [];
+let _allSongs = [];
+let _editId = null;
+let _editSongs = []; // [{id, title, artist, bpm, starts}]
+
+function escHtml(s) {
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+async function init() {
+    [_setlists, _allSongs] = await Promise.all([api.getSetlists(), api.getSongs()]);
+    renderSetlistCards();
+    renderPicker('');
+}
+
+// ── Left panel ────────────────────────────────────────────────────────────────
+
+function renderSetlistCards() {
+    const el = document.getElementById('setlist-cards');
+    el.innerHTML = '';
+    if (_setlists.length === 0) {
+        el.innerHTML = '<p class="text-secondary">Nog geen setlijsten.</p>';
+        return;
+    }
+    _setlists.forEach(sl => {
+        const publicUrl = `${location.origin}/s/${sl.public_token}`;
+        const card = document.createElement('div');
+        card.className = 'card-dark p-3 mb-2';
+        card.innerHTML = `
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <strong>${escHtml(sl.title)}</strong>
+                    <span class="text-secondary small ms-2">${sl.songs ? sl.songs.length : 0} nummers</span>
+                </div>
+                <div class="d-flex gap-1">
+                    <button class="btn btn-outline-secondary btn-sm" onclick="editSetlist(${sl.id})">&#9998;</button>
+                    <button class="btn btn-outline-danger btn-sm" onclick="deleteSetlist(${sl.id})">&#128465;</button>
+                </div>
+            </div>
+            <div class="mt-1">
+                <a href="${publicUrl}" target="_blank" class="public-url">${publicUrl}</a>
+                <button class="btn btn-link btn-sm text-secondary p-0 ms-1" onclick="copyUrl('${publicUrl}')" title="Kopieer URL">&#128203;</button>
+                <button class="btn btn-link btn-sm text-secondary p-0 ms-1" onclick="refreshToken(${sl.id})" title="Vernieuw publieke URL">&#8635;</button>
+            </div>
+        `;
+        el.appendChild(card);
+    });
+}
+
+async function copyUrl(url) {
+    await navigator.clipboard.writeText(url);
+    alert('URL gekopieerd!');
+}
+
+async function refreshToken(id) {
+    if (!confirm('Publieke URL vernieuwen? De oude URL werkt dan niet meer.')) return;
+    const res = await api.regenerateToken(id);
+    const sl = _setlists.find(s => s.id === id);
+    if (sl) sl.public_token = res.public_token;
+    renderSetlistCards();
+}
+
+// ── Editor ────────────────────────────────────────────────────────────────────
+
+function openNewSetlist() {
+    _editId = null;
+    _editSongs = [];
+    document.getElementById('sl-title').value = '';
+    document.getElementById('editor-error').style.display = 'none';
+    showEditor();
+}
+
+function editSetlist(id) {
+    const sl = _setlists.find(s => s.id === id);
+    if (!sl) return;
+    _editId = id;
+    _editSongs = sl.songs ? sl.songs.map(s => ({...s})) : [];
+    document.getElementById('sl-title').value = sl.title;
+    document.getElementById('editor-error').style.display = 'none';
+    showEditor();
+}
+
+function showEditor() {
+    document.getElementById('editor').style.display = 'block';
+    document.getElementById('editor-placeholder').style.display = 'none';
+    renderSelectedSongs();
+    renderPicker(document.getElementById('picker-search').value);
+}
+
+function closeEditor() {
+    document.getElementById('editor').style.display = 'none';
+    document.getElementById('editor-placeholder').style.display = 'block';
+    _editId = null;
+    _editSongs = [];
+}
+
+function renderSelectedSongs() {
+    const el = document.getElementById('selected-songs');
+    el.innerHTML = '';
+    document.getElementById('song-count').textContent = `(${_editSongs.length})`;
+    _editSongs.forEach((s, i) => {
+        const div = document.createElement('div');
+        div.className = 'song-item d-flex justify-content-between align-items-center';
+        div.innerHTML = `
+            <span><b>${i+1}.</b> ${escHtml(s.title)} <span class="text-secondary small">${escHtml(s.artist)}</span>
+                ${s.bpm ? `<span class="badge bg-secondary ms-1">${s.bpm} BPM</span>` : ''}
+            </span>
+            <div class="d-flex gap-1">
+                ${i > 0 ? `<button class="btn btn-sm btn-outline-secondary py-0" onclick="moveSong(${i},-1)">&#8593;</button>` : ''}
+                ${i < _editSongs.length-1 ? `<button class="btn btn-sm btn-outline-secondary py-0" onclick="moveSong(${i},1)">&#8595;</button>` : ''}
+                <button class="btn btn-sm btn-outline-danger py-0" onclick="removeSong(${i})">&#10005;</button>
+            </div>
+        `;
+        el.appendChild(div);
+    });
+}
+
+function moveSong(i, dir) {
+    const j = i + dir;
+    if (j < 0 || j >= _editSongs.length) return;
+    [_editSongs[i], _editSongs[j]] = [_editSongs[j], _editSongs[i]];
+    renderSelectedSongs();
+}
+
+function removeSong(i) {
+    _editSongs.splice(i, 1);
+    renderSelectedSongs();
+    renderPicker(document.getElementById('picker-search').value);
+}
+
+document.getElementById('picker-search').addEventListener('input', function() {
+    renderPicker(this.value);
+});
+
+function renderPicker(query) {
+    const q = (query || '').toLowerCase();
+    const selectedIds = new Set(_editSongs.map(s => s.id));
+    const songs = _allSongs.filter(s =>
+        !selectedIds.has(s.id) &&
+        (s.title.toLowerCase().includes(q) || s.artist.toLowerCase().includes(q))
+    );
+    const el = document.getElementById('song-picker');
+    el.innerHTML = '';
+    songs.slice(0, 50).forEach(s => {
+        const div = document.createElement('div');
+        div.className = 'song-picker-item';
+        div.innerHTML = `${escHtml(s.title)} <span class="text-secondary small">${escHtml(s.artist)}</span>
+            ${s.bpm ? `<span class="badge bg-secondary ms-1">${s.bpm} BPM</span>` : ''}`;
+        div.onclick = () => addSong(s);
+        el.appendChild(div);
+    });
+    if (songs.length === 0) {
+        el.innerHTML = '<p class="text-secondary p-2 mb-0">Geen nummers gevonden.</p>';
+    }
+}
+
+function addSong(s) {
+    _editSongs.push(s);
+    renderSelectedSongs();
+    renderPicker(document.getElementById('picker-search').value);
+}
+
+async function saveSetlist() {
+    const title = document.getElementById('sl-title').value.trim();
+    const errEl = document.getElementById('editor-error');
+    errEl.style.display = 'none';
+    if (!title) { errEl.textContent = 'Naam is verplicht'; errEl.style.display = 'block'; return; }
+
+    const songIds = _editSongs.map(s => s.id);
+    try {
+        if (_editId) {
+            await api.updateSetlist(_editId, { title, songIds });
+        } else {
+            await api.createSetlist({ title, songIds });
+        }
+        [_setlists] = await Promise.all([api.getSetlists()]);
+        renderSetlistCards();
+        closeEditor();
+    } catch(e) {
+        errEl.textContent = e.message;
+        errEl.style.display = 'block';
+    }
+}
+
+async function deleteSetlist(id) {
+    const sl = _setlists.find(s => s.id === id);
+    if (!confirm(`"${sl ? sl.title : id}" verwijderen?`)) return;
+    try {
+        await api.deleteSetlist(id);
+        _setlists = _setlists.filter(s => s.id !== id);
+        renderSetlistCards();
+        if (_editId === id) closeEditor();
+    } catch(e) {
+        alert(e.message);
+    }
+}
+
+init();
+</script>
+</body>
+</html>

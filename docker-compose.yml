@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: livegig
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data:/app/data          # SQLite database persistence
+      - ./public:/app/public      # Frontend live reload during development
+    environment:
+      - PORT=3000
+      - JWT_SECRET=${JWT_SECRET:-changeme-use-strong-secret-in-production}
+      - ADMIN_USERNAME=${ADMIN_USERNAME:-admin}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin123}
+    restart: unless-stopped

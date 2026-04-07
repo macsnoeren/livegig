@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="nl">
+<head>
+    <title>LiveGig - Click Track</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="app.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar fixed-top bg-dark border-bottom border-secondary">
+        <div class="container-fluid px-3">
+            <div id="clicktrack-bar" class="d-flex align-items-center flex-wrap gap-2">
+                <div id="clicktrack_1" class="dot"><p>1</p></div>
+                <div id="clicktrack_2" class="dot"><p>2</p></div>
+                <div id="clicktrack_3" class="dot"><p>3</p></div>
+                <div id="clicktrack_4" class="dot"><p>4</p></div>
+                <div id="clicktrack_bpm" class="bpm text-light">--</div>
+                <button type="button" class="btn btn-primary btn-lg" onclick="startClickTrack(_bpm)">START</button>
+                <button type="button" class="btn btn-danger btn-lg" onclick="stopClickTrack()">STOP</button>
+
+                <span class="dropdown">
+                    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        Setlijsten
+                    </a>
+                    <ul id="availablelists" class="dropdown-menu dropdown-menu-dark">
+                        <li><a class="dropdown-item" href="#">--</a></li>
+                    </ul>
+                </span>
+
+                <div class="text-light small">
+                    <div>Automode: <input id="automode" type="checkbox" onchange="toggleAutoMode();" checked></div>
+                    <div>Geluid: <input id="soundmode" type="checkbox" onchange="toggleSoundMode();"></div>
+                </div>
+
+                <!-- Nav links -->
+                <div class="ms-auto d-flex align-items-center gap-2">
+                    <a href="/songs.html" class="btn btn-outline-secondary btn-sm">Nummers</a>
+                    <a href="/setlists.html" class="btn btn-outline-secondary btn-sm">Setlijsten</a>
+                    <span id="admin-link" style="display:none">
+                        <a href="/admin.html" class="btn btn-outline-warning btn-sm">Admin</a>
+                    </span>
+                    <span id="user-badge" class="text-secondary small"></span>
+                    <button onclick="logout()" class="btn btn-outline-danger btn-sm">Uitloggen</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container" style="padding-top: 120px;">
+        <div id="songs" class="list-group"></div>
+    </div>
+
+    <div class="container">
+        <div id="debug" class="text-secondary small"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="sound.js"></script>
+    <script src="api.js"></script>
+    <script src="app.js"></script>
+    <script>
+        if (!requireLogin()) throw new Error('Not logged in');
+
+        const _currentUser = getStoredUser();
+        if (_currentUser) {
+            document.getElementById('user-badge').textContent = _currentUser.username;
+            if (_currentUser.role === 'admin') {
+                document.getElementById('admin-link').style.display = 'inline';
+            }
+        }
+
+        // Load songs and setlists from API
+        async function initApp() {
+            try {
+                const songs = await api.getSongs();
+                _allSongs = songs;
+                populateSongs(songs);
+
+                const setlists = await api.getSetlists();
+                _setlistsData = setlists;
+                populateAvailableLists(setlists);
+            } catch (e) {
+                console.error('Failed to load data:', e);
+            }
+        }
+
+        initApp();
+    </script>
+</body>
+</html>

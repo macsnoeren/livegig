@@ -1,7 +1,5 @@
 #!/usr/bin/python3
 
-#!/usr/bin/python3
-
 # Used to process the files in the given directory
 
 import json
