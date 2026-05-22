@@ -181,7 +181,7 @@ $(function() { loadSongsTable(); });
 
 function loadSongsTable() {
     var bandId = ' . ($user['band_id'] ?? 'null') . ';
-    $.get("/api/songs.php", {band_id: bandId}, function(data) {
+    $.get("api/songs.php", {band_id: bandId}, function(data) {
         renderSongsTable(data.songs || []);
     });
 }
@@ -251,7 +251,7 @@ function saveSong() {
         band_id: ' . ($user['band_id'] ?? 'null') . '
     };
     if (!data.title || !data.artist) { alert("Titel en artiest zijn verplicht."); return; }
-    $.post("/api/songs.php", data, function(r) {
+    $.post("api/songs.php", data, function(r) {
         if (r.ok) {
             bootstrap.Modal.getInstance("#songModal").hide();
             loadSongsTable();
@@ -266,7 +266,7 @@ function openDeleteSong(id, name) {
 }
 
 function confirmDelete() {
-    $.ajax({ url: "/api/songs.php", type: "DELETE", data: JSON.stringify({id: _deleteSongId}),
+    $.ajax({ url: "api/songs.php", type: "DELETE", data: JSON.stringify({id: _deleteSongId}),
         contentType: "application/json", success: function(r) {
             bootstrap.Modal.getInstance("#deleteModal").hide();
             loadSongsTable();
@@ -278,7 +278,7 @@ function searchMusic() {
     var q = $("#search-query").val().trim();
     if (!q) return;
     $("#search-results").html(\'<span class="text-muted">Zoeken...</span>\');
-    $.get("/api/search.php", {q: q}, function(data) {
+    $.get("api/search.php", {q: q}, function(data) {
         if (!data.results || !data.results.length) {
             $("#search-results").html(\'<span class="text-muted">Geen resultaten</span>\');
             return;

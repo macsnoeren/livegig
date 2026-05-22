@@ -10,7 +10,7 @@ function sessionStart(): void {
 function requireLogin(): void {
     sessionStart();
     if (empty($_SESSION['user_id'])) {
-        header('Location: /login.php');
+        header('Location: ' . appRelPath('login.php'));
         exit;
     }
 }
@@ -18,9 +18,24 @@ function requireLogin(): void {
 function requireAdmin(): void {
     requireLogin();
     if ($_SESSION['user_role'] !== 'admin') {
-        header('Location: /dashboard.php');
+        header('Location: ' . appRelPath('dashboard.php'));
         exit;
     }
+}
+
+// Returns a path relative to the calling script pointing to a file in the app root.
+function appRelPath(string $file): string {
+    $appRoot   = realpath(__DIR__ . '/..');
+    $scriptDir = realpath(dirname($_SERVER['SCRIPT_FILENAME']));
+    if (!$appRoot || !$scriptDir || $scriptDir === $appRoot) return $file;
+    $prefix = '';
+    $dir = $scriptDir;
+    while ($dir !== $appRoot && strlen($dir) > strlen($appRoot)) {
+        $prefix .= '../';
+        $dir = realpath($dir . '/..');
+        if (!$dir) break;
+    }
+    return $prefix . $file;
 }
 
 function currentUser(): ?array {

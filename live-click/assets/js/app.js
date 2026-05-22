@@ -16,7 +16,7 @@ var _allSongsCache = null;
 
 function loadAllSongs() {
     var bandId = typeof BAND_ID !== 'undefined' ? BAND_ID : null;
-    var url = '/api/songs.php' + (bandId ? '?band_id=' + bandId : '');
+    var url = 'api/songs.php' + (bandId ? '?band_id=' + bandId : '');
     $.get(url, function(data) {
         _allSongsCache = data.songs || [];
         renderAllSongs(_allSongsCache);
@@ -57,7 +57,7 @@ function filterSongs(q) {
 function loadSetlistDropdown() {
     var bandId = typeof BAND_ID !== 'undefined' ? BAND_ID : null;
     if (!bandId) return;
-    $.get('/api/setlists.php?band_id=' + bandId, function(data) {
+    $.get('api/setlists.php?band_id=' + bandId, function(data) {
         var lists = data.setlists || [];
         var menu = $('#setlist-dropdown');
         menu.empty();
@@ -83,7 +83,7 @@ function loadSetlistDropdown() {
    Dashboard: load setlist into left panel
    ========================================= */
 function loadSetlist(id) {
-    $.get('/api/setlists.php?id=' + id, function(data) {
+    $.get('api/setlists.php?id=' + id, function(data) {
         var sl = data.setlist;
         if (!sl) return;
 

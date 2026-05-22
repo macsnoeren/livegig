@@ -9,9 +9,15 @@ require __DIR__ . '/includes/header.php';
 <div class="container-fluid px-3 py-3">
 
     <?php if (!$user['band_id']): ?>
-    <div class="alert alert-warning">
-        <i class="bi bi-exclamation-triangle"></i>
-        Je bent nog niet lid van een band. Vraag een admin om je toe te voegen.
+    <div class="alert alert-warning alert-dismissible page-alert fade show" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <strong>Je bent nog niet aan een band gekoppeld.</strong>
+        <?php if ($user['role'] === 'admin'): ?>
+            Ga naar <a href="admin.php" class="alert-link">Admin → Bands</a> om jezelf toe te voegen.
+        <?php else: ?>
+            Een admin moet jou koppelen aan een band. Neem contact op met de beheerder.
+        <?php endif; ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
     <?php endif; ?>
 

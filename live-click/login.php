@@ -22,20 +22,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>LiveGig — Inloggen</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link href="/assets/css/app.css" rel="stylesheet">
+    <link href="assets/css/app.css" rel="stylesheet">
 </head>
 <body class="login-page">
 <div class="d-flex align-items-center justify-content-center min-vh-100">
     <div class="login-card">
         <div class="text-center mb-4">
             <div class="login-logo">
-                <div class="beat-dot active"></div>
+                <div class="beat-dot lit"></div>
                 <div class="beat-dot"></div>
                 <div class="beat-dot"></div>
-                <div class="beat-dot active"></div>
+                <div class="beat-dot lit"></div>
             </div>
-            <h1 class="mt-3 fw-bold text-white">LiveGig</h1>
-            <p class="text-muted">Click track & setlist beheer</p>
+            <h1 class="mt-3 fw-bold text-white fs-3">LiveGig</h1>
+            <p class="text-muted small">Click track &amp; setlist beheer</p>
         </div>
 
         <?php if ($error): ?>
@@ -56,6 +56,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <i class="bi bi-play-fill"></i> Inloggen
             </button>
         </form>
+
+        <hr class="border-secondary my-3">
+        <p class="text-center text-muted small mb-0">
+            Nog geen account? <a href="register.php" class="text-danger">Registreren</a>
+        </p>
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

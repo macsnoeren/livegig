@@ -171,8 +171,8 @@ $msg = "Import klaar! $imported nummers geïmporteerd, $skipped overgeslagen (be
 if ($cli) {
     echo $msg . "\n";
 } else {
-    echo '<!doctype html><html data-bs-theme="dark"><head><link href="/assets/css/app.css" rel="stylesheet"></head><body><div class="container py-5">';
+    echo '<!doctype html><html data-bs-theme="dark"><head><link href="assets/css/app.css" rel="stylesheet"></head><body><div class="container py-5">';
     echo '<div class="alert alert-success">' . htmlspecialchars($msg) . '</div>';
-    echo '<a href="/dashboard.php" class="btn btn-danger">Ga naar dashboard</a>';
+    echo '<a href="dashboard.php" class="btn btn-danger">Ga naar dashboard</a>';
     echo '</div></body></html>';
 }

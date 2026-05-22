@@ -2,6 +2,7 @@
 require_once __DIR__ . '/auth.php';
 $user = currentUser();
 $activeBands = $user ? userBands($user['id']) : [];
+$currentPage = basename($_SERVER['PHP_SELF']);
 ?>
 <!doctype html>
 <html lang="nl" data-bs-theme="dark">
@@ -11,77 +12,89 @@ $activeBands = $user ? userBands($user['id']) : [];
     <title><?= htmlspecialchars($pageTitle ?? 'LiveGig') ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link href="/assets/css/app.css" rel="stylesheet">
+    <link href="assets/css/app.css" rel="stylesheet">
 </head>
 <body>
 
-<!-- FIXED CLICK TRACK BAR -->
-<nav id="clicktrack-nav" class="navbar fixed-top">
-    <div class="container-fluid px-3">
-        <div class="d-flex align-items-center gap-2 flex-wrap">
-            <span class="brand-name me-2">LiveGig</span>
+<nav id="clicktrack-nav" class="fixed-top">
 
-            <!-- Beat dots -->
-            <div class="beat-dots">
-                <div id="beat_1" class="beat-dot"><span>1</span></div>
-                <div id="beat_2" class="beat-dot"><span>2</span></div>
-                <div id="beat_3" class="beat-dot"><span>3</span></div>
-                <div id="beat_4" class="beat-dot"><span>4</span></div>
-            </div>
+    <!-- ROW 1: Click track controls -->
+    <div class="ct-row-1">
+        <span class="brand-name">LiveGig</span>
 
-            <!-- BPM display -->
-            <div id="ct-bpm" class="ct-bpm-display">-- BPM</div>
+        <div class="beat-dots">
+            <div id="beat_1" class="beat-dot"><span>1</span></div>
+            <div id="beat_2" class="beat-dot"><span>2</span></div>
+            <div id="beat_3" class="beat-dot"><span>3</span></div>
+            <div id="beat_4" class="beat-dot"><span>4</span></div>
+        </div>
 
-            <!-- Song name display -->
-            <div id="ct-song" class="ct-song-display text-truncate">--</div>
+        <div id="ct-bpm" class="ct-bpm-display">-- BPM</div>
 
-            <!-- Controls -->
-            <button id="btn-start" class="btn btn-danger btn-sm px-3" onclick="ctStart()">
-                <i class="bi bi-play-fill"></i> START
+        <div id="ct-song" class="ct-song-display">--</div>
+
+        <button class="btn btn-danger btn-sm px-3 fw-bold" onclick="ctStart()">
+            <i class="bi bi-play-fill"></i> START
+        </button>
+        <button class="btn btn-outline-secondary btn-sm px-3" onclick="ctStop()">
+            <i class="bi bi-stop-fill"></i> STOP
+        </button>
+
+        <div class="ct-toggles">
+            <label class="ct-toggle-label">
+                <input type="checkbox" id="ct-automode" checked onchange="ctToggleAuto()">
+                <span>Auto</span>
+            </label>
+            <label class="ct-toggle-label">
+                <input type="checkbox" id="ct-soundmode" onchange="ctToggleSound()">
+                <span>Sound</span>
+            </label>
+        </div>
+
+        <?php if ($user && $user['band_id']): ?>
+        <div class="dropdown ms-auto">
+            <button class="btn btn-outline-light btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                <i class="bi bi-music-note-list"></i> <span id="ct-setlist-label">Setlist</span>
             </button>
-            <button id="btn-stop" class="btn btn-outline-secondary btn-sm px-3" onclick="ctStop()">
-                <i class="bi bi-stop-fill"></i> STOP
-            </button>
+            <ul id="setlist-dropdown" class="dropdown-menu dropdown-menu-dark">
+                <li><a class="dropdown-item text-muted" href="#">Laden...</a></li>
+            </ul>
+        </div>
+        <?php endif; ?>
+    </div>
 
-            <!-- Options -->
-            <div class="d-flex align-items-center gap-2 ms-1">
-                <div class="form-check form-switch mb-0" title="Auto-stop na 25s">
-                    <input class="form-check-input" type="checkbox" id="ct-automode" checked onchange="ctToggleAuto()">
-                    <label class="form-check-label small" for="ct-automode">Auto</label>
-                </div>
-                <div class="form-check form-switch mb-0">
-                    <input class="form-check-input" type="checkbox" id="ct-soundmode" onchange="ctToggleSound()">
-                    <label class="form-check-label small" for="ct-soundmode">Sound</label>
-                </div>
-            </div>
-
-            <!-- Setlist selector -->
-            <?php if ($user): ?>
-            <div class="dropdown ms-1">
-                <button class="btn btn-outline-light btn-sm dropdown-toggle" data-bs-toggle="dropdown">
-                    <i class="bi bi-music-note-list"></i> Setlist
-                </button>
-                <ul id="setlist-dropdown" class="dropdown-menu dropdown-menu-dark">
-                    <li><a class="dropdown-item text-muted" href="#">Geen band geselecteerd</a></li>
-                </ul>
-            </div>
+    <!-- ROW 2: Navigation -->
+    <?php if ($user): ?>
+    <div class="ct-row-2">
+        <div class="ct-nav-links">
+            <a href="dashboard.php" class="ct-nav-link <?= $currentPage === 'dashboard.php' ? 'active' : '' ?>">
+                <i class="bi bi-house-fill"></i> Dashboard
+            </a>
+            <a href="songs.php" class="ct-nav-link <?= $currentPage === 'songs.php' ? 'active' : '' ?>">
+                <i class="bi bi-music-note-beamed"></i> Nummers
+            </a>
+            <a href="setlists.php" class="ct-nav-link <?= $currentPage === 'setlists.php' ? 'active' : '' ?>">
+                <i class="bi bi-list-ol"></i> Setlists
+            </a>
+            <?php if ($user['role'] === 'admin'): ?>
+            <a href="admin.php" class="ct-nav-link ct-nav-admin <?= $currentPage === 'admin.php' ? 'active' : '' ?>">
+                <i class="bi bi-shield-fill"></i> Admin
+            </a>
             <?php endif; ?>
         </div>
 
-        <!-- Right side: nav + user -->
-        <?php if ($user): ?>
-        <div class="d-flex align-items-center gap-2 ms-auto">
-            <!-- Band switcher -->
+        <div class="ct-nav-right">
+            <!-- Band -->
             <?php if (count($activeBands) > 1): ?>
             <div class="dropdown">
-                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
-                    <i class="bi bi-people"></i> <?= htmlspecialchars($user['band_name'] ?? 'Band') ?>
+                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                    <i class="bi bi-people-fill"></i> <?= htmlspecialchars($user['band_name'] ?? 'Band') ?>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end">
                     <?php foreach ($activeBands as $b): ?>
                     <li>
                         <a class="dropdown-item <?= $b['id'] == $user['band_id'] ? 'active' : '' ?>"
-                           href="/api/switch-band.php?band_id=<?= $b['id'] ?>&redirect=<?= urlencode($_SERVER['REQUEST_URI']) ?>">
+                           href="api/switch-band.php?band_id=<?= $b['id'] ?>&redirect=<?= urlencode($_SERVER['REQUEST_URI']) ?>">
                             <?= htmlspecialchars($b['name']) ?>
                         </a>
                     </li>
@@ -89,38 +102,45 @@ $activeBands = $user ? userBands($user['id']) : [];
                 </ul>
             </div>
             <?php elseif ($user['band_name']): ?>
-            <span class="text-muted small"><i class="bi bi-people"></i> <?= htmlspecialchars($user['band_name']) ?></span>
+            <span class="ct-band-name"><i class="bi bi-people-fill"></i> <?= htmlspecialchars($user['band_name']) ?></span>
+            <?php else: ?>
+            <span class="ct-band-name text-warning"><i class="bi bi-exclamation-triangle"></i> Geen band</span>
             <?php endif; ?>
 
-            <!-- Main nav -->
-            <a href="/dashboard.php" class="btn btn-sm btn-outline-light <?= (basename($_SERVER['PHP_SELF']) === 'dashboard.php') ? 'active' : '' ?>">
-                <i class="bi bi-house"></i>
-            </a>
-            <a href="/songs.php" class="btn btn-sm btn-outline-light <?= (basename($_SERVER['PHP_SELF']) === 'songs.php') ? 'active' : '' ?>">
-                <i class="bi bi-music-note-beamed"></i> Nummers
-            </a>
-            <a href="/setlists.php" class="btn btn-sm btn-outline-light <?= (basename($_SERVER['PHP_SELF']) === 'setlists.php') ? 'active' : '' ?>">
-                <i class="bi bi-list-ol"></i> Setlists
-            </a>
-            <?php if ($user['role'] === 'admin'): ?>
-            <a href="/admin.php" class="btn btn-sm btn-outline-warning <?= (basename($_SERVER['PHP_SELF']) === 'admin.php') ? 'active' : '' ?>">
-                <i class="bi bi-shield"></i>
-            </a>
-            <?php endif; ?>
-
-            <!-- User menu -->
+            <!-- User -->
             <div class="dropdown">
                 <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
                     <i class="bi bi-person-circle"></i> <?= htmlspecialchars($user['username']) ?>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end">
-                    <li><a class="dropdown-item" href="/logout.php"><i class="bi bi-box-arrow-right"></i> Uitloggen</a></li>
+                    <li><h6 class="dropdown-header"><?= htmlspecialchars($user['username']) ?></h6></li>
+                    <li><span class="dropdown-item-text text-muted small">
+                        Rol: <?= $user['role'] ?>
+                        <?php if ($user['band_name']): ?> · <?= htmlspecialchars($user['band_name']) ?><?php endif; ?>
+                    </span></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="logout.php"><i class="bi bi-box-arrow-right me-2"></i>Uitloggen</a></li>
                 </ul>
             </div>
         </div>
-        <?php endif; ?>
     </div>
+    <?php endif; ?>
 </nav>
 
-<!-- PAGE CONTENT WRAPPER -->
+<!-- Dynamic padding spacer — JS sets height to match nav -->
+<div id="nav-spacer"></div>
+<script>
+(function() {
+    function adjustPadding() {
+        var nav = document.getElementById('clicktrack-nav');
+        var spacer = document.getElementById('nav-spacer');
+        if (nav && spacer) spacer.style.height = nav.offsetHeight + 'px';
+    }
+    document.addEventListener('DOMContentLoaded', adjustPadding);
+    window.addEventListener('resize', adjustPadding);
+    // Also run immediately in case DOM is already ready
+    adjustPadding();
+})();
+</script>
+
 <div id="page-content">

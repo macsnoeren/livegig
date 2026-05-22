@@ -131,7 +131,7 @@ $(function() {
 });
 
 function loadUsers() {
-    $.get("/api/users.php", function(data) {
+    $.get("api/users.php", function(data) {
         _allUsers = data.users || [];
         renderUsers(_allUsers);
     });
@@ -154,7 +154,7 @@ function renderUsers(users) {
 }
 
 function loadBands() {
-    $.get("/api/bands.php", function(data) {
+    $.get("api/bands.php", function(data) {
         _allBands = data.bands || [];
         renderBands(_allBands);
     });
@@ -211,7 +211,7 @@ function saveUser() {
         role: $("#user-role").val(), band_ids: bandIds
     };
     if (!data.username || !data.email) { alert("Gebruikersnaam en e-mail zijn verplicht."); return; }
-    $.post("/api/users.php", JSON.stringify(data), function(r) {
+    $.post("api/users.php", JSON.stringify(data), function(r) {
         if (r.ok) { bootstrap.Modal.getInstance("#userModal").hide(); loadUsers(); loadBands(); }
         else { alert(r.error || "Fout"); }
     }, "json");
@@ -249,7 +249,7 @@ function saveBand() {
         description: $("#band-description").val().trim(), member_ids: memberIds
     };
     if (!data.name) { alert("Bandnaam is verplicht."); return; }
-    $.post("/api/bands.php", JSON.stringify(data), function(r) {
+    $.post("api/bands.php", JSON.stringify(data), function(r) {
         if (r.ok) { bootstrap.Modal.getInstance("#bandModal").hide(); loadBands(); loadUsers(); }
         else { alert(r.error || "Fout"); }
     }, "json");

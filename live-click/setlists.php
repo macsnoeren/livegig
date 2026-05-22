@@ -103,7 +103,7 @@ $(function() {
 });
 
 function loadSetlists() {
-    $.get("/api/setlists.php", {band_id: ' . $bandId . '}, function(data) {
+    $.get("api/setlists.php", {band_id: ' . $bandId . '}, function(data) {
         renderSetlists(data.setlists || []);
     });
 }
@@ -144,7 +144,7 @@ function openCreateSetlist() {
 }
 
 function openEditSetlist(id) {
-    $.get("/api/setlists.php", {id: id}, function(data) {
+    $.get("api/setlists.php", {id: id}, function(data) {
         var sl = data.setlist;
         if (!sl) return;
         $("#createSetlistTitle").text("Setlist bewerken");
@@ -159,7 +159,7 @@ function openEditSetlist(id) {
 
 function loadAvailableSongs() {
     if (_allSongs.length) { renderSlAvailable(); return; }
-    $.get("/api/songs.php", {band_id: ' . $bandId . '}, function(data) {
+    $.get("api/songs.php", {band_id: ' . $bandId . '}, function(data) {
         _allSongs = data.songs || [];
         renderSlAvailable();
     });
@@ -238,7 +238,7 @@ function saveSetlist() {
         band_id: ' . $bandId . ',
         songs: _slSongs.map(function(s){ return s.id; })
     };
-    $.post("/api/setlists.php", JSON.stringify(data), function(r) {
+    $.post("api/setlists.php", JSON.stringify(data), function(r) {
         if (r.ok) {
             bootstrap.Modal.getInstance("#createSetlistModal").hide();
             loadSetlists();
@@ -253,7 +253,7 @@ function openDeleteSetlist(id, name) {
 }
 
 function confirmDeleteSetlist() {
-    $.ajax({ url: "/api/setlists.php", type: "DELETE", data: JSON.stringify({id: _deleteSlId}),
+    $.ajax({ url: "api/setlists.php", type: "DELETE", data: JSON.stringify({id: _deleteSlId}),
         contentType: "application/json", success: function() {
             bootstrap.Modal.getInstance("#deleteSlModal").hide();
             loadSetlists();

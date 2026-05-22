@@ -2,89 +2,196 @@
    LiveGig — Dark Theme
    ========================================= */
 :root {
-    --ct-height: 70px;
-    --accent: #cc0000;
-    --accent-hover: #ff1111;
-    --bg: #0b0b0b;
-    --card-bg: #141414;
-    --card-border: #2a2a2a;
-    --text-muted: #666;
+    --accent:      #cc0000;
+    --accent-glow: rgba(204,0,0,0.6);
+    --bg:          #0b0b0b;
+    --card-bg:     #131313;
+    --card-border: #262626;
+    --nav-bg:      #0d0d0d;
+    --nav-border:  #1e1e1e;
+    --row2-bg:     #111111;
 }
 
 /* Base */
 html, body { background-color: var(--bg); color: #e0e0e0; min-height: 100vh; }
 
 /* =========================================
-   Click Track Navbar
+   Fixed Nav — two rows
    ========================================= */
 #clicktrack-nav {
-    height: var(--ct-height);
-    background: #0d0d0d;
-    border-bottom: 1px solid #222;
+    background: var(--nav-bg);
+    border-bottom: 1px solid var(--nav-border);
     z-index: 1050;
-    padding: 0 0.75rem;
+    padding: 0;
+    width: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
 }
 
-#clicktrack-nav .navbar-toggler { display: none; }
+/* Row 1: click track */
+.ct-row-1 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 14px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--nav-border);
+}
 
+/* Row 2: navigation */
+.ct-row-2 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 14px;
+    background: var(--row2-bg);
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+/* Spacer div replaces fixed padding-top so height is always exact */
+#nav-spacer { flex-shrink: 0; }
+#page-content { min-height: 100vh; }
+
+/* Brand */
 .brand-name {
-    font-size: 1rem;
-    font-weight: 700;
-    letter-spacing: 2px;
+    font-size: 0.9rem;
+    font-weight: 800;
+    letter-spacing: 3px;
     color: var(--accent);
     text-transform: uppercase;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
-/* Beat dots */
-.beat-dots { display: flex; gap: 8px; align-items: center; }
+/* =========================================
+   Beat dots
+   ========================================= */
+.beat-dots { display: flex; gap: 7px; align-items: center; flex-shrink: 0; }
 
 .beat-dot {
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    background: #2a2a2a;
-    border: 2px solid #444;
+    background: #1e1e1e;
+    border: 2px solid #383838;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     font-weight: 700;
-    color: #555;
-    transition: background 0.05s, box-shadow 0.05s;
+    color: #444;
+    transition: background 0.04s, box-shadow 0.04s;
+    flex-shrink: 0;
+    user-select: none;
 }
 
-.beat-dot.active,
 .beat-dot.lit {
     background: var(--accent);
-    border-color: var(--accent-hover);
+    border-color: #ff2222;
     color: #fff;
-    box-shadow: 0 0 12px rgba(204,0,0,0.7);
+    box-shadow: 0 0 14px var(--accent-glow), 0 0 4px var(--accent-glow);
 }
 
 /* BPM display */
 .ct-bpm-display {
-    font-size: 1.3rem;
+    font-size: 1.25rem;
     font-weight: 700;
     color: #fff;
-    min-width: 110px;
+    min-width: 100px;
     text-align: center;
     font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+    letter-spacing: 1px;
 }
 
-/* Song name in header */
+/* Song name */
 .ct-song-display {
-    font-size: 0.85rem;
-    color: #aaa;
-    max-width: 180px;
+    font-size: 0.8rem;
+    color: #999;
+    min-width: 0;
+    flex: 1 1 120px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-/* Page content offset */
-#page-content {
-    padding-top: calc(var(--ct-height) + 10px);
-    min-height: 100vh;
+/* Toggles */
+.ct-toggles {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.ct-toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.75rem;
+    color: #888;
+    cursor: pointer;
+    margin: 0;
+    white-space: nowrap;
+}
+
+.ct-toggle-label input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+    accent-color: var(--accent);
+}
+
+/* =========================================
+   Navigation row 2
+   ========================================= */
+.ct-nav-links {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.ct-nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #888;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+    white-space: nowrap;
+}
+
+.ct-nav-link:hover {
+    background: #1e1e1e;
+    color: #ddd;
+    text-decoration: none;
+}
+
+.ct-nav-link.active {
+    background: rgba(204,0,0,0.12);
+    color: #fff;
+    border-bottom: 2px solid var(--accent);
+}
+
+.ct-nav-admin { color: #c8a000; }
+.ct-nav-admin:hover { color: #ffd700; background: rgba(200,160,0,0.1); }
+.ct-nav-admin.active { background: rgba(200,160,0,0.15); border-bottom-color: #ffd700; color: #ffd700; }
+
+.ct-nav-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ct-band-name {
+    font-size: 0.78rem;
+    color: #666;
+    white-space: nowrap;
 }
 
 /* =========================================
@@ -97,13 +204,14 @@ html, body { background-color: var(--bg); color: #e0e0e0; min-height: 100vh; }
 }
 
 .card-header {
-    background: #1a1a1a;
+    background: #181818;
     border-bottom: 1px solid var(--card-border);
-    font-size: 0.85rem;
+    font-size: 0.78rem;
     font-weight: 600;
-    letter-spacing: 0.5px;
-    color: #bbb;
+    letter-spacing: 0.6px;
+    color: #aaa;
     text-transform: uppercase;
+    padding: 8px 12px;
 }
 
 /* =========================================
@@ -115,14 +223,10 @@ html, body { background-color: var(--bg); color: #e0e0e0; min-height: 100vh; }
     color: #d0d0d0;
 }
 
-.list-group-item-action:hover {
-    background: #1e1e1e;
-    color: #fff;
-}
+.list-group-item-action:hover { background: #1c1c1c; color: #fff; }
 
-.list-group-item-action.active,
 .list-group-item-action.selected {
-    background: rgba(204, 0, 0, 0.15);
+    background: rgba(204,0,0,0.1);
     border-left: 3px solid var(--accent);
     color: #fff;
 }
@@ -133,17 +237,18 @@ html, body { background-color: var(--bg); color: #e0e0e0; min-height: 100vh; }
 .bpm-badge {
     display: inline-block;
     background: #1a1a1a;
-    border: 1px solid #333;
+    border: 1px solid #2e2e2e;
     color: var(--accent);
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 700;
-    padding: 2px 8px;
+    padding: 2px 7px;
     border-radius: 4px;
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
 }
 
-/* Big BPM on dashboard */
+/* Big BPM */
 .bpm-big {
     font-size: 2.5rem;
     font-weight: 900;
@@ -155,16 +260,27 @@ html, body { background-color: var(--bg); color: #e0e0e0; min-height: 100vh; }
 /* =========================================
    Tables
    ========================================= */
-.table-dark { --bs-table-bg: var(--card-bg); --bs-table-striped-bg: #161616; }
-.table-dark thead th { background: #1a1a1a; color: #888; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; border-color: var(--card-border); }
+.table-dark {
+    --bs-table-bg: var(--card-bg);
+    --bs-table-border-color: var(--card-border);
+}
+.table-dark thead th {
+    background: #181818;
+    color: #777;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-color: var(--card-border);
+    padding: 8px 12px;
+}
 .table-dark td, .table-dark th { border-color: var(--card-border); vertical-align: middle; }
-.table-hover tbody tr:hover td { background: #1c1c1c; }
+.table-hover tbody tr:hover td { background: #1a1a1a; }
 
 /* =========================================
    Buttons
    ========================================= */
 .btn-danger { background: var(--accent); border-color: var(--accent); }
-.btn-danger:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+.btn-danger:hover { background: #e60000; border-color: #e60000; }
 
 .btn-xs {
     padding: 2px 7px;
@@ -177,83 +293,100 @@ html, body { background-color: var(--bg); color: #e0e0e0; min-height: 100vh; }
    Forms
    ========================================= */
 .form-control, .form-select {
-    background: #1a1a1a;
-    border-color: #333;
+    background: #181818;
+    border-color: #2e2e2e;
     color: #e0e0e0;
 }
 .form-control:focus, .form-select:focus {
-    background: #1f1f1f;
+    background: #1c1c1c;
     border-color: var(--accent);
     color: #fff;
-    box-shadow: 0 0 0 2px rgba(204,0,0,0.2);
+    box-shadow: 0 0 0 2px rgba(204,0,0,0.18);
 }
+.form-control::placeholder { color: #555; }
 
 /* =========================================
-   Login page
+   Login / register page
    ========================================= */
-.login-page { background: radial-gradient(ellipse at center, #1a0000 0%, #000 70%); }
+.login-page {
+    background: radial-gradient(ellipse at 50% 30%, #180000 0%, #000 65%);
+}
 
 .login-card {
     background: #111;
-    border: 1px solid #2a2a2a;
+    border: 1px solid #252525;
     border-radius: 12px;
     padding: 2.5rem;
     width: 100%;
-    max-width: 400px;
-    box-shadow: 0 0 60px rgba(204,0,0,0.08);
+    max-width: 420px;
+    box-shadow: 0 0 80px rgba(204,0,0,0.07);
 }
 
 .login-logo {
     display: flex;
     gap: 10px;
     justify-content: center;
+    margin-bottom: 4px;
 }
 
-.login-logo .beat-dot { width: 28px; height: 28px; font-size: 0.6rem; }
-.login-logo .beat-dot.active { background: var(--accent); border-color: var(--accent-hover); color: #fff; box-shadow: 0 0 8px rgba(204,0,0,0.6); }
+.login-logo .beat-dot { width: 26px; height: 26px; font-size: 0.55rem; }
+.login-logo .beat-dot.lit {
+    background: var(--accent);
+    border-color: #ff2222;
+    box-shadow: 0 0 10px var(--accent-glow);
+    color: #fff;
+}
+
+/* =========================================
+   Alerts — keep below nav
+   ========================================= */
+.page-alert {
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    margin: 0 0 16px 0;
+    padding: 10px 16px;
+    font-size: 0.85rem;
+}
 
 /* =========================================
    Setlist cards
    ========================================= */
 .setlist-card { transition: border-color 0.2s; }
-.setlist-card:hover { border-color: #444; }
+.setlist-card:hover { border-color: #383838; }
 
 /* =========================================
-   Navigation active state
+   Scrollbar
    ========================================= */
-.btn-outline-light.active {
-    background: rgba(255,255,255,0.1);
-    color: #fff;
-}
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: #0d0d0d; }
+::-webkit-scrollbar-thumb { background: #2e2e2e; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #444; }
 
 /* =========================================
-   Scrollbar styling
+   Dropdown dark
    ========================================= */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: #111; }
-::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #555; }
+.dropdown-menu-dark { background: #161616; border: 1px solid #252525; }
+.dropdown-menu-dark .dropdown-item { color: #ccc; font-size: 0.85rem; }
+.dropdown-menu-dark .dropdown-item:hover { background: #202020; color: #fff; }
+.dropdown-menu-dark .dropdown-item.active { background: rgba(204,0,0,0.18); color: #fff; }
+.dropdown-header { color: #666; font-size: 0.72rem; }
 
 /* =========================================
-   Dropdown dark overrides
+   Modals
    ========================================= */
-.dropdown-menu-dark { background: #161616; border: 1px solid #2a2a2a; }
-.dropdown-menu-dark .dropdown-item:hover { background: #222; }
-.dropdown-menu-dark .dropdown-item.active { background: rgba(204,0,0,0.2); color: #fff; }
-
-/* =========================================
-   Modal
-   ========================================= */
-.modal-content.bg-dark { background: #111 !important; }
-.modal-header.border-secondary, .modal-footer.border-secondary { border-color: #2a2a2a !important; }
+.modal-content { background: #111 !important; border: 1px solid #252525; }
+.modal-header, .modal-footer { border-color: #252525 !important; }
+.modal-header .modal-title { font-size: 0.95rem; font-weight: 600; }
 
 /* =========================================
    Tabs
    ========================================= */
-.nav-tabs { border-color: #2a2a2a; }
-.nav-tabs .nav-link { color: #888; border: none; border-bottom: 2px solid transparent; }
+.nav-tabs { border-color: #252525; }
+.nav-tabs .nav-link { color: #777; border: none; border-bottom: 2px solid transparent; padding: 8px 14px; font-size: 0.85rem; }
 .nav-tabs .nav-link.active { color: #fff; border-bottom-color: var(--accent); background: none; }
-.nav-tabs .nav-link:hover { color: #ccc; border-bottom-color: #444; }
+.nav-tabs .nav-link:hover { color: #ccc; }
 
 /* =========================================
    Song detail card
