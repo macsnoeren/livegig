@@ -297,6 +297,7 @@ function fillSongFromSearch(r) {
     $("#song-artist").val(r.artist);
     if (r.duration) $("#song-duration").val(r.duration);
     if (r.bpm)      $("#song-bpm").val(r.bpm);
+    if (r.key)      $("#song-key").val(r.key);
     $("#search-results").empty();
 }
 
