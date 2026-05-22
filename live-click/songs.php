@@ -177,12 +177,14 @@ define('SPOTIFY_CLIENT_SECRET', 'jouw_secret');</pre>
 <?php
 $extraScripts = '<script>
 var _deleteSongId = null;
+var _songsList = [];
 $(function() { loadSongsTable(); });
 
 function loadSongsTable() {
     var bandId = ' . ($user['band_id'] ?? 'null') . ';
     $.get("api/songs.php", {band_id: bandId}, function(data) {
-        renderSongsTable(data.songs || []);
+        _songsList = data.songs || [];
+        renderSongsTable(_songsList);
     });
 }
 
@@ -200,7 +202,7 @@ function renderSongsTable(songs) {
             \'<td class="text-muted">\' + escHtml(s.duration || "") + \'</td>\' +
             \'<td>\' + escHtml(s.starts || "") + \'</td>\' +
             \'<td class="text-muted small">\' + escHtml(s.description || "").substring(0,60) + \'</td>\' +
-            \'<td><button class="btn btn-xs btn-outline-secondary me-1" onclick="openEditSong(\' + JSON.stringify(s) + \')"><i class="bi bi-pencil"></i></button>\' +
+            \'<td><button class="btn btn-xs btn-outline-secondary me-1" onclick="openEditSong(\' + i + \')"><i class="bi bi-pencil"></i></button>\' +
             \'<button class="btn btn-xs btn-outline-danger" onclick="openDeleteSong(\' + s.id + \',\\\'\' + escHtml(s.title) + \'\\\')"><i class="bi bi-trash"></i></button></td>\' +
             \'</tr>\'
         );
@@ -224,7 +226,9 @@ function openAddSong() {
     new bootstrap.Modal("#songModal").show();
 }
 
-function openEditSong(s) {
+function openEditSong(i) {
+    var s = _songsList[i];
+    if (!s) return;
     $("#songModalTitle").text("Nummer bewerken");
     $("#song-id").val(s.id);
     $("#song-title").val(s.title);
@@ -274,48 +278,59 @@ function confirmDelete() {
     });
 }
 
+// Search results stored here — index used in onclick to avoid quote-escaping issues
+var _searchResults = [];
+
 function searchMusic() {
     var q = $("#search-query").val().trim();
     if (!q) return;
-    $("#search-results").html(\'<span class="text-muted">Zoeken...</span>\');
+    $("#search-results").html(\'<div class="search-loading"><i class="bi bi-hourglass-split"></i> Zoeken...</div>\');
     $.get("api/search.php", {q: q}, function(data) {
-        if (!data.results || !data.results.length) {
-            $("#search-results").html(\'<span class="text-muted">Geen resultaten</span>\');
-            return;
-        }
-        var html = \'<div class="list-group list-group-flush mt-1">\';
-        data.results.slice(0,8).forEach(function(r) {
-            html += renderSearchResult(r);
-        });
-        html += \'</div>\';
-        $("#search-results").html(html);
+        _searchResults = data.results || [];
+        renderSearchResults(_searchResults, data.source || "");
+    }).fail(function() {
+        $("#search-results").html(\'<div class="search-loading text-danger">Zoeken mislukt.</div>\');
     });
 }
 
-function fillSongFromSearch(r) {
+function renderSearchResults(results, source) {
+    if (!results.length) {
+        $("#search-results").html(\'<div class="search-loading">Geen resultaten gevonden.</div>\');
+        return;
+    }
+    var sourceNames = {tunebat: "Tunebat", spotify: "Spotify", musicbrainz: "MusicBrainz"};
+    var hasBpm = results.some(function(r) { return r.bpm; });
+    var src = sourceNames[source] || source;
+    var lbl = src + (hasBpm ? \' <span class="text-success">· BPM ✓</span>\' : \' <span class="text-muted">· geen BPM</span>\');
+    var html = \'<div class="search-source">\' + lbl + \'</div><div class="search-result-list">\';
+    results.forEach(function(r, i) {
+        var badges = \'\';
+        if (r.bpm)          badges += \'<span class="bpm-badge">\' + r.bpm + \'</span> \';
+        if (r.key)          badges += \'<span class="search-badge">\' + escHtml(r.key) + \'</span> \';
+        if (r.energy)       badges += \'<span class="search-badge" title="Energie">⚡\' + r.energy + \'%</span> \';
+        if (r.danceability) badges += \'<span class="search-badge" title="Dansbaar">💃\' + r.danceability + \'%</span>\';
+        html += \'<button type="button" class="search-result-item" onclick="pickSearchResult(\' + i + \')">\'
+             + \'<div class="d-flex justify-content-between align-items-center gap-2">\'
+             + \'<div class="min-w-0"><div class="search-result-title text-truncate">\' + escHtml(r.title) + \'</div>\'
+             + \'<div class="search-result-artist text-truncate">\' + escHtml(r.artist)
+             + (r.duration ? \' <span class="search-result-dur">\' + r.duration + \'</span>\' : \'\') + \'</div></div>\'
+             + \'<div class="search-result-badges flex-shrink-0">\' + badges + \'</div>\'
+             + \'</div></button>\';
+    });
+    html += \'</div>\';
+    $("#search-results").html(html);
+}
+
+function pickSearchResult(i) {
+    var r = _searchResults[i];
+    if (!r) return;
     $("#song-title").val(r.title);
     $("#song-artist").val(r.artist);
     if (r.duration) $("#song-duration").val(r.duration);
     if (r.bpm)      $("#song-bpm").val(r.bpm);
     if (r.key)      $("#song-key").val(r.key);
     $("#search-results").empty();
-}
-
-function renderSearchResult(r) {
-    var badges = "";
-    if (r.bpm)          badges += \'<span class="bpm-badge me-1">\' + r.bpm + \' BPM</span>\';
-    if (r.key)          badges += \'<span class="badge bg-secondary me-1">\' + escHtml(r.key) + \'</span>\';
-    if (r.energy)       badges += \'<span class="badge bg-dark border border-secondary me-1" title="Energy">⚡\' + r.energy + \'%</span>\';
-    if (r.danceability) badges += \'<span class="badge bg-dark border border-secondary" title="Danceability">💃\' + r.danceability + \'%</span>\';
-
-    return \'<button class="list-group-item list-group-item-action list-group-item-dark py-2 px-2" onclick="fillSongFromSearch(\' + JSON.stringify(r) + \')">\'
-         + \'<div class="d-flex justify-content-between align-items-start">\'
-         + \'<div><strong>\' + escHtml(r.title) + \'</strong> <span class="text-muted">— \' + escHtml(r.artist) + \'</span>\'
-         + (r.duration ? \' <span class="text-muted small">(\' + r.duration + \')</span>\' : \'\')
-         + \'</div>\'
-         + \'<div class="text-end ms-2 flex-shrink-0">\' + badges + \'</div>\'
-         + \'</div>\'
-         + \'</button>\';
+    _searchResults = [];
 }
 </script>';
 require __DIR__ . '/includes/footer.php';
