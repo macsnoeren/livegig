@@ -13,6 +13,32 @@ function requireLogin(): void {
         header('Location: ' . appRelPath('login.php'));
         exit;
     }
+    // Always refresh band from DB so changes by admin are visible immediately.
+    refreshSessionBand((int)$_SESSION['user_id']);
+}
+
+function refreshSessionBand(int $userId): void {
+    // Only refresh if no band is active in session, or if band_id key is missing.
+    // To force a full refresh after admin changes, we always re-query.
+    $db = getDB();
+    $current = $_SESSION['user_band_id'] ?? null;
+    $stmt = $db->prepare(
+        'SELECT b.id, b.name FROM band_members bm JOIN bands b ON b.id = bm.band_id
+         WHERE bm.user_id = ? ORDER BY b.name LIMIT 1'
+    );
+    $stmt->execute([$userId]);
+    $band = $stmt->fetch();
+
+    // If the currently active band was removed, or none was set, pick the first available.
+    if ($current) {
+        $check = $db->prepare('SELECT b.id, b.name FROM band_members bm JOIN bands b ON b.id = bm.band_id WHERE bm.user_id = ? AND b.id = ?');
+        $check->execute([$userId, $current]);
+        $stillValid = $check->fetch();
+        if ($stillValid) return; // Current band still valid — no change needed.
+    }
+
+    $_SESSION['user_band_id']   = $band['id'] ?? null;
+    $_SESSION['user_band_name'] = $band['name'] ?? null;
 }
 
 function requireAdmin(): void {
