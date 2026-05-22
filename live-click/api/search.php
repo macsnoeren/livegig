@@ -7,9 +7,14 @@ header('Content-Type: application/json');
 $q = trim($_GET['q'] ?? '');
 if (!$q) { echo json_encode(['ok' => false, 'results' => [], 'source' => 'none']); exit; }
 
-// Priority: 1. Tunebat  2. Spotify  3. MusicBrainz
+// Priority: 1. Tunebat  2. GetSongBPM  3. Spotify  4. MusicBrainz
 $results = searchTunebat($q);
 $source  = 'tunebat';
+
+if (!$results && GETSONGBPM_API_KEY) {
+    $results = searchGetSongBpm($q);
+    $source  = 'getsongbpm';
+}
 
 if (!$results && SPOTIFY_CLIENT_ID && SPOTIFY_CLIENT_SECRET) {
     $results = searchSpotify($q);
@@ -171,6 +176,112 @@ function searchTunebat(string $q): array {
         ];
     }
     return $results;
+}
+
+/* =========================================
+   GetSongBPM  (free API key via getsongbpm.com/api)
+   Flow: 1 search request → up to 5 IDs → parallel detail fetches via curl_multi
+   Fields: tempo (BPM string), key_of (e.g. "Em", "C#"), open_key (Camelot-style "2m"/"8B"),
+           danceability (0-100), artist.name
+   ========================================= */
+function searchGetSongBpm(string $q): array {
+    if (!GETSONGBPM_API_KEY || !function_exists('curl_init')) return [];
+
+    $base = 'https://api.getsongbpm.com/';
+
+    // Step 1 — search for matching songs, returns list of {id, name/title, ...}
+    $searchUrl = $base . 'search/?api_key=' . urlencode(GETSONGBPM_API_KEY)
+               . '&type=song&lookup=' . urlencode($q);
+    $raw = curlGet($searchUrl, ['Accept: application/json']);
+    if (!$raw) return [];
+
+    $ids = [];
+    foreach (json_decode($raw, true)['search'] ?? [] as $item) {
+        if (!empty($item['id'])) $ids[] = $item['id'];
+        if (count($ids) >= 5) break;
+    }
+    if (!$ids) return [];
+
+    // Step 2 — fetch all song details in parallel
+    $mh      = curl_multi_init();
+    $handles = [];
+    foreach ($ids as $id) {
+        $ch = curl_init();
+        curl_setopt_array($ch, [
+            CURLOPT_URL            => $base . 'song/?api_key=' . urlencode(GETSONGBPM_API_KEY) . '&id=' . urlencode($id),
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING       => '',
+            CURLOPT_TIMEOUT        => 6,
+            CURLOPT_CONNECTTIMEOUT => 4,
+            CURLOPT_HTTPHEADER     => ['Accept: application/json'],
+        ]);
+        curl_multi_add_handle($mh, $ch);
+        $handles[] = $ch;
+    }
+
+    $running = null;
+    do {
+        curl_multi_exec($mh, $running);
+        if ($running) curl_multi_select($mh, 0.5);
+    } while ($running > 0);
+
+    $results = [];
+    foreach ($handles as $ch) {
+        $body = curl_multi_getcontent($ch);
+        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_multi_remove_handle($mh, $ch);
+        curl_close($ch);
+
+        if (!$body || $code !== 200) continue;
+        $first = ltrim($body)[0] ?? '';
+        if ($first !== '{' && $first !== '[') continue;
+
+        $song = json_decode($body, true)['song'] ?? null;
+        if (!$song || empty($song['title'])) continue;
+
+        $bpm = isset($song['tempo']) && $song['tempo'] !== '' ? (int)$song['tempo'] : null;
+
+        // key_of examples: "Em", "C#", "G", "Bbm", "F#m"
+        $keyFields = ['key' => null, 'camelot' => null];
+        if (!empty($song['key_of'])) {
+            $parsed = parseGetSongBpmKey($song['key_of']);
+            if ($parsed) $keyFields = buildKeyFields($parsed['keyIdx'], $parsed['mode']);
+        }
+
+        $results[] = [
+            'title'        => $song['title'],
+            'artist'       => $song['artist']['name'] ?? '',
+            'duration'     => null,
+            'bpm'          => $bpm,
+            'key'          => $keyFields['key'],
+            'camelot'      => $keyFields['camelot'],
+            'energy'       => null,
+            'danceability' => isset($song['danceability']) && $song['danceability'] !== '' ? (int)$song['danceability'] : null,
+            'valence'      => null,
+            'popularity'   => null,
+        ];
+    }
+    curl_multi_close($mh);
+    return $results;
+}
+
+/**
+ * Converts GetSongBPM key notation ("Em", "C#", "Bbm", "F#") to
+ * [keyIdx (0-11), mode (1=maj / 0=min)] for use with buildKeyFields().
+ */
+function parseGetSongBpmKey(string $keyOf): ?array {
+    $isMinor = str_ends_with($keyOf, 'm');
+    $note    = $isMinor ? substr($keyOf, 0, -1) : $keyOf;
+    $mode    = $isMinor ? 0 : 1;
+
+    // Normalise flat spellings to sharps
+    static $flats = ['Db'=>'C#','Eb'=>'D#','Gb'=>'F#','Ab'=>'G#','Bb'=>'A#'];
+    $note = $flats[$note] ?? $note;
+
+    static $notes = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+    $idx = array_search($note, $notes, true);
+    if ($idx === false) return null;
+    return ['keyIdx' => (int)$idx, 'mode' => $mode];
 }
 
 /* =========================================

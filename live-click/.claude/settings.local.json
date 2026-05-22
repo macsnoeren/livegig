@@ -9,7 +9,20 @@
       "Bash(curl -s -H \"User-Agent: Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\) AppleWebKit/537.36\" -H \"Accept: application/json\" -H \"Referer: https://tunebat.com/\" https://api.tunebat.com/api/tracks/data?q=highway+to+hell\\\\&p=1)",
       "Bash(curl -v -H \"User-Agent: Mozilla/5.0\" https://api.tunebat.com/api/tracks/data?q=highway+to+hell\\\\&p=1)",
       "Bash(curl -s 'https://api.deezer.com/search?q=highway+to+hell+acdc&limit=5')",
-      "Bash(curl -s 'https://api.deezer.com/track/1374987')"
+      "Bash(curl -s 'https://api.deezer.com/track/1374987')",
+      "WebFetch(domain:www.getsongbpm.com)",
+      "WebFetch(domain:www.last.fm)",
+      "WebFetch(domain:acousticbrainz.org)",
+      "WebFetch(domain:www.songbpm.com)",
+      "WebFetch(domain:essentia.upf.edu)",
+      "WebFetch(domain:getsongbpm.com)",
+      "WebFetch(domain:getsongkey.com)",
+      "WebFetch(domain:soundcharts.com)",
+      "WebFetch(domain:acousticbrainz.readthedocs.io)",
+      "WebFetch(domain:reccobeats.com)",
+      "WebFetch(domain:cyanite.ai)",
+      "WebFetch(domain:api.getsongbpm.com)",
+      "WebFetch(domain:github.com)"
     ]
   }
 }

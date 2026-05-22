@@ -15,3 +15,9 @@ define('SPOTIFY_CLIENT_SECRET', '');  // Vul in
 
 // Token cache: sla Spotify access token op in sessie (verlopen na 1 uur)
 define('SPOTIFY_TOKEN_CACHE_FILE', __DIR__ . '/../data/.spotify_token');
+
+/**
+ * GetSongBPM API — gratis na registratie op https://getsongbpm.com/api
+ * Geeft BPM, toonsoort en dansbaarheidsscore per nummer.
+ */
+define('GETSONGBPM_API_KEY', '');  // Vul in

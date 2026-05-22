@@ -300,7 +300,7 @@ function renderSearchResults(results, source) {
         $("#search-results").html(\'<div class="search-loading">Geen resultaten gevonden.</div>\');
         return;
     }
-    var sourceNames = {tunebat: "Tunebat", spotify: "Spotify", musicbrainz: "MusicBrainz"};
+    var sourceNames = {tunebat: "Tunebat", getsongbpm: "GetSongBPM", spotify: "Spotify", musicbrainz: "MusicBrainz"};
     var hasBpm = results.some(function(r) { return r.bpm; });
     var src = sourceNames[source] || source;
     var lbl = src + (hasBpm ? \' <span class="text-success">· BPM ✓</span>\' : \' <span class="text-muted">· geen BPM</span>\');
