@@ -260,6 +260,8 @@ function saveSong() {
             bootstrap.Modal.getInstance("#songModal").hide();
             loadSongsTable();
         } else { alert(r.error || "Fout bij opslaan"); }
+    }, "json").fail(function(xhr) {
+        alert("Opslaan mislukt (HTTP " + xhr.status + "): " + (xhr.responseText || "onbekende fout"));
     });
 }
 

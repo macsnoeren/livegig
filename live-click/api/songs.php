@@ -19,24 +19,35 @@ if ($method === 'GET') {
 }
 
 if ($method === 'POST') {
-    $data = json_decode(file_get_contents('php://input'), true) ?: $_POST;
-    $id   = (int)($data['id'] ?? 0);
-    $title = trim($data['title'] ?? '');
+    $data   = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+    $id     = (int)($data['id'] ?? 0);
+    $title  = trim($data['title'] ?? '');
     $artist = trim($data['artist'] ?? '');
     if (!$title || !$artist) { echo json_encode(['ok'=>false,'error'=>'Titel en artiest verplicht']); exit; }
 
-    $bpm  = $data['bpm'] ? (int)$data['bpm'] : null;
-    $key  = trim($data['song_key'] ?? '') ?: null;
+    $bpm    = isset($data['bpm']) && $data['bpm'] !== '' ? (int)$data['bpm'] : null;
+    $key    = trim($data['song_key'] ?? '') ?: null;
+    $dur    = trim($data['duration']    ?? '') ?: null;
+    $starts = trim($data['starts']      ?? '') ?: null;
+    $desc   = trim($data['description'] ?? '') ?: null;
+    // band_id: treat empty string / "null" / 0 all as NULL
+    $rawBand = $data['band_id'] ?? null;
+    $bandId  = ($rawBand !== null && $rawBand !== '' && $rawBand !== 'null' && (int)$rawBand > 0)
+               ? (int)$rawBand : null;
 
-    if ($id) {
-        $stmt = $db->prepare('UPDATE songs SET title=?,artist=?,bpm=?,song_key=?,duration=?,starts=?,description=? WHERE id=?');
-        $stmt->execute([$title,$artist,$bpm,$key,$data['duration']??null,$data['starts']??null,$data['description']??null,$id]);
-    } else {
-        $stmt = $db->prepare('INSERT INTO songs (title,artist,bpm,song_key,duration,starts,description,band_id,created_by) VALUES (?,?,?,?,?,?,?,?,?)');
-        $stmt->execute([$title,$artist,$bpm,$key,$data['duration']??null,$data['starts']??null,$data['description']??null,$data['band_id']??null,currentUser()['id']]);
-        $id = $db->lastInsertId();
+    try {
+        if ($id) {
+            $db->prepare('UPDATE songs SET title=?,artist=?,bpm=?,song_key=?,duration=?,starts=?,description=? WHERE id=?')
+               ->execute([$title, $artist, $bpm, $key, $dur, $starts, $desc, $id]);
+        } else {
+            $db->prepare('INSERT INTO songs (title,artist,bpm,song_key,duration,starts,description,band_id,created_by) VALUES (?,?,?,?,?,?,?,?,?)')
+               ->execute([$title, $artist, $bpm, $key, $dur, $starts, $desc, $bandId, currentUser()['id']]);
+            $id = $db->lastInsertId();
+        }
+        echo json_encode(['ok' => true, 'id' => $id]);
+    } catch (PDOException $e) {
+        echo json_encode(['ok' => false, 'error' => 'Database fout: ' . $e->getMessage()]);
     }
-    echo json_encode(['ok'=>true,'id'=>$id]);
     exit;
 }
 
