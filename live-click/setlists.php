@@ -97,6 +97,7 @@ $extraScripts = '<script>
 var _allSongs = [];
 var _slSongs = [];
 var _deleteSlId = null;
+var _setlistsData = [];
 
 $(function() {
     loadSetlists();
@@ -104,7 +105,8 @@ $(function() {
 
 function loadSetlists() {
     $.get("api/setlists.php", {band_id: ' . $bandId . '}, function(data) {
-        renderSetlists(data.setlists || []);
+        _setlistsData = data.setlists || [];
+        renderSetlists(_setlistsData);
     });
 }
 
@@ -112,7 +114,7 @@ function renderSetlists(lists) {
     var c = $("#setlists-container");
     c.empty();
     if (!lists.length) { c.html(\'<div class="col-12 text-muted">Nog geen setlists. Maak er één aan!</div>\'); return; }
-    lists.forEach(function(sl) {
+    lists.forEach(function(sl, slIdx) {
         var songs = sl.songs || [];
         var html = \'<div class="col-md-6 col-xl-4"><div class="card setlist-card">\' +
             \'<div class="card-header d-flex justify-content-between align-items-center">\' +
@@ -122,15 +124,20 @@ function renderSetlists(lists) {
             \'<button class="btn btn-xs btn-outline-danger" onclick="openDeleteSetlist(\' + sl.id + \',\\\'\' + escHtml(sl.name) + \'\\\')"><i class="bi bi-trash"></i></button>\' +
             \'</div></div>\' +
             \'<div class="list-group list-group-flush">\';
-        songs.forEach(function(s, i) {
-            html += \'<button class="list-group-item list-group-item-action list-group-item-dark d-flex justify-content-between align-items-center py-2" onclick="selectSong(\' + JSON.stringify(s) + \')">\'
-                + \'<span><span class="text-muted me-2">\' + (i+1) + \'.</span>\' + escHtml(s.title) + \'<span class="text-muted small ms-2">\' + escHtml(s.artist) + \'</span></span>\'
+        songs.forEach(function(s, songIdx) {
+            html += \'<button class="list-group-item list-group-item-action list-group-item-dark d-flex justify-content-between align-items-center py-2" onclick="selectSongFromSetlist(\' + slIdx + \',\' + songIdx + \')">\'
+                + \'<span><span class="text-muted me-2">\' + (songIdx+1) + \'.</span>\' + escHtml(s.title) + \'<span class="text-muted small ms-2">\' + escHtml(s.artist) + \'</span></span>\'
                 + \'<span class="bpm-badge">\' + (s.bpm || "--") + \'</span>\'
                 + \'</button>\';
         });
         html += \'</div></div></div>\';
         c.append(html);
     });
+}
+
+function selectSongFromSetlist(slIdx, songIdx) {
+    var s = (_setlistsData[slIdx] || {songs: []}).songs[songIdx];
+    if (s) selectSong(s);
 }
 
 function openCreateSetlist() {
@@ -167,23 +174,24 @@ function loadAvailableSongs() {
 
 function renderSlAvailable() {
     var q = $("#sl-song-filter").val().toLowerCase();
-    var list = _allSongs.filter(function(s) {
-        return !q || s.title.toLowerCase().includes(q) || s.artist.toLowerCase().includes(q);
-    });
     var c = $("#sl-available");
     c.empty();
-    if (!list.length) { c.append(\'<div class="list-group-item text-muted">Geen nummers</div>\'); return; }
-    list.forEach(function(s) {
-        c.append(\'<button class="list-group-item list-group-item-action list-group-item-dark d-flex justify-content-between align-items-center py-1" onclick="addToSlSongs(\' + JSON.stringify(s) + \')">\'
+    var found = false;
+    _allSongs.forEach(function(s, idx) {
+        if (q && !s.title.toLowerCase().includes(q) && !s.artist.toLowerCase().includes(q)) return;
+        found = true;
+        c.append(\'<button class="list-group-item list-group-item-action list-group-item-dark d-flex justify-content-between align-items-center py-1" onclick="addToSlSongs(\' + idx + \')">\'
             + \'<span>\' + escHtml(s.title) + \' <span class="text-muted small">\' + escHtml(s.artist) + \'</span></span>\'
             + \'<span class="bpm-badge">\' + (s.bpm || "--") + \'</span></button>\');
     });
+    if (!found) c.append(\'<div class="list-group-item text-muted">Geen nummers</div>\');
 }
 
 $("#sl-song-filter").on("input", function() { renderSlAvailable(); });
 
-function addToSlSongs(s) {
-    _slSongs.push(s);
+function addToSlSongs(idx) {
+    var s = _allSongs[idx];
+    if (s) _slSongs.push(s);
     renderSlSelected();
 }
 
