@@ -1,0 +1,261 @@
+/* =========================================
+   LiveGig — Dark Theme
+   ========================================= */
+:root {
+    --ct-height: 70px;
+    --accent: #cc0000;
+    --accent-hover: #ff1111;
+    --bg: #0b0b0b;
+    --card-bg: #141414;
+    --card-border: #2a2a2a;
+    --text-muted: #666;
+}
+
+/* Base */
+html, body { background-color: var(--bg); color: #e0e0e0; min-height: 100vh; }
+
+/* =========================================
+   Click Track Navbar
+   ========================================= */
+#clicktrack-nav {
+    height: var(--ct-height);
+    background: #0d0d0d;
+    border-bottom: 1px solid #222;
+    z-index: 1050;
+    padding: 0 0.75rem;
+}
+
+#clicktrack-nav .navbar-toggler { display: none; }
+
+.brand-name {
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--accent);
+    text-transform: uppercase;
+}
+
+/* Beat dots */
+.beat-dots { display: flex; gap: 8px; align-items: center; }
+
+.beat-dot {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #2a2a2a;
+    border: 2px solid #444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #555;
+    transition: background 0.05s, box-shadow 0.05s;
+}
+
+.beat-dot.active,
+.beat-dot.lit {
+    background: var(--accent);
+    border-color: var(--accent-hover);
+    color: #fff;
+    box-shadow: 0 0 12px rgba(204,0,0,0.7);
+}
+
+/* BPM display */
+.ct-bpm-display {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #fff;
+    min-width: 110px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Song name in header */
+.ct-song-display {
+    font-size: 0.85rem;
+    color: #aaa;
+    max-width: 180px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Page content offset */
+#page-content {
+    padding-top: calc(var(--ct-height) + 10px);
+    min-height: 100vh;
+}
+
+/* =========================================
+   Cards
+   ========================================= */
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+}
+
+.card-header {
+    background: #1a1a1a;
+    border-bottom: 1px solid var(--card-border);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: #bbb;
+    text-transform: uppercase;
+}
+
+/* =========================================
+   List groups
+   ========================================= */
+.list-group-item {
+    background: var(--card-bg);
+    border-color: var(--card-border);
+    color: #d0d0d0;
+}
+
+.list-group-item-action:hover {
+    background: #1e1e1e;
+    color: #fff;
+}
+
+.list-group-item-action.active,
+.list-group-item-action.selected {
+    background: rgba(204, 0, 0, 0.15);
+    border-left: 3px solid var(--accent);
+    color: #fff;
+}
+
+/* =========================================
+   BPM badge
+   ========================================= */
+.bpm-badge {
+    display: inline-block;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    color: var(--accent);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Big BPM on dashboard */
+.bpm-big {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: var(--accent);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+
+/* =========================================
+   Tables
+   ========================================= */
+.table-dark { --bs-table-bg: var(--card-bg); --bs-table-striped-bg: #161616; }
+.table-dark thead th { background: #1a1a1a; color: #888; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; border-color: var(--card-border); }
+.table-dark td, .table-dark th { border-color: var(--card-border); vertical-align: middle; }
+.table-hover tbody tr:hover td { background: #1c1c1c; }
+
+/* =========================================
+   Buttons
+   ========================================= */
+.btn-danger { background: var(--accent); border-color: var(--accent); }
+.btn-danger:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+
+.btn-xs {
+    padding: 2px 7px;
+    font-size: 0.7rem;
+    line-height: 1.4;
+    border-radius: 3px;
+}
+
+/* =========================================
+   Forms
+   ========================================= */
+.form-control, .form-select {
+    background: #1a1a1a;
+    border-color: #333;
+    color: #e0e0e0;
+}
+.form-control:focus, .form-select:focus {
+    background: #1f1f1f;
+    border-color: var(--accent);
+    color: #fff;
+    box-shadow: 0 0 0 2px rgba(204,0,0,0.2);
+}
+
+/* =========================================
+   Login page
+   ========================================= */
+.login-page { background: radial-gradient(ellipse at center, #1a0000 0%, #000 70%); }
+
+.login-card {
+    background: #111;
+    border: 1px solid #2a2a2a;
+    border-radius: 12px;
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 0 60px rgba(204,0,0,0.08);
+}
+
+.login-logo {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.login-logo .beat-dot { width: 28px; height: 28px; font-size: 0.6rem; }
+.login-logo .beat-dot.active { background: var(--accent); border-color: var(--accent-hover); color: #fff; box-shadow: 0 0 8px rgba(204,0,0,0.6); }
+
+/* =========================================
+   Setlist cards
+   ========================================= */
+.setlist-card { transition: border-color 0.2s; }
+.setlist-card:hover { border-color: #444; }
+
+/* =========================================
+   Navigation active state
+   ========================================= */
+.btn-outline-light.active {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+}
+
+/* =========================================
+   Scrollbar styling
+   ========================================= */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #111; }
+::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #555; }
+
+/* =========================================
+   Dropdown dark overrides
+   ========================================= */
+.dropdown-menu-dark { background: #161616; border: 1px solid #2a2a2a; }
+.dropdown-menu-dark .dropdown-item:hover { background: #222; }
+.dropdown-menu-dark .dropdown-item.active { background: rgba(204,0,0,0.2); color: #fff; }
+
+/* =========================================
+   Modal
+   ========================================= */
+.modal-content.bg-dark { background: #111 !important; }
+.modal-header.border-secondary, .modal-footer.border-secondary { border-color: #2a2a2a !important; }
+
+/* =========================================
+   Tabs
+   ========================================= */
+.nav-tabs { border-color: #2a2a2a; }
+.nav-tabs .nav-link { color: #888; border: none; border-bottom: 2px solid transparent; }
+.nav-tabs .nav-link.active { color: #fff; border-bottom-color: var(--accent); background: none; }
+.nav-tabs .nav-link:hover { color: #ccc; border-bottom-color: #444; }
+
+/* =========================================
+   Song detail card
+   ========================================= */
+#song-detail-card { border-left: 3px solid var(--accent) !important; }
