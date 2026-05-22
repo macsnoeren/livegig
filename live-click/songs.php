@@ -21,6 +21,8 @@ require __DIR__ . '/includes/header.php';
         </div>
     </div>
 
+    <div id="table-spotify-embed" class="mb-2" style="display:none"></div>
+
     <div class="card">
         <div class="table-responsive">
             <table class="table table-dark table-hover table-sm mb-0" id="songs-table">
@@ -88,6 +90,7 @@ require __DIR__ . '/includes/header.php';
                 <form id="song-form">
                     <input type="hidden" id="song-id">
                     <input type="hidden" id="song-preview-url">
+                    <input type="hidden" id="song-spotify-id">
                     <div class="row g-2">
                         <div class="col-md-8">
                             <label class="form-label">Titel *</label>
@@ -210,8 +213,8 @@ function renderSongsTable(songs) {
     tbody.empty();
     if (!songs.length) { tbody.append(\'<tr><td colspan="9" class="text-muted">Geen nummers gevonden</td></tr>\'); return; }
     songs.forEach(function(s, i) {
-        var playBtn = s.preview_url
-            ? \'<td><button class="btn btn-xs btn-outline-secondary" title="Preview afspelen" onclick="toggleTablePreview(\' + i + \')"><i class="bi bi-play-fill" id="play-icon-\' + i + \'"></i></button></td>\'
+        var playBtn = (s.spotify_id || s.preview_url)
+            ? \'<td><button class="btn btn-xs btn-outline-success" title="Afspelen via Spotify" onclick="toggleTablePreview(\' + i + \')"><i class="bi bi-play-fill" id="play-icon-\' + i + \'"></i></button></td>\'
             : \'<td></td>\';
         tbody.append(
             \'<tr data-title="\' + escHtml(s.title) + \'" data-artist="\' + escHtml(s.artist) + \'">\' +
@@ -244,6 +247,7 @@ function openAddSong() {
     $("#song-form")[0].reset();
     $("#song-id").val("");
     $("#song-preview-url").val("");
+    $("#song-spotify-id").val("");
     $("#song-duplicate-warning").hide();
     $("#search-results").empty();
     new bootstrap.Modal("#songModal").show();
@@ -262,6 +266,7 @@ function openEditSong(i) {
     $("#song-starts").val(s.starts);
     $("#song-description").val(s.description);
     $("#song-preview-url").val(s.preview_url || "");
+    $("#song-spotify-id").val(s.spotify_id || "");
     $("#song-duplicate-warning").hide();
     $("#search-results").empty();
     new bootstrap.Modal("#songModal").show();
@@ -300,6 +305,7 @@ function saveSong() {
         starts: $("#song-starts").val().trim(),
         description: $("#song-description").val().trim(),
         preview_url: $("#song-preview-url").val(),
+        spotify_id:  $("#song-spotify-id").val(),
         band_id: ' . ($user['band_id'] ?? 'null') . '
     };
     if (!data.title || !data.artist) { alert("Titel en artiest zijn verplicht."); return; }
@@ -365,8 +371,8 @@ function renderSearchResults(results, source, spotifyNoBpm) {
         if (r.danceability != null) badges += \'<span class="search-badge" title="Dansbaar">💃\' + r.danceability + \'%</span> \';
         if (r.valence != null)    badges += \'<span class="search-badge" title="Sfeer / vrolijkheid">\' + valenceEmoji(r.valence) + r.valence + \'%</span> \';
         if (r.popularity != null) badges += \'<span class="search-badge search-badge-pop" title="Populariteit">★\' + r.popularity + \'</span>\';
-        var playBtn = r.preview_url
-            ? \'<button type="button" class="btn btn-xs btn-outline-secondary me-2 flex-shrink-0" title="Preview afspelen" onclick="event.stopPropagation(); toggleSearchPreview(\' + i + \')"><i class="bi bi-play-fill" id="sr-play-\' + i + \'"></i></button>\'
+        var playBtn = (r.preview_url || r.spotify_id)
+            ? \'<button type="button" class="btn btn-xs btn-outline-success me-2 flex-shrink-0" title="Preview afspelen" onclick="event.stopPropagation(); toggleSearchPreview(\' + i + \')"><i class="bi bi-play-fill" id="sr-play-\' + i + \'"></i></button>\'
             : \'\';
         html += \'<div class="search-result-item d-flex align-items-center gap-1">\'
              + playBtn
@@ -378,7 +384,7 @@ function renderSearchResults(results, source, spotifyNoBpm) {
              + \'<div class="search-result-badges flex-shrink-0">\' + badges + \'</div>\'
              + \'</div></button></div>\';
     });
-    html += \'</div>\';
+    html += \'</div><div id="spotify-embed-container" class="mt-2" style="display:none"></div>\';
     $("#search-results").html(html);
 }
 
@@ -397,6 +403,7 @@ function pickSearchResult(i) {
     if (r.duration)     $("#song-duration").val(r.duration);
     if (r.bpm)          $("#song-bpm").val(r.bpm);
     if (r.preview_url)  $("#song-preview-url").val(r.preview_url);
+    if (r.spotify_id)   $("#song-spotify-id").val(r.spotify_id);
     if (r.key) {
         var keyVal = r.key;
         if (r.camelot) keyVal += \' (\' + r.camelot + \')\';
@@ -407,55 +414,73 @@ function pickSearchResult(i) {
     checkDuplicate();
 }
 
-/* ---- Preview audio player ---- */
+/* ---- Preview audio / Spotify embed player ---- */
 var _previewAudio   = null;
 var _playingType    = null; // \'search\' or \'table\'
 var _playingIdx     = -1;
 
 function stopPreview() {
-    if (_previewAudio) {
-        _previewAudio.pause();
-        _previewAudio = null;
-    }
+    if (_previewAudio) { _previewAudio.pause(); _previewAudio = null; }
     if (_playingType === \'search\' && _playingIdx >= 0) {
         $("#sr-play-" + _playingIdx).removeClass("bi-stop-fill").addClass("bi-play-fill");
+        $("#spotify-embed-container").hide().empty();
     }
     if (_playingType === \'table\' && _playingIdx >= 0) {
         $("#play-icon-" + _playingIdx).removeClass("bi-stop-fill").addClass("bi-play-fill");
+        $("#table-spotify-embed").hide().empty();
     }
     _playingType = null;
     _playingIdx  = -1;
 }
 
+function playWithSpotifyEmbed(spotifyId, embedContainerId, iconId) {
+    var url = \'https://open.spotify.com/embed/track/\' + spotifyId + \'?utm_source=generator\';
+    var iframe = \'<iframe src="\' + url + \'" width="100%" height="80" frameborder="0" \' +
+        \'allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" \' +
+        \'style="border-radius:8px"></iframe>\';
+    $(\'#\' + embedContainerId).html(iframe).show();
+    $(\'#\' + iconId).removeClass("bi-play-fill").addClass("bi-stop-fill");
+}
+
 function toggleSearchPreview(i) {
     var r = _searchResults[i];
-    if (!r || !r.preview_url) return;
+    if (!r || (!r.preview_url && !r.spotify_id)) return;
     if (_playingType === \'search\' && _playingIdx === i) { stopPreview(); return; }
     stopPreview();
     _playingType = \'search\';
     _playingIdx  = i;
-    $("#sr-play-" + i).removeClass("bi-play-fill").addClass("bi-stop-fill");
-    _previewAudio = new Audio(r.preview_url);
-    _previewAudio.volume = 0.6;
-    _previewAudio.play();
-    _previewAudio.onended = stopPreview;
+    if (r.preview_url) {
+        // HTML5 audio if available
+        $("#sr-play-" + i).removeClass("bi-play-fill").addClass("bi-stop-fill");
+        _previewAudio = new Audio(r.preview_url);
+        _previewAudio.volume = 0.6;
+        _previewAudio.play();
+        _previewAudio.onended = stopPreview;
+    } else {
+        // Spotify embed fallback
+        playWithSpotifyEmbed(r.spotify_id, \'spotify-embed-container\', \'sr-play-\' + i);
+    }
 }
 
 function toggleTablePreview(i) {
     var s = _songsList[i];
-    if (!s || !s.preview_url) return;
+    if (!s || (!s.preview_url && !s.spotify_id)) return;
     if (_playingType === \'table\' && _playingIdx === i) { stopPreview(); return; }
     stopPreview();
     _playingType = \'table\';
     _playingIdx  = i;
-    $("#play-icon-" + i).removeClass("bi-play-fill").addClass("bi-stop-fill");
-    _previewAudio = new Audio(s.preview_url);
-    _previewAudio.volume = 0.6;
-    _previewAudio.play();
-    _previewAudio.onended = stopPreview;
+    if (s.preview_url) {
+        $("#play-icon-" + i).removeClass("bi-play-fill").addClass("bi-stop-fill");
+        _previewAudio = new Audio(s.preview_url);
+        _previewAudio.volume = 0.6;
+        _previewAudio.play();
+        _previewAudio.onended = stopPreview;
+    } else {
+        playWithSpotifyEmbed(s.spotify_id, \'table-spotify-embed\', \'play-icon-\' + i);
+    }
 }
 
-// Stop audio when modal closes
+// Stop audio/embed when modal closes
 document.getElementById("songModal").addEventListener("hidden.bs.modal", stopPreview);
 </script>';
 require __DIR__ . '/includes/footer.php';

@@ -336,6 +336,7 @@ function searchSpotify(string $q, bool &$noBpm = false): array {
             'valence'      => $feat ? (int)round((float)$feat['valence'] * 100) : null,
             'popularity'   => $t['popularity'] ?? null,
             'preview_url'  => $t['preview_url'] ?? null,
+            'spotify_id'   => $t['id'] ?? null,
         ];
     }
     return $results;

@@ -31,6 +31,7 @@ if ($method === 'POST') {
     $starts     = trim($data['starts']      ?? '') ?: null;
     $desc       = trim($data['description'] ?? '') ?: null;
     $previewUrl = trim($data['preview_url'] ?? '') ?: null;
+    $spotifyId  = trim($data['spotify_id']  ?? '') ?: null;
     // band_id: treat empty string / "null" / 0 all as NULL
     $rawBand = $data['band_id'] ?? null;
     $bandId  = ($rawBand !== null && $rawBand !== '' && $rawBand !== 'null' && (int)$rawBand > 0)
@@ -38,11 +39,11 @@ if ($method === 'POST') {
 
     try {
         if ($id) {
-            $db->prepare('UPDATE songs SET title=?,artist=?,bpm=?,song_key=?,duration=?,starts=?,description=?,preview_url=? WHERE id=?')
-               ->execute([$title, $artist, $bpm, $key, $dur, $starts, $desc, $previewUrl, $id]);
+            $db->prepare('UPDATE songs SET title=?,artist=?,bpm=?,song_key=?,duration=?,starts=?,description=?,preview_url=?,spotify_id=? WHERE id=?')
+               ->execute([$title, $artist, $bpm, $key, $dur, $starts, $desc, $previewUrl, $spotifyId, $id]);
         } else {
-            $db->prepare('INSERT INTO songs (title,artist,bpm,song_key,duration,starts,description,preview_url,band_id,created_by) VALUES (?,?,?,?,?,?,?,?,?,?)')
-               ->execute([$title, $artist, $bpm, $key, $dur, $starts, $desc, $previewUrl, $bandId, currentUser()['id']]);
+            $db->prepare('INSERT INTO songs (title,artist,bpm,song_key,duration,starts,description,preview_url,spotify_id,band_id,created_by) VALUES (?,?,?,?,?,?,?,?,?,?,?)')
+               ->execute([$title, $artist, $bpm, $key, $dur, $starts, $desc, $previewUrl, $spotifyId, $bandId, currentUser()['id']]);
             $id = $db->lastInsertId();
         }
         echo json_encode(['ok' => true, 'id' => $id]);
