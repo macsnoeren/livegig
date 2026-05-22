@@ -338,7 +338,7 @@ function pickSearchResult(i) {
     if (r.duration) $("#song-duration").val(r.duration);
     if (r.bpm)      $("#song-bpm").val(r.bpm);
     if (r.key) {
-        // Store key with Camelot notation so it's visible in the song overview
+        // Store key with Camelot notation so its visible in the song overview
         var keyVal = r.key;
         if (r.camelot) keyVal += \' (\' + r.camelot + \')\';
         $("#song-key").val(keyVal);
