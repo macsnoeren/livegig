@@ -76,6 +76,9 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             <a href="setlists.php" class="ct-nav-link <?= $currentPage === 'setlists.php' ? 'active' : '' ?>">
                 <i class="bi bi-list-ol"></i> Setlists
             </a>
+            <a href="bands.php" class="ct-nav-link <?= $currentPage === 'bands.php' ? 'active' : '' ?>">
+                <i class="bi bi-people-fill"></i> Bands
+            </a>
             <?php if ($user['role'] === 'admin'): ?>
             <a href="admin.php" class="ct-nav-link ct-nav-admin <?= $currentPage === 'admin.php' ? 'active' : '' ?>">
                 <i class="bi bi-shield-fill"></i> Admin
