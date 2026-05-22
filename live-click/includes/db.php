@@ -46,6 +46,7 @@ function initSchema(PDO $db): void {
             title TEXT NOT NULL,
             artist TEXT NOT NULL,
             bpm INTEGER,
+            song_key TEXT,
             duration TEXT,
             starts TEXT,
             description TEXT,

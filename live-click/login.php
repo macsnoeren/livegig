@@ -1,14 +1,14 @@
 <?php
 require_once __DIR__ . '/includes/auth.php';
 sessionStart();
-if (currentUser()) { header('Location: /dashboard.php'); exit; }
+if (currentUser()) { header('Location: dashboard.php'); exit; }
 
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
     if (login($username, $password)) {
-        header('Location: /dashboard.php');
+        header('Location: dashboard.php');
         exit;
     }
     $error = 'Gebruikersnaam of wachtwoord onjuist.';

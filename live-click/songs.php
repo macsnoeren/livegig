@@ -55,9 +55,24 @@ require __DIR__ . '/includes/header.php';
             <div class="modal-body">
                 <!-- Music search -->
                 <div class="mb-3 p-3 bg-black rounded">
-                    <label class="form-label small text-muted">Zoek nummer online (MusicBrainz)</label>
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <label class="form-label small text-muted mb-0">Zoek nummer online</label>
+                        <?php
+                        require_once __DIR__ . '/includes/config.php';
+                        if (SPOTIFY_CLIENT_ID): ?>
+                        <span class="badge bg-success" title="Spotify API — BPM beschikbaar">
+                            <i class="bi bi-spotify"></i> Spotify + BPM
+                        </span>
+                        <?php else: ?>
+                        <span class="badge bg-secondary" title="MusicBrainz — geen BPM. Voeg Spotify credentials toe in includes/config.php">
+                            <i class="bi bi-music-note"></i> MusicBrainz (geen BPM)
+                            <a href="#" class="text-warning ms-1" title="Klik voor instructies" data-bs-toggle="modal" data-bs-target="#spotifyHelpModal">?</a>
+                        </span>
+                        <?php endif; ?>
+                    </div>
                     <div class="input-group">
-                        <input type="text" id="search-query" class="form-control" placeholder="Bijv. Highway to Hell ACDC">
+                        <input type="text" id="search-query" class="form-control" placeholder="Bijv. Highway to Hell ACDC"
+                               onkeydown="if(event.key==='Enter') searchMusic()">
                         <button class="btn btn-outline-secondary" onclick="searchMusic()">
                             <i class="bi bi-search"></i> Zoek
                         </button>
@@ -72,9 +87,13 @@ require __DIR__ . '/includes/header.php';
                             <label class="form-label">Titel *</label>
                             <input type="text" id="song-title" class="form-control" required>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-2">
                             <label class="form-label">BPM</label>
                             <input type="number" id="song-bpm" class="form-control" min="1" max="400">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Toonsoort</label>
+                            <input type="text" id="song-key" class="form-control" placeholder="bijv. A min">
                         </div>
                         <div class="col-md-8">
                             <label class="form-label">Artiest *</label>
@@ -100,6 +119,37 @@ require __DIR__ . '/includes/header.php';
                 <button type="button" class="btn btn-danger" onclick="saveSong()">
                     <i class="bi bi-check-lg"></i> Opslaan
                 </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Spotify help -->
+<div class="modal fade" id="spotifyHelpModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title"><i class="bi bi-spotify"></i> Spotify koppelen voor BPM</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body small">
+                <p>Tunebat.com gebruikt de Spotify API om BPM, toonsoort en energie van nummers op te halen. Om dit in LiveGig te activeren:</p>
+                <ol class="ps-3">
+                    <li>Ga naar <strong>developer.spotify.com/dashboard</strong></li>
+                    <li>Log in met je Spotify account</li>
+                    <li>Klik <strong>Create app</strong> → vul naam in (bijv. "LiveGig")</li>
+                    <li>Kopieer je <strong>Client ID</strong> en <strong>Client Secret</strong></li>
+                    <li>Zet ze in <code>includes/config.php</code>:
+                        <pre class="bg-black p-2 rounded mt-1">define('SPOTIFY_CLIENT_ID',     'jouw_client_id');
+define('SPOTIFY_CLIENT_SECRET', 'jouw_secret');</pre>
+                    </li>
+                </ol>
+                <div class="alert alert-warning py-2 mb-0">
+                    <strong>Let op:</strong> Spotify heeft het BPM-endpoint (<code>audio-features</code>) gedepreceerd voor apps aangemaakt na 27 november 2024. Als je daarna een app aanmaakt kan het zijn dat BPM-data niet beschikbaar is.
+                </div>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Sluiten</button>
             </div>
         </div>
     </div>
@@ -180,6 +230,7 @@ function openEditSong(s) {
     $("#song-title").val(s.title);
     $("#song-artist").val(s.artist);
     $("#song-bpm").val(s.bpm);
+    $("#song-key").val(s.song_key || "");
     $("#song-duration").val(s.duration);
     $("#song-starts").val(s.starts);
     $("#song-description").val(s.description);
@@ -193,6 +244,7 @@ function saveSong() {
         title: $("#song-title").val().trim(),
         artist: $("#song-artist").val().trim(),
         bpm: $("#song-bpm").val(),
+        song_key: $("#song-key").val().trim(),
         duration: $("#song-duration").val().trim(),
         starts: $("#song-starts").val().trim(),
         description: $("#song-description").val().trim(),
@@ -233,10 +285,7 @@ function searchMusic() {
         }
         var html = \'<div class="list-group list-group-flush mt-1">\';
         data.results.slice(0,8).forEach(function(r) {
-            html += \'<button class="list-group-item list-group-item-action list-group-item-dark py-1 px-2 small" onclick="fillSongFromSearch(\' + JSON.stringify(r) + \')">\'
-                 + \'<strong>\' + escHtml(r.title) + \'</strong> — \' + escHtml(r.artist)
-                 + (r.duration ? \' <span class="text-muted">(\' + r.duration + \')</span>\' : \'\')
-                 + \'</button>\';
+            html += renderSearchResult(r);
         });
         html += \'</div>\';
         $("#search-results").html(html);
@@ -247,8 +296,25 @@ function fillSongFromSearch(r) {
     $("#song-title").val(r.title);
     $("#song-artist").val(r.artist);
     if (r.duration) $("#song-duration").val(r.duration);
-    if (r.bpm) $("#song-bpm").val(r.bpm);
+    if (r.bpm)      $("#song-bpm").val(r.bpm);
     $("#search-results").empty();
+}
+
+function renderSearchResult(r) {
+    var badges = "";
+    if (r.bpm)          badges += \'<span class="bpm-badge me-1">\' + r.bpm + \' BPM</span>\';
+    if (r.key)          badges += \'<span class="badge bg-secondary me-1">\' + escHtml(r.key) + \'</span>\';
+    if (r.energy)       badges += \'<span class="badge bg-dark border border-secondary me-1" title="Energy">⚡\' + r.energy + \'%</span>\';
+    if (r.danceability) badges += \'<span class="badge bg-dark border border-secondary" title="Danceability">💃\' + r.danceability + \'%</span>\';
+
+    return \'<button class="list-group-item list-group-item-action list-group-item-dark py-2 px-2" onclick="fillSongFromSearch(\' + JSON.stringify(r) + \')">\'
+         + \'<div class="d-flex justify-content-between align-items-start">\'
+         + \'<div><strong>\' + escHtml(r.title) + \'</strong> <span class="text-muted">— \' + escHtml(r.artist) + \'</span>\'
+         + (r.duration ? \' <span class="text-muted small">(\' + r.duration + \')</span>\' : \'\')
+         + \'</div>\'
+         + \'<div class="text-end ms-2 flex-shrink-0">\' + badges + \'</div>\'
+         + \'</div>\'
+         + \'</button>\';
 }
 </script>';
 require __DIR__ . '/includes/footer.php';
