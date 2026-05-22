@@ -16,8 +16,9 @@ if (!$results && GETSONGBPM_API_KEY) {
     $source  = 'getsongbpm';
 }
 
+$spotifyNoBpm = false;
 if (!$results && SPOTIFY_CLIENT_ID && SPOTIFY_CLIENT_SECRET) {
-    $results = searchSpotify($q);
+    $results = searchSpotify($q, $spotifyNoBpm);
     $source  = 'spotify';
 }
 
@@ -26,7 +27,7 @@ if (!$results) {
     $source  = 'musicbrainz';
 }
 
-echo json_encode(['ok' => true, 'results' => $results, 'source' => $source]);
+echo json_encode(['ok' => true, 'results' => $results, 'source' => $source, 'spotify_no_bpm' => $spotifyNoBpm]);
 
 /* =========================================
    Helpers
@@ -173,6 +174,7 @@ function searchTunebat(string $q): array {
             'danceability' => $pct($t['n'] ?? null),
             'valence'      => $pct($t['o'] ?? null),
             'popularity'   => $popularity,
+            'preview_url'  => null,
         ];
     }
     return $results;
@@ -259,6 +261,7 @@ function searchGetSongBpm(string $q): array {
             'danceability' => isset($song['danceability']) && $song['danceability'] !== '' ? (int)$song['danceability'] : null,
             'valence'      => null,
             'popularity'   => null,
+            'preview_url'  => null,
         ];
     }
     curl_multi_close($mh);
@@ -287,7 +290,7 @@ function parseGetSongBpmKey(string $keyOf): ?array {
 /* =========================================
    Spotify (requires credentials in config.php)
    ========================================= */
-function searchSpotify(string $q): array {
+function searchSpotify(string $q, bool &$noBpm = false): array {
     $token = getSpotifyToken();
     if (!$token) return [];
 
@@ -298,7 +301,7 @@ function searchSpotify(string $q): array {
     $tracks = $data['tracks']['items'] ?? [];
     if (!$tracks) return [];
 
-    // Fetch audio features for all tracks in one call
+    // Fetch audio features for all tracks in one call (deprecated for apps after Nov 2024)
     $ids     = implode(',', array_column($tracks, 'id'));
     $featRaw = spotifyGet('https://api.spotify.com/v1/audio-features?ids=' . $ids, $token);
     $featById = [];
@@ -307,6 +310,8 @@ function searchSpotify(string $q): array {
             if ($f && isset($f['id'])) $featById[$f['id']] = $f;
         }
     }
+    // If no features came back (403 = deprecated endpoint), flag it
+    if (!$featById) $noBpm = true;
 
     $results = [];
     foreach ($tracks as $t) {
@@ -330,6 +335,7 @@ function searchSpotify(string $q): array {
             'danceability' => $feat ? (int)round((float)$feat['danceability'] * 100) : null,
             'valence'      => $feat ? (int)round((float)$feat['valence'] * 100) : null,
             'popularity'   => $t['popularity'] ?? null,
+            'preview_url'  => $t['preview_url'] ?? null,
         ];
     }
     return $results;
@@ -409,6 +415,7 @@ function searchMusicBrainz(string $q): array {
             'danceability' => null,
             'valence'      => null,
             'popularity'   => null,
+            'preview_url'  => null,
         ];
     }
     return $results;

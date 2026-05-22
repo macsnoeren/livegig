@@ -420,14 +420,10 @@ html, body { background-color: var(--bg); color: #e0e0e0; min-height: 100vh; }
 }
 
 .search-result-item {
-    display: block;
-    width: 100%;
     background: #181818;
     border: 1px solid #252525;
     border-radius: 5px;
-    padding: 6px 10px;
-    text-align: left;
-    cursor: pointer;
+    padding: 4px 8px;
     transition: background 0.12s, border-color 0.12s;
     color: #d0d0d0;
 }
@@ -436,6 +432,18 @@ html, body { background-color: var(--bg); color: #e0e0e0; min-height: 100vh; }
     background: #222;
     border-color: var(--accent);
     color: #fff;
+}
+
+.search-result-item > button.flex-grow-1 {
+    color: inherit;
+    padding: 2px 4px;
+}
+
+.search-result-item > button.flex-grow-1:hover,
+.search-result-item > button.flex-grow-1:focus {
+    color: #fff;
+    outline: none;
+    box-shadow: none;
 }
 
 .search-result-title {

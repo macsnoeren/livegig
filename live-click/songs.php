@@ -26,6 +26,7 @@ require __DIR__ . '/includes/header.php';
             <table class="table table-dark table-hover table-sm mb-0" id="songs-table">
                 <thead>
                     <tr>
+                        <th></th>
                         <th>#</th>
                         <th>Titel</th>
                         <th>Artiest</th>
@@ -37,7 +38,7 @@ require __DIR__ . '/includes/header.php';
                     </tr>
                 </thead>
                 <tbody id="songs-tbody">
-                    <tr><td colspan="8" class="text-muted">Laden...</td></tr>
+                    <tr><td colspan="9" class="text-muted">Laden...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -63,10 +64,14 @@ require __DIR__ . '/includes/header.php';
                         <span class="badge bg-success" title="Spotify API — BPM beschikbaar">
                             <i class="bi bi-spotify"></i> Spotify + BPM
                         </span>
+                        <?php elseif (GETSONGBPM_API_KEY): ?>
+                        <span class="badge bg-success" title="GetSongBPM — BPM beschikbaar">
+                            <i class="bi bi-music-note-beamed"></i> GetSongBPM + BPM
+                        </span>
                         <?php else: ?>
-                        <span class="badge bg-secondary" title="MusicBrainz — geen BPM. Voeg Spotify credentials toe in includes/config.php">
-                            <i class="bi bi-music-note"></i> MusicBrainz (geen BPM)
-                            <a href="#" class="text-warning ms-1" title="Klik voor instructies" data-bs-toggle="modal" data-bs-target="#spotifyHelpModal">?</a>
+                        <span class="badge bg-warning text-dark" title="Geen BPM-bron geconfigureerd — Tunebat wordt geprobeerd maar is soms geblokkeerd. Voeg een API-sleutel toe voor betrouwbare BPM.">
+                            <i class="bi bi-exclamation-triangle"></i> Geen BPM-bron
+                            <a href="#" class="text-dark ms-1 fw-bold" title="Klik voor instructies" data-bs-toggle="modal" data-bs-target="#spotifyHelpModal">?</a>
                         </span>
                         <?php endif; ?>
                     </div>
@@ -82,10 +87,12 @@ require __DIR__ . '/includes/header.php';
 
                 <form id="song-form">
                     <input type="hidden" id="song-id">
+                    <input type="hidden" id="song-preview-url">
                     <div class="row g-2">
                         <div class="col-md-8">
                             <label class="form-label">Titel *</label>
                             <input type="text" id="song-title" class="form-control" required>
+                            <div id="song-duplicate-warning" class="small text-warning mt-1" style="display:none"></div>
                         </div>
                         <div class="col-md-2">
                             <label class="form-label">BPM</label>
@@ -129,23 +136,33 @@ require __DIR__ . '/includes/header.php';
     <div class="modal-dialog">
         <div class="modal-content bg-dark">
             <div class="modal-header border-secondary">
-                <h5 class="modal-title"><i class="bi bi-spotify"></i> Spotify koppelen voor BPM</h5>
+                <h5 class="modal-title"><i class="bi bi-music-note-beamed"></i> BPM-bron instellen</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body small">
-                <p>Tunebat.com gebruikt de Spotify API om BPM, toonsoort en energie van nummers op te halen. Om dit in LiveGig te activeren:</p>
-                <ol class="ps-3">
-                    <li>Ga naar <strong>developer.spotify.com/dashboard</strong></li>
-                    <li>Log in met je Spotify account</li>
+                <p>LiveGig probeert BPM op te halen via Tunebat, maar die site is soms geblokkeerd. Voeg een gratis API-sleutel toe voor betrouwbare BPM-data.</p>
+
+                <h6 class="text-success mt-3"><i class="bi bi-star-fill"></i> Optie 1 — GetSongBPM (aanbevolen, gratis)</h6>
+                <ol class="ps-3 mb-2">
+                    <li>Ga naar <strong>getsongbpm.com/our-api/</strong> en maak een gratis account</li>
+                    <li>Kopieer je API-sleutel</li>
+                    <li>Zet hem in <code>includes/config.php</code>:
+                        <pre class="bg-black p-2 rounded mt-1">define('GETSONGBPM_API_KEY', 'jouw_sleutel');</pre>
+                    </li>
+                </ol>
+
+                <h6 class="text-muted mt-3"><i class="bi bi-spotify"></i> Optie 2 — Spotify</h6>
+                <ol class="ps-3 mb-2">
+                    <li>Ga naar <strong>developer.spotify.com/dashboard</strong> en log in</li>
                     <li>Klik <strong>Create app</strong> → vul naam in (bijv. "LiveGig")</li>
-                    <li>Kopieer je <strong>Client ID</strong> en <strong>Client Secret</strong></li>
+                    <li>Kopieer <strong>Client ID</strong> en <strong>Client Secret</strong></li>
                     <li>Zet ze in <code>includes/config.php</code>:
                         <pre class="bg-black p-2 rounded mt-1">define('SPOTIFY_CLIENT_ID',     'jouw_client_id');
 define('SPOTIFY_CLIENT_SECRET', 'jouw_secret');</pre>
                     </li>
                 </ol>
                 <div class="alert alert-warning py-2 mb-0">
-                    <strong>Let op:</strong> Spotify heeft het BPM-endpoint (<code>audio-features</code>) gedepreceerd voor apps aangemaakt na 27 november 2024. Als je daarna een app aanmaakt kan het zijn dat BPM-data niet beschikbaar is.
+                    <strong>Let op:</strong> Spotify heeft het BPM-endpoint gedepreceerd voor apps aangemaakt na 27 november 2024. GetSongBPM is daarom de aanbevolen optie.
                 </div>
             </div>
             <div class="modal-footer border-secondary">
@@ -191,10 +208,14 @@ function loadSongsTable() {
 function renderSongsTable(songs) {
     var tbody = $("#songs-tbody");
     tbody.empty();
-    if (!songs.length) { tbody.append(\'<tr><td colspan="8" class="text-muted">Geen nummers gevonden</td></tr>\'); return; }
+    if (!songs.length) { tbody.append(\'<tr><td colspan="9" class="text-muted">Geen nummers gevonden</td></tr>\'); return; }
     songs.forEach(function(s, i) {
+        var playBtn = s.preview_url
+            ? \'<td><button class="btn btn-xs btn-outline-secondary" title="Preview afspelen" onclick="toggleTablePreview(\' + i + \')"><i class="bi bi-play-fill" id="play-icon-\' + i + \'"></i></button></td>\'
+            : \'<td></td>\';
         tbody.append(
             \'<tr data-title="\' + escHtml(s.title) + \'" data-artist="\' + escHtml(s.artist) + \'">\' +
+            playBtn +
             \'<td class="text-muted">\' + (i+1) + \'</td>\' +
             \'<td class="fw-semibold">\' + escHtml(s.title) + \'</td>\' +
             \'<td class="text-muted">\' + escHtml(s.artist) + \'</td>\' +
@@ -222,6 +243,8 @@ function openAddSong() {
     $("#songModalTitle").text("Nummer toevoegen");
     $("#song-form")[0].reset();
     $("#song-id").val("");
+    $("#song-preview-url").val("");
+    $("#song-duplicate-warning").hide();
     $("#search-results").empty();
     new bootstrap.Modal("#songModal").show();
 }
@@ -238,9 +261,33 @@ function openEditSong(i) {
     $("#song-duration").val(s.duration);
     $("#song-starts").val(s.starts);
     $("#song-description").val(s.description);
+    $("#song-preview-url").val(s.preview_url || "");
+    $("#song-duplicate-warning").hide();
     $("#search-results").empty();
     new bootstrap.Modal("#songModal").show();
 }
+
+function checkDuplicate() {
+    var title = $("#song-title").val().trim().toLowerCase();
+    var artist = $("#song-artist").val().trim().toLowerCase();
+    var editingId = $("#song-id").val();
+    $("#song-duplicate-warning").hide();
+    if (!title) return;
+    var matches = _songsList.filter(function(s) {
+        if (editingId && s.id == editingId) return false;
+        var sameTitle = s.title.trim().toLowerCase() === title;
+        var sameArtist = !artist || s.artist.trim().toLowerCase() === artist;
+        return sameTitle && sameArtist;
+    });
+    if (matches.length) {
+        var names = matches.map(function(s) {
+            return \'"\' + escHtml(s.title) + \'" — \' + escHtml(s.artist);
+        }).join(\', \');
+        $("#song-duplicate-warning").html(\'<i class="bi bi-exclamation-triangle me-1"></i>Al in repertoire: \' + names).show();
+    }
+}
+
+$("#song-title, #song-artist").on("input", checkDuplicate);
 
 function saveSong() {
     var data = {
@@ -252,6 +299,7 @@ function saveSong() {
         duration: $("#song-duration").val().trim(),
         starts: $("#song-starts").val().trim(),
         description: $("#song-description").val().trim(),
+        preview_url: $("#song-preview-url").val(),
         band_id: ' . ($user['band_id'] ?? 'null') . '
     };
     if (!data.title || !data.artist) { alert("Titel en artiest zijn verplicht."); return; }
@@ -289,13 +337,13 @@ function searchMusic() {
     $("#search-results").html(\'<div class="search-loading"><i class="bi bi-hourglass-split"></i> Zoeken...</div>\');
     $.get("api/search.php", {q: q}, function(data) {
         _searchResults = data.results || [];
-        renderSearchResults(_searchResults, data.source || "");
+        renderSearchResults(_searchResults, data.source || "", data.spotify_no_bpm || false);
     }).fail(function() {
         $("#search-results").html(\'<div class="search-loading text-danger">Zoeken mislukt.</div>\');
     });
 }
 
-function renderSearchResults(results, source) {
+function renderSearchResults(results, source, spotifyNoBpm) {
     if (!results.length) {
         $("#search-results").html(\'<div class="search-loading">Geen resultaten gevonden.</div>\');
         return;
@@ -303,8 +351,11 @@ function renderSearchResults(results, source) {
     var sourceNames = {tunebat: "Tunebat", getsongbpm: "GetSongBPM", spotify: "Spotify", musicbrainz: "MusicBrainz"};
     var hasBpm = results.some(function(r) { return r.bpm; });
     var src = sourceNames[source] || source;
-    var lbl = src + (hasBpm ? \' <span class="text-success">· BPM ✓</span>\' : \' <span class="text-muted">· geen BPM</span>\');
-    var html = \'<div class="search-source">\' + lbl + \'</div><div class="search-result-list">\';
+    var bpmLbl = hasBpm ? \' <span class="text-success">· BPM ✓</span>\'
+               : (source === \'spotify\' && spotifyNoBpm)
+                   ? \' <span class="text-warning">· geen BPM <small>(audio-features gedepreceerd — gebruik GetSongBPM)</small></span>\'
+                   : \' <span class="text-muted">· geen BPM</span>\';
+    var html = \'<div class="search-source">\' + src + bpmLbl + \'</div><div class="search-result-list">\';
     results.forEach(function(r, i) {
         var badges = \'\';
         if (r.bpm)                badges += \'<span class="bpm-badge">\' + r.bpm + \'</span> \';
@@ -314,13 +365,18 @@ function renderSearchResults(results, source) {
         if (r.danceability != null) badges += \'<span class="search-badge" title="Dansbaar">💃\' + r.danceability + \'%</span> \';
         if (r.valence != null)    badges += \'<span class="search-badge" title="Sfeer / vrolijkheid">\' + valenceEmoji(r.valence) + r.valence + \'%</span> \';
         if (r.popularity != null) badges += \'<span class="search-badge search-badge-pop" title="Populariteit">★\' + r.popularity + \'</span>\';
-        html += \'<button type="button" class="search-result-item" onclick="pickSearchResult(\' + i + \')">\'
+        var playBtn = r.preview_url
+            ? \'<button type="button" class="btn btn-xs btn-outline-secondary me-2 flex-shrink-0" title="Preview afspelen" onclick="event.stopPropagation(); toggleSearchPreview(\' + i + \')"><i class="bi bi-play-fill" id="sr-play-\' + i + \'"></i></button>\'
+            : \'\';
+        html += \'<div class="search-result-item d-flex align-items-center gap-1">\'
+             + playBtn
+             + \'<button type="button" class="flex-grow-1 text-start border-0 bg-transparent p-0" onclick="pickSearchResult(\' + i + \')">\'
              + \'<div class="d-flex justify-content-between align-items-center gap-2">\'
              + \'<div class="min-w-0"><div class="search-result-title text-truncate">\' + escHtml(r.title) + \'</div>\'
              + \'<div class="search-result-artist text-truncate">\' + escHtml(r.artist)
              + (r.duration ? \' <span class="search-result-dur">\' + r.duration + \'</span>\' : \'\') + \'</div></div>\'
              + \'<div class="search-result-badges flex-shrink-0">\' + badges + \'</div>\'
-             + \'</div></button>\';
+             + \'</div></button></div>\';
     });
     html += \'</div>\';
     $("#search-results").html(html);
@@ -335,19 +391,72 @@ function valenceEmoji(v) {
 function pickSearchResult(i) {
     var r = _searchResults[i];
     if (!r) return;
+    stopPreview();
     $("#song-title").val(r.title);
     $("#song-artist").val(r.artist);
-    if (r.duration) $("#song-duration").val(r.duration);
-    if (r.bpm)      $("#song-bpm").val(r.bpm);
+    if (r.duration)     $("#song-duration").val(r.duration);
+    if (r.bpm)          $("#song-bpm").val(r.bpm);
+    if (r.preview_url)  $("#song-preview-url").val(r.preview_url);
     if (r.key) {
-        // Store key with Camelot notation so its visible in the song overview
         var keyVal = r.key;
         if (r.camelot) keyVal += \' (\' + r.camelot + \')\';
         $("#song-key").val(keyVal);
     }
     $("#search-results").empty();
     _searchResults = [];
+    checkDuplicate();
 }
+
+/* ---- Preview audio player ---- */
+var _previewAudio   = null;
+var _playingType    = null; // \'search\' or \'table\'
+var _playingIdx     = -1;
+
+function stopPreview() {
+    if (_previewAudio) {
+        _previewAudio.pause();
+        _previewAudio = null;
+    }
+    if (_playingType === \'search\' && _playingIdx >= 0) {
+        $("#sr-play-" + _playingIdx).removeClass("bi-stop-fill").addClass("bi-play-fill");
+    }
+    if (_playingType === \'table\' && _playingIdx >= 0) {
+        $("#play-icon-" + _playingIdx).removeClass("bi-stop-fill").addClass("bi-play-fill");
+    }
+    _playingType = null;
+    _playingIdx  = -1;
+}
+
+function toggleSearchPreview(i) {
+    var r = _searchResults[i];
+    if (!r || !r.preview_url) return;
+    if (_playingType === \'search\' && _playingIdx === i) { stopPreview(); return; }
+    stopPreview();
+    _playingType = \'search\';
+    _playingIdx  = i;
+    $("#sr-play-" + i).removeClass("bi-play-fill").addClass("bi-stop-fill");
+    _previewAudio = new Audio(r.preview_url);
+    _previewAudio.volume = 0.6;
+    _previewAudio.play();
+    _previewAudio.onended = stopPreview;
+}
+
+function toggleTablePreview(i) {
+    var s = _songsList[i];
+    if (!s || !s.preview_url) return;
+    if (_playingType === \'table\' && _playingIdx === i) { stopPreview(); return; }
+    stopPreview();
+    _playingType = \'table\';
+    _playingIdx  = i;
+    $("#play-icon-" + i).removeClass("bi-play-fill").addClass("bi-stop-fill");
+    _previewAudio = new Audio(s.preview_url);
+    _previewAudio.volume = 0.6;
+    _previewAudio.play();
+    _previewAudio.onended = stopPreview;
+}
+
+// Stop audio when modal closes
+document.getElementById("songModal").addEventListener("hidden.bs.modal", stopPreview);
 </script>';
 require __DIR__ . '/includes/footer.php';
 ?>

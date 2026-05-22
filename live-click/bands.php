@@ -86,6 +86,11 @@ require __DIR__ . '/includes/header.php';
             </div>
             <div class="modal-body">
                 Weet je zeker dat je <strong id="leave-band-name"></strong> wilt verlaten?
+                <div id="leave-leader-warning" class="alert alert-warning py-2 mt-2 mb-0 small" style="display:none">
+                    <i class="bi bi-exclamation-triangle me-1"></i>
+                    Je bent de bandleider. Het volgende lid wordt automatisch de nieuwe leider.
+                    Is er niemand anders, dan wordt de band verwijderd.
+                </div>
             </div>
             <div class="modal-footer border-secondary">
                 <button class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
@@ -124,6 +129,10 @@ function loadAllUsers() {
     });
 }
 
+function isLeaderOf(b) {
+    return (b.members || []).some(function(m) { return m.id == _myUserId && m.role === "leader"; });
+}
+
 function renderBands(bands) {
     var c = $("#bands-container"); c.empty();
     if (!bands.length) {
@@ -134,12 +143,15 @@ function renderBands(bands) {
         return;
     }
     bands.forEach(function(b, i) {
-        var isActive = (b.id == ' . (int)($user['band_id'] ?? 0) . ');
-        var activeBadge = isActive ? \'<span class="badge bg-danger ms-2 align-middle" style="font-size:0.65rem">Actief</span>\' : \'\';
+        var isActive    = (b.id == ' . (int)($user['band_id'] ?? 0) . ');
+        var amLeader    = isLeaderOf(b);
+        var canManage   = amLeader || _isAdmin;
 
-        // Header buttons
-        var editBtn = \'<button class="btn btn-xs btn-outline-secondary" onclick="openEditBand(\' + i + \')" title="Bewerken"><i class="bi bi-pencil"></i></button>\';
-        var leaveBtn = \'<button class="btn btn-xs btn-outline-warning ms-1" onclick="askLeave(\' + b.id + \',\\\'\' + escHtml(b.name) + \'\\\')" title="Band verlaten"><i class="bi bi-box-arrow-left"></i></button>\';
+        var activeBadge = isActive ? \'<span class="badge bg-danger ms-2 align-middle" style="font-size:0.65rem">Actief</span>\' : \'\';
+        var editBtn  = canManage
+            ? \'<button class="btn btn-xs btn-outline-secondary" onclick="openEditBand(\' + i + \')" title="Bewerken"><i class="bi bi-pencil"></i></button>\'
+            : \'\';
+        var leaveBtn = \'<button class="btn btn-xs btn-outline-warning ms-1" onclick="askLeave(\' + b.id + \',\\\'\' + escHtml(b.name) + \'\\\',\' + (amLeader ? "true" : "false") + \')" title="Band verlaten"><i class="bi bi-box-arrow-left"></i></button>\';
         var deleteBtn = _isAdmin
             ? \'<button class="btn btn-xs btn-outline-danger ms-1" onclick="askDeleteBand(\' + b.id + \',\\\'\' + escHtml(b.name) + \'\\\')" title="Verwijderen"><i class="bi bi-trash"></i></button>\'
             : \'\';
@@ -147,45 +159,38 @@ function renderBands(bands) {
         // Members list
         var membersHtml = \'\';
         (b.members || []).forEach(function(m) {
-            var isMe = (m.id == _myUserId);
-            var removeBtn = !isMe
-                ? \'<button class="btn btn-xs btn-link text-danger p-0 ms-2" onclick="removeMember(\' + b.id + \',\' + m.id + \',\\\'\' + escHtml(m.username) + \'\\\')" title="Toegang ontzeggen">\'
-                  + \'<i class="bi bi-x-lg"></i></button>\'
+            var isMe       = (m.id == _myUserId);
+            var isLeader   = (m.role === "leader");
+            var leaderIcon = isLeader ? \'<i class="bi bi-star-fill text-warning me-1" title="Bandleider" style="font-size:0.65rem"></i>\' : \'\';
+            var removeBtn  = (!isMe && canManage)
+                ? \'<button class="btn btn-xs btn-link text-danger p-0 ms-auto" onclick="removeMember(\' + b.id + \',\' + m.id + \',\\\'\' + escHtml(m.username) + \'\\\')" title="Toegang ontzeggen"><i class="bi bi-x-lg"></i></button>\'
                 : \'\';
             membersHtml += \'<div class="d-flex align-items-center py-1 border-bottom border-secondary" style="border-bottom-style:dashed!important">\'
-                + \'<i class="bi bi-person-fill text-muted me-2 small"></i>\'
+                + leaderIcon
                 + \'<span class="small \' + (isMe ? "text-white" : "text-muted") + \'">\' + escHtml(m.username) + (isMe ? \' <span class="text-muted">(jij)</span>\' : \'\') + \'</span>\'
                 + removeBtn
                 + \'</div>\';
         });
         if (!membersHtml) membersHtml = \'<span class="text-muted small">Geen leden</span>\';
 
+        var inviteFooter = canManage
+            ? \'<div class="card-footer border-secondary p-0">\'
+              + \'<button class="btn btn-link btn-sm text-muted w-100 text-start px-3 py-2" onclick="toggleInvite(\' + b.id + \')"><i class="bi bi-link-45deg me-1"></i> Uitnodigingslink</button>\'
+              + \'<div id="invite-\' + b.id + \'" class="px-3 pb-3" style="display:none"></div>\'
+              + \'</div>\'
+            : \'\';
+
         c.append(\'<div class="col-md-6 col-lg-4">\'
             + \'<div class="card h-100 d-flex flex-column">\'
             + \'<div class="card-body pb-2">\'
-
-            // Title row
             + \'<div class="d-flex justify-content-between align-items-start mb-2">\'
             + \'<h6 class="fw-bold mb-0">\' + escHtml(b.name) + activeBadge + \'</h6>\'
             + \'<div class="d-flex">\' + editBtn + leaveBtn + deleteBtn + \'</div>\'
             + \'</div>\'
-
-            // Description
             + (b.description ? \'<p class="text-muted small mb-2">\' + escHtml(b.description) + \'</p>\' : \'\')
-
-            // Members
             + \'<div class="mb-2">\' + membersHtml + \'</div>\'
-
             + \'</div>\'
-
-            // Invite footer
-            + \'<div class="card-footer border-secondary p-0">\'
-            + \'<button class="btn btn-link btn-sm text-muted w-100 text-start px-3 py-2" onclick="toggleInvite(\' + b.id + \')">\'
-            + \'<i class="bi bi-link-45deg me-1"></i> Uitnodigingslink\'
-            + \'</button>\'
-            + \'<div id="invite-\' + b.id + \'" class="px-3 pb-3" style="display:none"></div>\'
-            + \'</div>\'
-
+            + inviteFooter
             + \'</div></div>\');
     });
 }
@@ -254,9 +259,11 @@ function removeMember(bandId, userId, username) {
 
 // ---- Leave band ----
 
-function askLeave(bandId, name) {
+function askLeave(bandId, name, amLeader) {
     _leaveBandId = bandId;
     $("#leave-band-name").text(name);
+    var warning = $("#leave-leader-warning");
+    if (amLeader) { warning.show(); } else { warning.hide(); }
     new bootstrap.Modal("#leaveModal").show();
 }
 

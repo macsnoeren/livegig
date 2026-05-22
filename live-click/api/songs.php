@@ -25,11 +25,12 @@ if ($method === 'POST') {
     $artist = trim($data['artist'] ?? '');
     if (!$title || !$artist) { echo json_encode(['ok'=>false,'error'=>'Titel en artiest verplicht']); exit; }
 
-    $bpm    = isset($data['bpm']) && $data['bpm'] !== '' ? (int)$data['bpm'] : null;
-    $key    = trim($data['song_key'] ?? '') ?: null;
-    $dur    = trim($data['duration']    ?? '') ?: null;
-    $starts = trim($data['starts']      ?? '') ?: null;
-    $desc   = trim($data['description'] ?? '') ?: null;
+    $bpm        = isset($data['bpm']) && $data['bpm'] !== '' ? (int)$data['bpm'] : null;
+    $key        = trim($data['song_key']    ?? '') ?: null;
+    $dur        = trim($data['duration']    ?? '') ?: null;
+    $starts     = trim($data['starts']      ?? '') ?: null;
+    $desc       = trim($data['description'] ?? '') ?: null;
+    $previewUrl = trim($data['preview_url'] ?? '') ?: null;
     // band_id: treat empty string / "null" / 0 all as NULL
     $rawBand = $data['band_id'] ?? null;
     $bandId  = ($rawBand !== null && $rawBand !== '' && $rawBand !== 'null' && (int)$rawBand > 0)
@@ -37,11 +38,11 @@ if ($method === 'POST') {
 
     try {
         if ($id) {
-            $db->prepare('UPDATE songs SET title=?,artist=?,bpm=?,song_key=?,duration=?,starts=?,description=? WHERE id=?')
-               ->execute([$title, $artist, $bpm, $key, $dur, $starts, $desc, $id]);
+            $db->prepare('UPDATE songs SET title=?,artist=?,bpm=?,song_key=?,duration=?,starts=?,description=?,preview_url=? WHERE id=?')
+               ->execute([$title, $artist, $bpm, $key, $dur, $starts, $desc, $previewUrl, $id]);
         } else {
-            $db->prepare('INSERT INTO songs (title,artist,bpm,song_key,duration,starts,description,band_id,created_by) VALUES (?,?,?,?,?,?,?,?,?)')
-               ->execute([$title, $artist, $bpm, $key, $dur, $starts, $desc, $bandId, currentUser()['id']]);
+            $db->prepare('INSERT INTO songs (title,artist,bpm,song_key,duration,starts,description,preview_url,band_id,created_by) VALUES (?,?,?,?,?,?,?,?,?,?)')
+               ->execute([$title, $artist, $bpm, $key, $dur, $starts, $desc, $previewUrl, $bandId, currentUser()['id']]);
             $id = $db->lastInsertId();
         }
         echo json_encode(['ok' => true, 'id' => $id]);

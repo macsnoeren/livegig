@@ -87,6 +87,9 @@ function initSchema(PDO $db): void {
         );
     ");
 
+    // Add columns introduced after initial schema (safe to run on existing DBs)
+    try { $db->exec('ALTER TABLE songs ADD COLUMN preview_url TEXT'); } catch (PDOException $e) {}
+
     // Seed default admin if no users exist
     $count = $db->query('SELECT COUNT(*) FROM users')->fetchColumn();
     if ($count == 0) {
