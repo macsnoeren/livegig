@@ -78,13 +78,34 @@ if ($method === 'POST') {
 }
 
 if ($method === 'DELETE') {
-    requireAdmin();
-    $data = json_decode(file_get_contents('php://input'), true);
-    $id   = (int)($data['id'] ?? 0);
-    if (!$id) { echo json_encode(['ok' => false, 'error' => 'Geen id']); exit; }
-    $db->prepare('DELETE FROM bands WHERE id=?')->execute([$id]);
-    echo json_encode(['ok' => true]);
-    exit;
+    $data   = json_decode(file_get_contents('php://input'), true);
+    $bandId = (int)($data['band_id'] ?? 0);
+    $userId = (int)($data['user_id'] ?? 0);
+    $id     = (int)($data['id'] ?? 0);
+
+    if ($bandId && $userId) {
+        // Remove a member — allowed for admins or fellow band members
+        if (!$isAdmin) {
+            $chk = $db->prepare('SELECT 1 FROM band_members WHERE band_id=? AND user_id=?');
+            $chk->execute([$bandId, $user['id']]);
+            if (!$chk->fetch()) {
+                echo json_encode(['ok' => false, 'error' => 'Geen toegang']); exit;
+            }
+        }
+        $db->prepare('DELETE FROM band_members WHERE band_id=? AND user_id=?')->execute([$bandId, $userId]);
+        echo json_encode(['ok' => true]);
+        exit;
+    }
+
+    if ($id) {
+        // Delete entire band — admin only
+        requireAdmin();
+        $db->prepare('DELETE FROM bands WHERE id=?')->execute([$id]);
+        echo json_encode(['ok' => true]);
+        exit;
+    }
+
+    echo json_encode(['ok' => false, 'error' => 'Geen id']); exit;
 }
 
 http_response_code(405);

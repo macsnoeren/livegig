@@ -75,6 +75,16 @@ function initSchema(PDO $db): void {
             FOREIGN KEY (setlist_id) REFERENCES setlists(id) ON DELETE CASCADE,
             FOREIGN KEY (song_id) REFERENCES songs(id) ON DELETE CASCADE
         );
+
+        CREATE TABLE IF NOT EXISTS band_invites (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            band_id INTEGER NOT NULL UNIQUE,
+            token TEXT NOT NULL UNIQUE,
+            created_by INTEGER NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (band_id) REFERENCES bands(id) ON DELETE CASCADE,
+            FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
+        );
     ");
 
     // Seed default admin if no users exist

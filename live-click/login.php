@@ -8,7 +8,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
     if (login($username, $password)) {
-        header('Location: dashboard.php');
+        $next = $_GET['next'] ?? '';
+        // Only allow safe relative redirects (no protocol, no double slash)
+        if ($next && preg_match('/^[a-zA-Z0-9_\-\.\/\?=&%]+$/', $next) && !str_starts_with($next, '//')) {
+            header('Location: ' . $next);
+        } else {
+            header('Location: dashboard.php');
+        }
         exit;
     }
     $error = 'Gebruikersnaam of wachtwoord onjuist.';
