@@ -3,7 +3,13 @@
     "allow": [
       "WebSearch",
       "WebFetch(domain:developer.spotify.com)",
-      "WebFetch(domain:api.tunebat.com)"
+      "WebFetch(domain:api.tunebat.com)",
+      "WebFetch(domain:tunebat.com)",
+      "Bash(curl -s -H \"User-Agent: Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\) AppleWebKit/537.36\" -H \"Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\" -H \"Accept-Language: en-US,en;q=0.5\" -H \"Referer: https://tunebat.com/\" https://tunebat.com/)",
+      "Bash(curl -s -H \"User-Agent: Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\) AppleWebKit/537.36\" -H \"Accept: application/json\" -H \"Referer: https://tunebat.com/\" https://api.tunebat.com/api/tracks/data?q=highway+to+hell\\\\&p=1)",
+      "Bash(curl -v -H \"User-Agent: Mozilla/5.0\" https://api.tunebat.com/api/tracks/data?q=highway+to+hell\\\\&p=1)",
+      "Bash(curl -s 'https://api.deezer.com/search?q=highway+to+hell+acdc&limit=5')",
+      "Bash(curl -s 'https://api.deezer.com/track/1374987')"
     ]
   }
 }

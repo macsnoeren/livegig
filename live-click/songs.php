@@ -305,10 +305,13 @@ function renderSearchResults(results, source) {
     var html = \'<div class="search-source">\' + lbl + \'</div><div class="search-result-list">\';
     results.forEach(function(r, i) {
         var badges = \'\';
-        if (r.bpm)          badges += \'<span class="bpm-badge">\' + r.bpm + \'</span> \';
-        if (r.key)          badges += \'<span class="search-badge">\' + escHtml(r.key) + \'</span> \';
-        if (r.energy)       badges += \'<span class="search-badge" title="Energie">⚡\' + r.energy + \'%</span> \';
-        if (r.danceability) badges += \'<span class="search-badge" title="Dansbaar">💃\' + r.danceability + \'%</span>\';
+        if (r.bpm)                badges += \'<span class="bpm-badge">\' + r.bpm + \'</span> \';
+        if (r.key)                badges += \'<span class="search-badge">\' + escHtml(r.key) + \'</span> \';
+        if (r.camelot)            badges += \'<span class="search-badge search-badge-camelot" title="Camelot">\' + escHtml(r.camelot) + \'</span> \';
+        if (r.energy != null)     badges += \'<span class="search-badge" title="Energie">⚡\' + r.energy + \'%</span> \';
+        if (r.danceability != null) badges += \'<span class="search-badge" title="Dansbaar">💃\' + r.danceability + \'%</span> \';
+        if (r.valence != null)    badges += \'<span class="search-badge" title="Sfeer / vrolijkheid">\' + valenceEmoji(r.valence) + r.valence + \'%</span> \';
+        if (r.popularity != null) badges += \'<span class="search-badge search-badge-pop" title="Populariteit">★\' + r.popularity + \'</span>\';
         html += \'<button type="button" class="search-result-item" onclick="pickSearchResult(\' + i + \')">\'
              + \'<div class="d-flex justify-content-between align-items-center gap-2">\'
              + \'<div class="min-w-0"><div class="search-result-title text-truncate">\' + escHtml(r.title) + \'</div>\'
@@ -321,6 +324,12 @@ function renderSearchResults(results, source) {
     $("#search-results").html(html);
 }
 
+function valenceEmoji(v) {
+    if (v >= 70) return \'😄\';
+    if (v >= 40) return \'😐\';
+    return \'😔\';
+}
+
 function pickSearchResult(i) {
     var r = _searchResults[i];
     if (!r) return;
@@ -328,7 +337,12 @@ function pickSearchResult(i) {
     $("#song-artist").val(r.artist);
     if (r.duration) $("#song-duration").val(r.duration);
     if (r.bpm)      $("#song-bpm").val(r.bpm);
-    if (r.key)      $("#song-key").val(r.key);
+    if (r.key) {
+        // Store key with Camelot notation so it's visible in the song overview
+        var keyVal = r.key;
+        if (r.camelot) keyVal += \' (\' + r.camelot + \')\';
+        $("#song-key").val(keyVal);
+    }
     $("#search-results").empty();
     _searchResults = [];
 }
