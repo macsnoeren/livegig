@@ -116,9 +116,17 @@ function renderSetlists(lists) {
     if (!lists.length) { c.html(\'<div class="col-12 text-muted">Nog geen setlists. Maak er één aan!</div>\'); return; }
     lists.forEach(function(sl, slIdx) {
         var songs = sl.songs || [];
+        var dur = calcSetlistDuration(songs);
+        var durTxt = songs.length ? (dur.estimated ? "~" : "") + fmtSecs(dur.totalSecs) : "";
+        var estTip = dur.estimated ? " — " + dur.estimated + " nummer(s) zonder duur, geschat op gemiddeld " + fmtSecs(dur.avg) : "";
+        var estIcon = dur.estimated ? \' <i class="bi bi-dash-circle text-warning ms-1" title="Geschatte duur\' + estTip + \'"></i>\' : "";
+        var durBadge = durTxt ? \'<span class="text-muted" style="font-size:0.75rem;font-weight:400"><i class="bi bi-clock me-1"></i>\' + durTxt + estIcon + \'</span>\' : \'\';
         var html = \'<div class="col-md-6 col-xl-4"><div class="card setlist-card">\' +
             \'<div class="card-header d-flex justify-content-between align-items-center">\' +
+            \'<div class="d-flex align-items-center gap-2">\' +
             \'<span class="fw-bold">\' + escHtml(sl.name) + \'</span>\' +
+            durBadge +
+            \'</div>\' +
             \'<div class="d-flex gap-1">\' +
             \'<button class="btn btn-xs btn-outline-secondary" onclick="openEditSetlist(\' + sl.id + \')"><i class="bi bi-pencil"></i></button>\' +
             \'<button class="btn btn-xs btn-outline-danger" onclick="openDeleteSetlist(\' + sl.id + \',\\\'\' + escHtml(sl.name) + \'\\\')"><i class="bi bi-trash"></i></button>\' +
@@ -130,14 +138,7 @@ function renderSetlists(lists) {
                 + \'<span class="bpm-badge">\' + (s.bpm || "--") + \'</span>\'
                 + \'</button>\';
         });
-        var dur = calcSetlistDuration(songs);
-        var durTxt = songs.length ? (dur.estimated ? "~" : "") + fmtSecs(dur.totalSecs) : "";
-        var estTip = dur.estimated ? " — " + dur.estimated + " nummer(s) zonder duur, geschat op gemiddeld " + fmtSecs(dur.avg) : "";
-        var estIcon = dur.estimated ? \' <i class="bi bi-dash-circle text-warning ms-1" title="Geschatte duur\' + estTip + \'"></i>\' : "";
-        html += \'</div><div class="card-footer text-muted small d-flex justify-content-between align-items-center">\' +
-            \'<span>\' + songs.length + \' nummer\' + (songs.length !== 1 ? \'s\' : \'\') + \'</span>\' +
-            (durTxt ? \'<span><i class="bi bi-clock me-1"></i>\' + durTxt + estIcon + \'</span>\' : \'\') +
-            \'</div></div></div>\';
+        html += \'</div></div></div>\';
         c.append(html);
     });
 }
