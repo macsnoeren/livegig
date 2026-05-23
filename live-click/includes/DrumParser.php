@@ -35,9 +35,16 @@ class DrumParser {
                 $content = $line;
             }
 
+            // Anything after the last valid symbol (non-symbol, non-whitespace) is a comment
+            $comment = '';
+            if (preg_match('/^([-|*^ \t]*)([^-|*^ \t].*)$/', rtrim($content), $m)) {
+                $content = $m[1];
+                $comment = trim($m[2]);
+            }
+
             $groups = self::tokenizeGroups($content);
             if (!empty($groups)) {
-                $sections[] = ['label' => $label, 'groups' => $groups];
+                $sections[] = ['label' => $label, 'groups' => $groups, 'comment' => $comment];
             }
         }
         return $sections;

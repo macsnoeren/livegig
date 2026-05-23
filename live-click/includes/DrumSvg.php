@@ -41,6 +41,10 @@ class DrumSvg {
     const C_REST     = '#cc0000'; // rest / quiet  (-)  RED
     const C_CRASH    = '#c8a000'; // cymbal / crash (^)  GOLD
     const C_BRAKE    = '#ff6600'; // brake / break  (*)  ORANGE
+    const C_COMMENT  = '#666';    // inline comment text
+
+    const COMMENT_GAP     = 14;   // px between last bar and comment text
+    const COMMENT_CHAR_W  = 6.5;  // estimated px per character (11 px system-ui italic)
 
     // ────────────────────────────────────────────────────────────────────────
 
@@ -51,6 +55,9 @@ class DrumSvg {
         $maxSpan = 0;
         foreach ($sections as $sec) {
             $s = self::contentSpan($sec['groups']);
+            if (!empty($sec['comment'])) {
+                $s += self::COMMENT_GAP + (int)ceil(strlen($sec['comment']) * self::COMMENT_CHAR_W);
+            }
             if ($s > $maxSpan) $maxSpan = $s;
         }
 
@@ -209,6 +216,18 @@ class DrumSvg {
                         . ' stroke-linecap="round"/>';
                 }
             }
+        }
+
+        // ── Inline comment (italic, right of last bar) ────────────────────
+        if (!empty($sec['comment'])) {
+            $o .= '<text'
+                . ' x="' . ($xLast + self::COMMENT_GAP) . '"'
+                . ' y="' . ($bl - 2) . '"'
+                . ' font-family="system-ui,Arial,sans-serif"'
+                . ' font-size="11"'
+                . ' font-style="italic"'
+                . ' fill="' . self::C_COMMENT . '">'
+                . htmlspecialchars($sec['comment'], ENT_XML1) . '</text>';
         }
 
         return $o;
