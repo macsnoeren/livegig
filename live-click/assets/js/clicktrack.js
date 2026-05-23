@@ -115,12 +115,30 @@ function selectSong(song) {
     var card = document.getElementById('song-detail-card');
     if (card) {
         card.style.display = '';
-        document.getElementById('detail-title').textContent  = song.title;
-        document.getElementById('detail-artist').textContent = song.artist;
-        document.getElementById('detail-bpm').textContent    = song.bpm || '--';
-        document.getElementById('detail-starts').textContent = song.starts || '--';
-        document.getElementById('detail-desc').innerHTML     = song.description || '';
+        document.getElementById('detail-title').textContent    = song.title;
+        document.getElementById('detail-artist').textContent   = song.artist;
+        document.getElementById('detail-bpm').textContent      = song.bpm || '--';
+        document.getElementById('detail-starts').textContent   = song.starts || '--';
+        document.getElementById('detail-desc').innerHTML       = song.description || '';
         document.getElementById('detail-duration').textContent = song.duration || '';
+
+        var drumDiv = document.getElementById('detail-drum');
+        if (drumDiv) {
+            if (song.drum_notation) {
+                $.ajax({
+                    url: 'api/drum_preview.php', type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({notation: song.drum_notation}),
+                    dataType: 'json',
+                    success: function(r) {
+                        if (r.ok && r.svg) { drumDiv.innerHTML = r.svg; drumDiv.style.display = ''; }
+                    }
+                });
+            } else {
+                drumDiv.innerHTML = '';
+                drumDiv.style.display = 'none';
+            }
+        }
     }
 
     // Restart click track at new BPM if already running

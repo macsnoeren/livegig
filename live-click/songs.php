@@ -121,6 +121,20 @@ require __DIR__ . '/includes/header.php';
                             <label class="form-label">Beschrijving / notities</label>
                             <textarea id="song-description" class="form-control" rows="2"></textarea>
                         </div>
+                        <div class="col-12">
+                            <label class="form-label d-flex justify-content-between align-items-baseline">
+                                <span><i class="bi bi-music-note-list"></i> Drumstructuur</span>
+                                <span class="text-muted" style="font-size:0.72rem;font-weight:400">
+                                    <code class="text-muted">|</code> maat &nbsp;
+                                    <code class="text-muted">*</code> rust &nbsp;
+                                    <code class="text-muted">^</code> crash &nbsp;
+                                    <code class="text-muted">-</code> break
+                                </span>
+                            </label>
+                            <input type="text" id="song-drum-notation" class="form-control font-monospace"
+                                   placeholder="Bijv. ||||^|||*||||-" autocomplete="off" spellcheck="false">
+                            <div id="drum-preview" class="mt-2 rounded overflow-hidden" style="display:none"></div>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -216,11 +230,12 @@ function renderSongsTable(songs) {
         var playBtn = (s.spotify_id || s.preview_url)
             ? \'<td><button class="btn btn-xs btn-outline-success" title="Afspelen via Spotify" onclick="toggleTablePreview(\' + i + \')"><i class="bi bi-play-fill" id="play-icon-\' + i + \'"></i></button></td>\'
             : \'<td></td>\';
+        var drumIcon = s.drum_notation ? \' <i class="bi bi-music-note-list text-warning ms-1" title="Drumstructuur beschikbaar" style="font-size:0.7rem"></i>\' : \'\';
         tbody.append(
             \'<tr data-title="\' + escHtml(s.title) + \'" data-artist="\' + escHtml(s.artist) + \'">\' +
             playBtn +
             \'<td class="text-muted">\' + (i+1) + \'</td>\' +
-            \'<td class="fw-semibold">\' + escHtml(s.title) + \'</td>\' +
+            \'<td class="fw-semibold">\' + escHtml(s.title) + drumIcon + \'</td>\' +
             \'<td class="text-muted">\' + escHtml(s.artist) + \'</td>\' +
             \'<td class="text-center"><span class="bpm-badge">\' + (s.bpm || "--") + \'</span></td>\' +
             \'<td class="text-muted">\' + escHtml(s.duration || "") + \'</td>\' +
@@ -248,6 +263,8 @@ function openAddSong() {
     $("#song-id").val("");
     $("#song-preview-url").val("");
     $("#song-spotify-id").val("");
+    $("#song-drum-notation").val("");
+    $("#drum-preview").hide().empty();
     $("#song-duplicate-warning").hide();
     $("#search-results").empty();
     new bootstrap.Modal("#songModal").show();
@@ -267,8 +284,10 @@ function openEditSong(i) {
     $("#song-description").val(s.description);
     $("#song-preview-url").val(s.preview_url || "");
     $("#song-spotify-id").val(s.spotify_id || "");
+    $("#song-drum-notation").val(s.drum_notation || "");
     $("#song-duplicate-warning").hide();
     $("#search-results").empty();
+    refreshDrumPreview(s.drum_notation || "");
     new bootstrap.Modal("#songModal").show();
 }
 
@@ -306,6 +325,7 @@ function saveSong() {
         description: $("#song-description").val().trim(),
         preview_url: $("#song-preview-url").val(),
         spotify_id:  $("#song-spotify-id").val(),
+        drum_notation: $("#song-drum-notation").val().trim(),
         band_id: ' . ($user['band_id'] ?? 'null') . '
     };
     if (!data.title || !data.artist) { alert("Titel en artiest zijn verplicht."); return; }
@@ -412,6 +432,30 @@ function pickSearchResult(i) {
     $("#search-results").empty();
     _searchResults = [];
     checkDuplicate();
+}
+
+/* ---- Drum notation live preview ---- */
+var _drumTimer = null;
+$("#song-drum-notation").on("input", function() {
+    clearTimeout(_drumTimer);
+    var val = $(this).val();
+    _drumTimer = setTimeout(function() { refreshDrumPreview(val); }, 280);
+});
+
+function refreshDrumPreview(notation) {
+    notation = (notation || "").trim();
+    if (!notation) { $("#drum-preview").hide().empty(); return; }
+    $.ajax({
+        url: "api/drum_preview.php",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({notation: notation}),
+        dataType: "json",
+        success: function(r) {
+            if (r.ok && r.svg) { $("#drum-preview").html(r.svg).show(); }
+            else               { $("#drum-preview").hide().empty(); }
+        }
+    });
 }
 
 /* ---- Preview audio / Spotify embed player ---- */

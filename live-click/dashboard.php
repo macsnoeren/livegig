@@ -56,6 +56,7 @@ require __DIR__ . '/includes/header.php';
                         <div class="text-muted small" id="detail-duration"></div>
                     </div>
                 </div>
+                <div id="detail-drum" class="mt-2 rounded overflow-hidden" style="display:none"></div>
             </div>
         </div>
 
