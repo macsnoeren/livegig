@@ -52,7 +52,7 @@ html, body { background-color: var(--bg); color: #e0e0e0; min-height: 100vh; }
 
 /* Spacer div replaces fixed padding-top so height is always exact */
 #nav-spacer { flex-shrink: 0; }
-#page-content { min-height: 100vh; }
+#page-content { min-height: 100vh; } /* overridden for dashboard by body.page-dashboard rules */
 
 /* Brand */
 .brand-name {
@@ -503,43 +503,67 @@ html, body { background-color: var(--bg); color: #e0e0e0; min-height: 100vh; }
 
 /* =========================================
    Dashboard — full-viewport, no page scroll
+   =========================================
+   Strategy: make <body> a flex-column that is
+   exactly 100dvh tall. nav-spacer takes its
+   natural height; #page-content gets the rest.
+   No calc() or CSS-variable tricks needed.
    ========================================= */
 
-/* page-content becomes a flex column on the dashboard so the alert
-   and the db-wrap together fill exactly the remaining viewport height */
-#page-content:has(.db-wrap),
-body.page-dashboard #page-content {
+body.page-dashboard {
+    height: 100dvh;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
-    height: calc(100vh - var(--nav-h, 90px));
+}
+
+body.page-dashboard #nav-spacer { flex-shrink: 0; }
+
+body.page-dashboard #page-content {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
 }
 
 .db-wrap {
     flex: 1;
+    min-height: 0;
     display: flex;
     flex-direction: column;
     padding: 10px 12px;
-    overflow: hidden;
-    min-height: 0;
+    gap: 0;
 }
 
+/* Bootstrap .row inside db-wrap: make it fill
+   remaining height. Force columns to be flex-columns
+   so cards can grow into them. */
 .db-wrap > .row {
     flex: 1;
     min-height: 0;
+    /* Remove default Bootstrap row min-height */
+    align-items: stretch;
 }
 
-/* Cards that should fill column height */
-.db-card {
+.db-wrap > .row > [class*="col"] {
     display: flex;
     flex-direction: column;
-    height: 100%;
     min-height: 0;
+    gap: 8px;
 }
 
-/* Scrollable list inside a db-card */
+/* A card that should stretch to fill its column */
+.db-card {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* The scrollable list inside a db-card */
 .db-list {
     flex: 1;
-    overflow-y: auto;
     min-height: 0;
+    overflow-y: auto;
 }

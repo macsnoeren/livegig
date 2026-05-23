@@ -21,10 +21,10 @@ require __DIR__ . '/includes/header.php';
 <?php endif; ?>
 
 <div class="db-wrap">
-    <div class="row g-2 h-100">
+    <div class="row g-2">
 
         <!-- Left: setlist -->
-        <div class="col-lg-4 d-flex flex-column">
+        <div class="col-lg-4">
             <div class="card db-card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <span><i class="bi bi-list-ol"></i> Actieve setlist</span>
@@ -40,7 +40,7 @@ require __DIR__ . '/includes/header.php';
         </div>
 
         <!-- Right: song detail + all songs -->
-        <div class="col-lg-8 d-flex flex-column gap-2">
+        <div class="col-lg-8">
 
             <div class="card" id="song-detail-card" style="display:none!important">
                 <div class="card-body py-2">
