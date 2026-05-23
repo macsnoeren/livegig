@@ -85,6 +85,15 @@ function initSchema(PDO $db): void {
             FOREIGN KEY (band_id) REFERENCES bands(id) ON DELETE CASCADE,
             FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
         );
+
+        CREATE TABLE IF NOT EXISTS remember_tokens (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            token_hash TEXT NOT NULL UNIQUE,
+            expires_at DATETIME NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        );
     ");
 
     // Add columns introduced after initial schema (safe to run on existing DBs)
@@ -93,6 +102,8 @@ function initSchema(PDO $db): void {
     try { $db->exec('ALTER TABLE songs ADD COLUMN drum_notation TEXT'); } catch (PDOException $e) {}
     try { $db->exec('ALTER TABLE songs ADD COLUMN drum_svg TEXT'); } catch (PDOException $e) {}
     try { $db->exec('ALTER TABLE songs ADD COLUMN drum_svg_updated_at DATETIME'); } catch (PDOException $e) {}
+    try { $db->exec('ALTER TABLE users ADD COLUMN totp_secret TEXT'); } catch (PDOException $e) {}
+    try { $db->exec('ALTER TABLE users ADD COLUMN totp_enabled INTEGER NOT NULL DEFAULT 0'); } catch (PDOException $e) {}
 
     // Seed default admin if no users exist
     $count = $db->query('SELECT COUNT(*) FROM users')->fetchColumn();

@@ -1,5 +1,9 @@
 <?php
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/totp.php';
+
+define('REMEMBER_COOKIE', 'lg_remember');
+define('REMEMBER_DAYS',   30);
 
 function sessionStart(): void {
     if (session_status() === PHP_SESSION_NONE) {
@@ -10,8 +14,11 @@ function sessionStart(): void {
 function requireLogin(): void {
     sessionStart();
     if (empty($_SESSION['user_id'])) {
-        header('Location: ' . appRelPath('login.php'));
-        exit;
+        // Try remember-me cookie before redirecting
+        if (!loginWithRememberToken()) {
+            header('Location: ' . appRelPath('login.php'));
+            exit;
+        }
     }
     // Always refresh band from DB so changes by admin are visible immediately.
     refreshSessionBand((int)$_SESSION['user_id']);
@@ -76,31 +83,146 @@ function currentUser(): ?array {
     ];
 }
 
-function login(string $username, string $password): bool {
+/**
+ * Verify credentials and start a login session.
+ * Returns:
+ *   'ok'  — logged in (no 2FA)
+ *   '2fa' — credentials OK, 2FA code required (pending data stored in session)
+ *   false — bad credentials
+ */
+function login(string $username, string $password): string|false {
     $db = getDB();
-    $stmt = $db->prepare('SELECT id, username, password_hash, role FROM users WHERE username = ?');
+    $stmt = $db->prepare('SELECT id, username, password_hash, role, totp_enabled, totp_secret FROM users WHERE username = ?');
     $stmt->execute([$username]);
     $user = $stmt->fetch();
     if (!$user || !password_verify($password, $user['password_hash'])) return false;
 
     sessionStart();
-    $_SESSION['user_id']       = $user['id'];
+
+    if ($user['totp_enabled']) {
+        // Store pending state; full session set only after code is verified
+        $_SESSION['2fa_pending_id']       = (int)$user['id'];
+        $_SESSION['2fa_pending_username'] = $user['username'];
+        $_SESSION['2fa_pending_role']     = $user['role'];
+        return '2fa';
+    }
+
+    _completeLogin($user);
+    return 'ok';
+}
+
+/** Complete login after credentials (and optionally 2FA) are verified. */
+function _completeLogin(array $user): void {
+    sessionStart();
+    $_SESSION['user_id']       = (int)$user['id'];
     $_SESSION['user_username'] = $user['username'];
     $_SESSION['user_role']     = $user['role'];
+    // Clear any 2FA pending data
+    unset($_SESSION['2fa_pending_id'], $_SESSION['2fa_pending_username'],
+          $_SESSION['2fa_pending_role'], $_SESSION['2fa_pending_remember']);
 
-    // Load first band membership
+    $db = getDB();
     $bm = $db->prepare('SELECT b.id, b.name FROM band_members bm JOIN bands b ON b.id = bm.band_id WHERE bm.user_id = ? LIMIT 1');
     $bm->execute([$user['id']]);
     $band = $bm->fetch();
     $_SESSION['user_band_id']   = $band['id'] ?? null;
     $_SESSION['user_band_name'] = $band['name'] ?? null;
+}
 
+/**
+ * Complete login after TOTP code verification.
+ * Returns true on success, false if code is wrong.
+ */
+function verifyTotpLogin(string $code): bool {
+    sessionStart();
+    $pendingId = $_SESSION['2fa_pending_id'] ?? null;
+    if (!$pendingId) return false;
+
+    $db   = getDB();
+    $stmt = $db->prepare('SELECT id, username, role, totp_secret FROM users WHERE id = ? AND totp_enabled = 1');
+    $stmt->execute([$pendingId]);
+    $user = $stmt->fetch();
+    if (!$user || !Totp::verify($user['totp_secret'], $code)) return false;
+
+    _completeLogin($user);
     return true;
 }
 
 function logout(): void {
     sessionStart();
+    clearRememberToken();
     session_destroy();
+}
+
+// ── Remember-me ──────────────────────────────────────────────────────────────
+
+/** Set a persistent remember-me cookie and store its hash in the DB. */
+function createRememberToken(int $userId): void {
+    $token = bin2hex(random_bytes(32)); // 64 hex chars
+    $hash  = hash('sha256', $token);
+    $db    = getDB();
+    // One active token per user — replace any existing one
+    $db->prepare('DELETE FROM remember_tokens WHERE user_id = ?')->execute([$userId]);
+    $db->prepare('INSERT INTO remember_tokens (user_id, token_hash, expires_at)
+                  VALUES (?, ?, datetime("now", "+' . REMEMBER_DAYS . ' days"))')
+       ->execute([$userId, $hash]);
+    setcookie(REMEMBER_COOKIE, $token, [
+        'expires'  => time() + REMEMBER_DAYS * 86400,
+        'path'     => '/',
+        'httponly' => true,
+        'samesite' => 'Strict',
+    ]);
+}
+
+/** Try to log in using the remember-me cookie. Returns true on success. */
+function loginWithRememberToken(): bool {
+    $token = $_COOKIE[REMEMBER_COOKIE] ?? '';
+    if (!$token) return false;
+
+    $hash = hash('sha256', $token);
+    $db   = getDB();
+    $stmt = $db->prepare(
+        'SELECT rt.user_id, u.username, u.role
+           FROM remember_tokens rt
+           JOIN users u ON u.id = rt.user_id
+          WHERE rt.token_hash = ? AND rt.expires_at > datetime("now")'
+    );
+    $stmt->execute([$hash]);
+    $row = $stmt->fetch();
+    if (!$row) {
+        _clearRememberCookie();
+        return false;
+    }
+
+    sessionStart();
+    $_SESSION['user_id']        = (int)$row['user_id'];
+    $_SESSION['user_username']  = $row['username'];
+    $_SESSION['user_role']      = $row['role'];
+    $_SESSION['user_band_id']   = null;
+    $_SESSION['user_band_name'] = null;
+    return true;
+}
+
+/** Delete the remember token from DB and clear the cookie. */
+function clearRememberToken(): void {
+    $token = $_COOKIE[REMEMBER_COOKIE] ?? '';
+    if ($token) {
+        $hash = hash('sha256', $token);
+        try {
+            getDB()->prepare('DELETE FROM remember_tokens WHERE token_hash = ?')->execute([$hash]);
+        } catch (Exception $e) {}
+    }
+    _clearRememberCookie();
+}
+
+function _clearRememberCookie(): void {
+    setcookie(REMEMBER_COOKIE, '', [
+        'expires'  => time() - 3600,
+        'path'     => '/',
+        'httponly' => true,
+        'samesite' => 'Strict',
+    ]);
+    unset($_COOKIE[REMEMBER_COOKIE]);
 }
 
 function userBands(int $userId): array {

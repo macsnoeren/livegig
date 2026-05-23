@@ -7,6 +7,21 @@ header('Content-Type: application/json');
 $q = trim($_GET['q'] ?? '');
 if (!$q) { echo json_encode(['ok' => false, 'results' => [], 'source' => 'none']); exit; }
 
+// Local library lookup — aggregate per title+artist to avoid duplicates across bands
+$db   = getDB();
+$like = '%' . $q . '%';
+$stmt = $db->prepare(
+    'SELECT title, artist, MAX(bpm) AS bpm, MAX(song_key) AS song_key, MAX(duration) AS duration
+       FROM songs
+      WHERE LOWER(title)  LIKE LOWER(?)
+         OR LOWER(artist) LIKE LOWER(?)
+      GROUP BY title, artist
+      ORDER BY title COLLATE NOCASE
+      LIMIT 8'
+);
+$stmt->execute([$like, $like]);
+$dbHits = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 // Priority: 1. Tunebat  2. GetSongBPM  3. Spotify  4. MusicBrainz
 $results = searchTunebat($q);
 $source  = 'tunebat';
@@ -27,7 +42,7 @@ if (!$results) {
     $source  = 'musicbrainz';
 }
 
-echo json_encode(['ok' => true, 'results' => $results, 'source' => $source, 'spotify_no_bpm' => $spotifyNoBpm]);
+echo json_encode(['ok' => true, 'results' => $results, 'source' => $source, 'spotify_no_bpm' => $spotifyNoBpm, 'db_hits' => $dbHits]);
 
 /* =========================================
    Helpers

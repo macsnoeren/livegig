@@ -357,12 +357,14 @@ function confirmDelete() {
 
 // Search results stored here — index used in onclick to avoid quote-escaping issues
 var _searchResults = [];
+var _dbHits = [];
 
 function searchMusic() {
     var q = $("#search-query").val().trim();
     if (!q) return;
     $("#search-results").html(\'<div class="search-loading"><i class="bi bi-hourglass-split"></i> Zoeken...</div>\');
     $.get("api/search.php", {q: q}, function(data) {
+        _dbHits = data.db_hits || [];
         _searchResults = data.results || [];
         renderSearchResults(_searchResults, data.source || "", data.spotify_no_bpm || false);
     }).fail(function() {
@@ -371,10 +373,34 @@ function searchMusic() {
 }
 
 function renderSearchResults(results, source, spotifyNoBpm) {
+    var html = \'\';
+
+    // ── Library hits ────────────────────────────────────────────────────────
+    if (_dbHits.length) {
+        html += \'<div class="search-source" style="color:#f0c040"><i class="bi bi-database-fill me-1"></i>Uit bibliotheek</div>\';
+        html += \'<div class="search-result-list">\';
+        _dbHits.forEach(function(r, i) {
+            var badges = \'\';
+            if (r.bpm)      badges += \'<span class="bpm-badge">\' + r.bpm + \'</span> \';
+            if (r.song_key) badges += \'<span class="search-badge">\' + escHtml(r.song_key) + \'</span>\';
+            html += \'<div class="search-result-item d-flex align-items-center gap-1">\'
+                 + \'<button type="button" class="flex-grow-1 text-start border-0 bg-transparent p-0" onclick="pickDbResult(\' + i + \')">\'
+                 + \'<div class="d-flex justify-content-between align-items-center gap-2">\'
+                 + \'<div class="min-w-0"><div class="search-result-title text-truncate">\' + escHtml(r.title) + \'</div>\'
+                 + \'<div class="search-result-artist text-truncate">\' + escHtml(r.artist)
+                 + (r.duration ? \' <span class="search-result-dur">\' + r.duration + \'</span>\' : \'\') + \'</div></div>\'
+                 + \'<div class="search-result-badges flex-shrink-0">\' + badges + \'</div>\'
+                 + \'</div></button></div>\';
+        });
+        html += \'</div>\';
+    }
+
     if (!results.length) {
-        $("#search-results").html(\'<div class="search-loading">Geen resultaten gevonden.</div>\');
+        if (!_dbHits.length) html += \'<div class="search-loading">Geen resultaten gevonden.</div>\';
+        $("#search-results").html(html);
         return;
     }
+
     var sourceNames = {tunebat: "Tunebat", getsongbpm: "GetSongBPM", spotify: "Spotify", musicbrainz: "MusicBrainz"};
     var hasBpm = results.some(function(r) { return r.bpm; });
     var src = sourceNames[source] || source;
@@ -382,7 +408,7 @@ function renderSearchResults(results, source, spotifyNoBpm) {
                : (source === \'spotify\' && spotifyNoBpm)
                    ? \' <span class="text-warning">· geen BPM <small>(audio-features gedepreceerd — gebruik GetSongBPM)</small></span>\'
                    : \' <span class="text-muted">· geen BPM</span>\';
-    var html = \'<div class="search-source">\' + src + bpmLbl + \'</div><div class="search-result-list">\';
+    html += \'<div class="search-source">\' + src + bpmLbl + \'</div><div class="search-result-list">\';
     results.forEach(function(r, i) {
         var badges = \'\';
         if (r.bpm)                badges += \'<span class="bpm-badge">\' + r.bpm + \'</span> \';
@@ -431,6 +457,21 @@ function pickSearchResult(i) {
         $("#song-key").val(keyVal);
     }
     $("#search-results").empty();
+    _searchResults = [];
+    _dbHits = [];
+    checkDuplicate();
+}
+
+function pickDbResult(i) {
+    var r = _dbHits[i];
+    if (!r) return;
+    $("#song-title").val(r.title);
+    $("#song-artist").val(r.artist);
+    if (r.bpm)      $("#song-bpm").val(r.bpm);
+    if (r.song_key) $("#song-key").val(r.song_key);
+    if (r.duration) $("#song-duration").val(r.duration);
+    $("#search-results").empty();
+    _dbHits = [];
     _searchResults = [];
     checkDuplicate();
 }

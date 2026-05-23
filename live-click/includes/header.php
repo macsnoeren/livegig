@@ -122,6 +122,8 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                         <?php if ($user['band_name']): ?> · <?= htmlspecialchars($user['band_name']) ?><?php endif; ?>
                     </span></li>
                     <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="profile.php"><i class="bi bi-person-gear me-2"></i>Profiel &amp; beveiliging</a></li>
+                    <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="logout.php"><i class="bi bi-box-arrow-right me-2"></i>Uitloggen</a></li>
                 </ul>
             </div>
