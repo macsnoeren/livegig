@@ -26,7 +26,10 @@ require __DIR__ . '/includes/header.php';
     <div class="db-col-left">
         <div class="card db-card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <span><i class="bi bi-list-ol"></i> Actieve setlist</span>
+                <span>
+                    <i class="bi bi-list-ol"></i> Actieve setlist
+                    <span id="sl-dash-dur" class="badge bg-secondary ms-2" style="display:none"></span>
+                </span>
                 <select id="setlist-select" class="form-select form-select-sm w-auto"
                         onchange="loadSetlist(this.value)">
                     <option value="">— kies setlist —</option>

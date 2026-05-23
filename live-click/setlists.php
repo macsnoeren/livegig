@@ -231,32 +231,6 @@ function renderSlSelected() {
     updateSlTime();
 }
 
-function parseDurSecs(str) {
-    if (!str) return null;
-    var p = str.split(":");
-    if (p.length !== 2) return null;
-    var m = parseInt(p[0], 10), s = parseInt(p[1], 10);
-    if (isNaN(m) || isNaN(s)) return null;
-    return m * 60 + s;
-}
-
-function calcSetlistDuration(songs) {
-    var knownSecs = [], unknown = 0;
-    songs.forEach(function(s) {
-        var secs = parseDurSecs(s.duration);
-        if (secs !== null) knownSecs.push(secs);
-        else unknown++;
-    });
-    var total = knownSecs.reduce(function(a, b) { return a + b; }, 0);
-    var avg = knownSecs.length ? Math.round(total / knownSecs.length) : 0;
-    total += unknown * avg;
-    return { totalSecs: total, estimated: unknown, avg: avg, known: knownSecs.length };
-}
-
-function fmtSecs(secs) {
-    var m = Math.floor(secs / 60), s = secs % 60;
-    return m + ":" + (s < 10 ? "0" : "") + s;
-}
 
 function updateSlTime() {
     var r = calcSetlistDuration(_slSongs);
