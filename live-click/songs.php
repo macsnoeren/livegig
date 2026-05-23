@@ -125,15 +125,16 @@ require __DIR__ . '/includes/header.php';
                             <label class="form-label d-flex justify-content-between align-items-baseline">
                                 <span><i class="bi bi-music-note-list"></i> Drumstructuur</span>
                                 <span class="text-muted" style="font-size:0.72rem;font-weight:400">
-                                    <code class="text-muted">|</code> maat &nbsp;
-                                    <code class="text-muted">*</code> rust &nbsp;
-                                    <code class="text-muted">^</code> crash &nbsp;
-                                    <code class="text-muted">-</code> break
+                                    <code class="text-muted">|</code>&nbsp;maat &nbsp;
+                                    <code class="text-muted">-</code>&nbsp;rust &nbsp;
+                                    <code class="text-muted">^</code>&nbsp;cymbaal &nbsp;
+                                    <code class="text-muted">*</code>&nbsp;brake
                                 </span>
                             </label>
-                            <input type="text" id="song-drum-notation" class="form-control font-monospace"
-                                   placeholder="Bijv. ||||^|||*||||-" autocomplete="off" spellcheck="false">
-                            <div id="drum-preview" class="mt-2 rounded overflow-hidden" style="display:none"></div>
+                            <textarea id="song-drum-notation" class="form-control font-monospace" rows="5"
+                                      placeholder="Intro: | | | |   | | | |&#10;Couplet: | | | |   | | | |    | | | |   | | | |&#10;Refrein: | | | |   | | | |    | | | |   | | | |&#10;Brug: | | | |   | | | |&#10;Outro: | | | |   | | | |"
+                                      autocomplete="off" spellcheck="false"></textarea>
+                            <div id="drum-preview" class="mt-2" style="display:none;overflow-x:auto;background:#0d0d0d;border:1px solid #1e1e1e;border-radius:6px;padding:6px"></div>
                         </div>
                     </div>
                 </form>
