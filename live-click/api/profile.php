@@ -32,8 +32,10 @@ if ($action === 'change_password') {
         echo json_encode(['ok' => false, 'error' => 'Huidig wachtwoord onjuist.']); exit;
     }
 
-    $db->prepare('UPDATE users SET password_hash = ? WHERE id = ?')
+    $db->prepare('UPDATE users SET password_hash = ?, must_change_password = 0 WHERE id = ?')
        ->execute([password_hash($new1, PASSWORD_DEFAULT), $userId]);
+    // Clear force-change flag from session so the redirect stops
+    unset($_SESSION['must_change_password']);
     echo json_encode(['ok' => true]); exit;
 }
 

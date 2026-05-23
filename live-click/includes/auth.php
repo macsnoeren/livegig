@@ -20,6 +20,12 @@ function requireLogin(): void {
             exit;
         }
     }
+    // Redirect to profile if admin has required a password change,
+    // unless we're already on profile.php (or its API endpoint) to avoid loops.
+    if (!empty($_SESSION['must_change_password']) && basename($_SERVER['SCRIPT_FILENAME']) !== 'profile.php') {
+        header('Location: ' . appRelPath('profile.php') . '?force_pw=1');
+        exit;
+    }
     // Always refresh band from DB so changes by admin are visible immediately.
     refreshSessionBand((int)$_SESSION['user_id']);
 }
@@ -92,7 +98,7 @@ function currentUser(): ?array {
  */
 function login(string $username, string $password): string|false {
     $db = getDB();
-    $stmt = $db->prepare('SELECT id, username, password_hash, role, totp_enabled, totp_secret FROM users WHERE username = ?');
+    $stmt = $db->prepare('SELECT id, username, password_hash, role, totp_enabled, totp_secret, must_change_password FROM users WHERE username = ?');
     $stmt->execute([$username]);
     $user = $stmt->fetch();
     if (!$user || !password_verify($password, $user['password_hash'])) return false;
@@ -114,9 +120,10 @@ function login(string $username, string $password): string|false {
 /** Complete login after credentials (and optionally 2FA) are verified. */
 function _completeLogin(array $user): void {
     sessionStart();
-    $_SESSION['user_id']       = (int)$user['id'];
-    $_SESSION['user_username'] = $user['username'];
-    $_SESSION['user_role']     = $user['role'];
+    $_SESSION['user_id']              = (int)$user['id'];
+    $_SESSION['user_username']        = $user['username'];
+    $_SESSION['user_role']            = $user['role'];
+    $_SESSION['must_change_password'] = !empty($user['must_change_password']);
     // Clear any 2FA pending data
     unset($_SESSION['2fa_pending_id'], $_SESSION['2fa_pending_username'],
           $_SESSION['2fa_pending_role'], $_SESSION['2fa_pending_remember']);
@@ -139,7 +146,7 @@ function verifyTotpLogin(string $code): bool {
     if (!$pendingId) return false;
 
     $db   = getDB();
-    $stmt = $db->prepare('SELECT id, username, role, totp_secret FROM users WHERE id = ? AND totp_enabled = 1');
+    $stmt = $db->prepare('SELECT id, username, role, totp_secret, must_change_password FROM users WHERE id = ? AND totp_enabled = 1');
     $stmt->execute([$pendingId]);
     $user = $stmt->fetch();
     if (!$user || !Totp::verify($user['totp_secret'], $code)) return false;
@@ -182,7 +189,7 @@ function loginWithRememberToken(): bool {
     $hash = hash('sha256', $token);
     $db   = getDB();
     $stmt = $db->prepare(
-        'SELECT rt.user_id, u.username, u.role
+        'SELECT rt.user_id, u.username, u.role, u.must_change_password
            FROM remember_tokens rt
            JOIN users u ON u.id = rt.user_id
           WHERE rt.token_hash = ? AND rt.expires_at > datetime("now")'
@@ -195,11 +202,12 @@ function loginWithRememberToken(): bool {
     }
 
     sessionStart();
-    $_SESSION['user_id']        = (int)$row['user_id'];
-    $_SESSION['user_username']  = $row['username'];
-    $_SESSION['user_role']      = $row['role'];
-    $_SESSION['user_band_id']   = null;
-    $_SESSION['user_band_name'] = null;
+    $_SESSION['user_id']              = (int)$row['user_id'];
+    $_SESSION['user_username']        = $row['username'];
+    $_SESSION['user_role']            = $row['role'];
+    $_SESSION['must_change_password'] = !empty($row['must_change_password']);
+    $_SESSION['user_band_id']         = null;
+    $_SESSION['user_band_name']       = null;
     return true;
 }
 

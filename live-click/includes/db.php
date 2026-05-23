@@ -104,6 +104,7 @@ function initSchema(PDO $db): void {
     try { $db->exec('ALTER TABLE songs ADD COLUMN drum_svg_updated_at DATETIME'); } catch (PDOException $e) {}
     try { $db->exec('ALTER TABLE users ADD COLUMN totp_secret TEXT'); } catch (PDOException $e) {}
     try { $db->exec('ALTER TABLE users ADD COLUMN totp_enabled INTEGER NOT NULL DEFAULT 0'); } catch (PDOException $e) {}
+    try { $db->exec('ALTER TABLE users ADD COLUMN must_change_password INTEGER NOT NULL DEFAULT 0'); } catch (PDOException $e) {}
 
     // Seed default admin if no users exist
     $count = $db->query('SELECT COUNT(*) FROM users')->fetchColumn();

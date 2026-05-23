@@ -77,6 +77,14 @@ require __DIR__ . '/includes/header.php';
                     </select>
                 </div>
                 <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="user-must-change-password">
+                        <label class="form-check-label" for="user-must-change-password">
+                            Verplicht wachtwoord wijzigen bij volgende login
+                        </label>
+                    </div>
+                </div>
+                <div class="mb-3">
                     <label class="form-label">Bands</label>
                     <div id="user-bands-list"></div>
                 </div>
@@ -148,7 +156,7 @@ function renderUsers(users) {
             + \'<td><span class="badge \' + (u.role==="admin"?"bg-warning text-dark":"bg-secondary") + \'">\' + u.role + \'</span></td>\'
             + \'<td class="text-muted">\' + (bands || "—") + \'</td>\'
             + \'<td class="text-muted small">\' + escHtml(u.created_at||"") + \'</td>\'
-            + \'<td><button class="btn btn-xs btn-outline-secondary" onclick="openEditUser(\' + JSON.stringify(u) + \')"><i class="bi bi-pencil"></i></button></td>\'
+            + \'<td><button class="btn btn-xs btn-outline-secondary" onclick="openEditUser(\' + u.id + \')"><i class="bi bi-pencil"></i></button></td>\'
             + \'</tr>\');
     });
 }
@@ -171,7 +179,7 @@ function renderBands(bands) {
             + \'<div><h6 class="fw-bold mb-1">\' + escHtml(b.name) + \'</h6>\'
             + \'<p class="text-muted small mb-1">\' + escHtml(b.description || "") + \'</p>\'
             + \'<p class="small mb-0">Leden: \' + (members || "—") + \'</p></div>\'
-            + \'<button class="btn btn-xs btn-outline-secondary" onclick="openEditBand(\' + JSON.stringify(b) + \')"><i class="bi bi-pencil"></i></button>\'
+            + \'<button class="btn btn-xs btn-outline-secondary" onclick="openEditBand(\' + b.id + \')"><i class="bi bi-pencil"></i></button>\'
             + \'</div></div></div></div>\');
     });
 }
@@ -180,14 +188,18 @@ function openAddUser() {
     $("#userModalTitle").text("Gebruiker toevoegen");
     $("#user-id").val(""); $("#user-username").val(""); $("#user-email").val("");
     $("#user-password").val(""); $("#user-role").val("user");
+    $("#user-must-change-password").prop("checked", false);
     renderUserBandCheckboxes([]);
     new bootstrap.Modal("#userModal").show();
 }
 
-function openEditUser(u) {
+function openEditUser(id) {
+    var u = _allUsers.find(function(x) { return x.id === id; });
+    if (!u) return;
     $("#userModalTitle").text("Gebruiker bewerken");
     $("#user-id").val(u.id); $("#user-username").val(u.username); $("#user-email").val(u.email);
     $("#user-password").val(""); $("#user-role").val(u.role);
+    $("#user-must-change-password").prop("checked", !!u.must_change_password);
     renderUserBandCheckboxes((u.bands||[]).map(function(b){return b.id;}));
     new bootstrap.Modal("#userModal").show();
 }
@@ -208,7 +220,8 @@ function saveUser() {
     var data = {
         id: $("#user-id").val(), username: $("#user-username").val().trim(),
         email: $("#user-email").val().trim(), password: $("#user-password").val(),
-        role: $("#user-role").val(), band_ids: bandIds
+        role: $("#user-role").val(), band_ids: bandIds,
+        must_change_password: $("#user-must-change-password").is(":checked") ? 1 : 0
     };
     if (!data.username || !data.email) { alert("Gebruikersnaam en e-mail zijn verplicht."); return; }
     $.post("api/users.php", JSON.stringify(data), function(r) {
@@ -224,7 +237,9 @@ function openAddBand() {
     new bootstrap.Modal("#bandModal").show();
 }
 
-function openEditBand(b) {
+function openEditBand(id) {
+    var b = _allBands.find(function(x) { return x.id === id; });
+    if (!b) return;
     $("#bandModalTitle").text("Band bewerken");
     $("#band-id").val(b.id); $("#band-name").val(b.name); $("#band-description").val(b.description||"");
     renderBandMemberCheckboxes((b.members||[]).map(function(m){return m.id;}));

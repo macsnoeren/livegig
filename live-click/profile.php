@@ -13,6 +13,16 @@ require __DIR__ . '/includes/header.php';
 
 <div class="container" style="max-width:560px;padding-top:1.5rem;padding-bottom:2rem">
 
+    <?php if (!empty($_SESSION['must_change_password']) || isset($_GET['force_pw'])): ?>
+    <div class="alert alert-warning d-flex align-items-center gap-2 mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+        <div>
+            <strong>Wachtwoord wijzigen verplicht.</strong>
+            Je kunt de app pas gebruiken nadat je een nieuw wachtwoord hebt ingesteld.
+        </div>
+    </div>
+    <?php endif; ?>
+
     <!-- ── Change password ───────────────────────────────────────────────── -->
     <div class="card mb-4">
         <div class="card-header"><i class="bi bi-key-fill me-2"></i>Wachtwoord wijzigen</div>
@@ -133,6 +143,10 @@ function changePassword() {
                 el.removeClass("alert-danger").addClass("alert-success")
                   .html(\'<i class="bi bi-check-circle me-1"></i>Wachtwoord gewijzigd.\').show();
                 $("#pw-current, #pw-new1, #pw-new2").val("");
+                // If redirected here because of forced password change, go to dashboard
+                if (window.location.search.indexOf("force_pw") !== -1) {
+                    setTimeout(function() { window.location.href = "dashboard.php"; }, 1200);
+                }
             } else {
                 el.removeClass("alert-success").addClass("alert-danger")
                   .html(\'<i class="bi bi-exclamation-triangle me-1"></i>\' + escHtml(r.error || "Fout")).show();
