@@ -500,3 +500,46 @@ html, body { background-color: var(--bg); color: #e0e0e0; min-height: 100vh; }
     border-color: rgba(204, 0, 0, 0.25);
     color: #cc6666;
 }
+
+/* =========================================
+   Dashboard — full-viewport, no page scroll
+   ========================================= */
+
+/* page-content becomes a flex column on the dashboard so the alert
+   and the db-wrap together fill exactly the remaining viewport height */
+#page-content:has(.db-wrap),
+body.page-dashboard #page-content {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - var(--nav-h, 90px));
+    overflow: hidden;
+}
+
+.db-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 10px 12px;
+    overflow: hidden;
+    min-height: 0;
+}
+
+.db-wrap > .row {
+    flex: 1;
+    min-height: 0;
+}
+
+/* Cards that should fill column height */
+.db-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+}
+
+/* Scrollable list inside a db-card */
+.db-list {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+}

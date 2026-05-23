@@ -22,7 +22,8 @@
       "WebFetch(domain:reccobeats.com)",
       "WebFetch(domain:cyanite.ai)",
       "WebFetch(domain:api.getsongbpm.com)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(Test-Path \"c:\\\\Data\\\\projects\\\\livegig\\\\live-click\\\\import.php\")"
     ]
   }
 }

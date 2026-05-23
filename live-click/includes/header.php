@@ -137,11 +137,14 @@ $currentPage = basename($_SERVER['PHP_SELF']);
     function adjustPadding() {
         var nav = document.getElementById('clicktrack-nav');
         var spacer = document.getElementById('nav-spacer');
-        if (nav && spacer) spacer.style.height = nav.offsetHeight + 'px';
+        if (nav && spacer) {
+            var h = nav.offsetHeight;
+            spacer.style.height = h + 'px';
+            document.documentElement.style.setProperty('--nav-h', h + 'px');
+        }
     }
     document.addEventListener('DOMContentLoaded', adjustPadding);
     window.addEventListener('resize', adjustPadding);
-    // Also run immediately in case DOM is already ready
     adjustPadding();
 })();
 </script>
