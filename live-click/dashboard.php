@@ -42,21 +42,31 @@ require __DIR__ . '/includes/header.php';
     <div class="db-col-right">
 
         <div class="card" id="song-detail-card" style="display:none!important">
-            <div class="card-body py-2">
-                <div class="d-flex align-items-center gap-3">
+            <div class="card-body py-2 px-3">
+
+                <!-- Top row: title / artist / meta on left, BPM on right -->
+                <div class="d-flex align-items-start gap-3">
                     <div class="flex-grow-1 min-w-0">
                         <h4 id="detail-title" class="mb-0 fw-bold text-white text-truncate"></h4>
-                        <p id="detail-artist" class="text-muted mb-1 small"></p>
-                        <p id="detail-desc" class="small mb-0 text-muted"></p>
+                        <div class="text-muted small mt-1" id="detail-artist"></div>
+                        <div class="small mt-1" id="detail-starts-wrap" style="display:none">
+                            <span class="text-muted">Start:</span>
+                            <strong id="detail-starts"></strong>
+                            <span id="detail-duration" class="text-muted ms-2"></span>
+                        </div>
                     </div>
                     <div class="text-end flex-shrink-0">
                         <div class="bpm-big" id="detail-bpm">--</div>
-                        <div class="text-muted small">BPM</div>
-                        <div class="mt-1 small">Start: <strong id="detail-starts">--</strong></div>
-                        <div class="text-muted small" id="detail-duration"></div>
+                        <div class="text-muted" style="font-size:0.7rem">BPM</div>
                     </div>
                 </div>
-                <div id="detail-drum" class="mt-2" style="display:none;overflow-x:auto;background:#0d0d0d;border:1px solid #1e1e1e;border-radius:6px;padding:6px"></div>
+
+                <!-- Notes / description -->
+                <div id="detail-desc" class="mt-2" style="display:none;font-size:0.82rem;color:#ccc;white-space:pre-wrap;border-left:2px solid #333;padding-left:8px"></div>
+
+                <!-- Drum structure SVG -->
+                <div id="detail-drum" class="mt-2" style="display:none;overflow-x:auto;background:#0b0b0b;border:1px solid #222;border-radius:5px;padding:8px 6px"></div>
+
             </div>
         </div>
 

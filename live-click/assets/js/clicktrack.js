@@ -115,15 +115,37 @@ function selectSong(song) {
     var card = document.getElementById('song-detail-card');
     if (card) {
         card.style.display = '';
-        document.getElementById('detail-title').textContent    = song.title;
-        document.getElementById('detail-artist').textContent   = song.artist;
-        document.getElementById('detail-bpm').textContent      = song.bpm || '--';
-        document.getElementById('detail-starts').textContent   = song.starts || '--';
-        document.getElementById('detail-desc').innerHTML       = song.description || '';
-        document.getElementById('detail-duration').textContent = song.duration || '';
 
+        document.getElementById('detail-title').textContent  = song.title;
+        document.getElementById('detail-artist').textContent = song.artist;
+        document.getElementById('detail-bpm').textContent    = song.bpm || '--';
+
+        // Starts + duration row
+        var startsWrap = document.getElementById('detail-starts-wrap');
+        var startsEl   = document.getElementById('detail-starts');
+        var durEl      = document.getElementById('detail-duration');
+        if (song.starts || song.duration) {
+            startsEl.textContent = song.starts || '';
+            durEl.textContent    = song.duration || '';
+            startsWrap.style.display = '';
+        } else {
+            startsWrap.style.display = 'none';
+        }
+
+        // Description / notes
+        var descEl = document.getElementById('detail-desc');
+        if (song.description && song.description.trim()) {
+            descEl.textContent    = song.description; // textContent keeps it safe
+            descEl.style.display  = '';
+        } else {
+            descEl.style.display  = 'none';
+        }
+
+        // Drum structure SVG
         var drumDiv = document.getElementById('detail-drum');
         if (drumDiv) {
+            drumDiv.innerHTML    = '';
+            drumDiv.style.display = 'none';
             if (song.drum_notation) {
                 $.ajax({
                     url: 'api/drum_preview.php', type: 'POST',
@@ -131,12 +153,12 @@ function selectSong(song) {
                     data: JSON.stringify({notation: song.drum_notation}),
                     dataType: 'json',
                     success: function(r) {
-                        if (r.ok && r.svg) { drumDiv.innerHTML = r.svg; drumDiv.style.display = ''; }
+                        if (r.ok && r.svg) {
+                            drumDiv.innerHTML    = r.svg;
+                            drumDiv.style.display = '';
+                        }
                     }
                 });
-            } else {
-                drumDiv.innerHTML = '';
-                drumDiv.style.display = 'none';
             }
         }
     }
