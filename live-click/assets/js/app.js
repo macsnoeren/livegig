@@ -16,8 +16,11 @@ var _allSongsCache = null;
 
 function loadAllSongs() {
     var bandId = typeof BAND_ID !== 'undefined' ? BAND_ID : null;
-    var url = 'api/songs.php' + (bandId ? '?band_id=' + bandId : '');
-    $.get(url, function(data) {
+    if (!bandId) {
+        $('#all-songs').html('<div class="list-group-item text-muted small">Je bent nog niet aan een band gekoppeld.</div>');
+        return;
+    }
+    $.get('api/songs.php?band_id=' + bandId, function(data) {
         _allSongsCache = data.songs || [];
         renderAllSongs(_allSongsCache);
     });

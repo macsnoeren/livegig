@@ -10,12 +10,13 @@ if ($method === 'GET') {
     $bandId = $_GET['band_id'] ?? null;
     // Exclude drum_svg from list (can be large; regenerated on demand via drum_preview.php)
     $cols = 'id,title,artist,bpm,song_key,duration,starts,description,preview_url,spotify_id,drum_notation,band_id,created_by,created_at';
-    if ($bandId) {
-        $stmt = $db->prepare("SELECT $cols FROM songs WHERE band_id = ? ORDER BY title COLLATE NOCASE");
-        $stmt->execute([(int)$bandId]);
-    } else {
-        $stmt = $db->query("SELECT $cols FROM songs ORDER BY title COLLATE NOCASE");
+    if (!$bandId) {
+        // No band filter → return nothing (prevents leaking songs from other bands)
+        echo json_encode(['ok' => true, 'songs' => []]);
+        exit;
     }
+    $stmt = $db->prepare("SELECT $cols FROM songs WHERE band_id = ? ORDER BY title COLLATE NOCASE");
+    $stmt->execute([(int)$bandId]);
     echo json_encode(['ok' => true, 'songs' => $stmt->fetchAll()]);
     exit;
 }
