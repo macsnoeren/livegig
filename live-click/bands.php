@@ -162,13 +162,19 @@ function renderBands(bands) {
             var isMe       = (m.id == _myUserId);
             var isLeader   = (m.role === "leader");
             var leaderIcon = isLeader ? \'<i class="bi bi-star-fill text-warning me-1" title="Bandleider" style="font-size:0.65rem"></i>\' : \'\';
-            var removeBtn  = (!isMe && canManage)
-                ? \'<button class="btn btn-xs btn-link text-danger p-0 ms-auto" onclick="removeMember(\' + b.id + \',\' + m.id + \',\\\'\' + escHtml(m.username) + \'\\\')" title="Toegang ontzeggen"><i class="bi bi-x-lg"></i></button>\'
+            var roleBtn = \'\';
+            if (!isMe && canManage) {
+                roleBtn = isLeader
+                    ? \'<button class="btn btn-xs btn-link text-warning p-0" onclick="setMemberRole(\' + b.id + \',\' + m.id + \',0)" title="Als leider verwijderen"><i class="bi bi-star-fill" style="font-size:0.75rem"></i></button>\'
+                    : \'<button class="btn btn-xs btn-link text-muted p-0" onclick="setMemberRole(\' + b.id + \',\' + m.id + \',1)" title="Maak leider"><i class="bi bi-star" style="font-size:0.75rem"></i></button>\';
+            }
+            var removeBtn = (!isMe && canManage)
+                ? \'<button class="btn btn-xs btn-link text-danger p-0" onclick="removeMember(\' + b.id + \',\' + m.id + \',\\\'\' + escHtml(m.username) + \'\\\')" title="Toegang ontzeggen"><i class="bi bi-x-lg"></i></button>\'
                 : \'\';
             membersHtml += \'<div class="d-flex align-items-center py-1 border-bottom border-secondary" style="border-bottom-style:dashed!important">\'
                 + leaderIcon
                 + \'<span class="small \' + (isMe ? "text-white" : "text-muted") + \'">\' + escHtml(m.username) + (isMe ? \' <span class="text-muted">(jij)</span>\' : \'\') + \'</span>\'
-                + removeBtn
+                + \'<div class="ms-auto d-flex align-items-center gap-1">\' + roleBtn + removeBtn + \'</div>\'
                 + \'</div>\';
         });
         if (!membersHtml) membersHtml = \'<span class="text-muted small">Geen leden</span>\';
@@ -377,6 +383,23 @@ function revokeInvite(bandId) {
                 section.data("loaded", true);
                 renderNoInvite(bandId);
             } else { alert(r.error || "Fout"); }
+        }
+    });
+}
+
+// ---- Role management ----
+
+function setMemberRole(bandId, userId, promote) {
+    var msg = promote
+        ? \'Dit lid leider maken van de band?\'
+        : \'Leidersrol van dit lid verwijderen?\';
+    if (!confirm(msg)) return;
+    $.ajax({ url: \'api/bands.php\', type: \'PATCH\',
+        contentType: \'application/json\',
+        data: JSON.stringify({band_id: bandId, user_id: userId, role: promote ? \'leader\' : \'member\'}),
+        success: function(r) {
+            if (r.ok) loadBands();
+            else alert(r.error || \'Fout\');
         }
     });
 }

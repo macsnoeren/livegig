@@ -1065,11 +1065,7 @@ var _songs = [
         "starts": "Toetsen / Zang",
         "description": ""
     },
-];
-
-/*
-
-    {
+        {
         "id": 120,
         "title": "Islands in the Stream (ATIx)",
         "artist": "Dolly Parton",
@@ -1246,4 +1242,4 @@ var _songs = [
         "starts": "Drum",
         "description": ""
     },
-*/
+];

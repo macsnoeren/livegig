@@ -92,12 +92,21 @@ require __DIR__ . '/includes/header.php';
 </div>
 
 <?php
-$bandId = (int)($user['band_id'] ?? 0);
+$bandId  = (int)($user['band_id'] ?? 0);
+$isAdmin = $user['role'] === 'admin';
+$canDeleteSetlist = $isAdmin;
+if ($bandId && !$isAdmin) {
+    $db   = getDB();
+    $stmt = $db->prepare("SELECT 1 FROM band_members WHERE band_id=? AND user_id=? AND role='leader'");
+    $stmt->execute([$bandId, $user['id']]);
+    $canDeleteSetlist = (bool)$stmt->fetchColumn();
+}
 $extraScripts = '<script>
 var _allSongs = [];
 var _slSongs = [];
 var _deleteSlId = null;
 var _setlistsData = [];
+var _canDeleteSetlist = ' . ($canDeleteSetlist ? 'true' : 'false') . ';
 
 $(function() {
     loadSetlists();
@@ -108,6 +117,11 @@ function loadSetlists() {
         _setlistsData = data.setlists || [];
         renderSetlists(_setlistsData);
     });
+}
+
+function slDeleteBtn(id, name) {
+    if (!_canDeleteSetlist) return \'\';
+    return \'<button class="btn btn-xs btn-outline-danger" onclick="openDeleteSetlist(\' + id + \',\\\'\' + escHtml(name) + \'\\\')"><i class="bi bi-trash"></i></button>\';
 }
 
 function renderSetlists(lists) {
@@ -129,7 +143,7 @@ function renderSetlists(lists) {
             \'</div>\' +
             \'<div class="d-flex gap-1">\' +
             \'<button class="btn btn-xs btn-outline-secondary" onclick="openEditSetlist(\' + sl.id + \')"><i class="bi bi-pencil"></i></button>\' +
-            \'<button class="btn btn-xs btn-outline-danger" onclick="openDeleteSetlist(\' + sl.id + \',\\\'\' + escHtml(sl.name) + \'\\\')"><i class="bi bi-trash"></i></button>\' +
+            slDeleteBtn(sl.id, sl.name) +
             \'</div></div>\' +
             \'<div class="list-group list-group-flush">\';
         songs.forEach(function(s, songIdx) {

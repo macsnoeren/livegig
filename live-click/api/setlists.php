@@ -3,8 +3,15 @@ require_once __DIR__ . '/../includes/auth.php';
 requireLogin();
 header('Content-Type: application/json');
 
-$db = getDB();
+$db     = getDB();
 $method = $_SERVER['REQUEST_METHOD'];
+$user   = currentUser();
+
+function slIsBandLeader(PDO $db, int $bandId, int $userId): bool {
+    $s = $db->prepare("SELECT 1 FROM band_members WHERE band_id=? AND user_id=? AND role='leader'");
+    $s->execute([$bandId, $userId]);
+    return (bool)$s->fetchColumn();
+}
 
 function getSetlistWithSongs(PDO $db, int $id): ?array {
     $sl = $db->prepare('SELECT * FROM setlists WHERE id=?');
@@ -66,8 +73,21 @@ if ($method === 'POST') {
 }
 
 if ($method === 'DELETE') {
-    $data = json_decode(file_get_contents('php://input'), true);
-    $id = (int)($data['id'] ?? 0);
+    $data    = json_decode(file_get_contents('php://input'), true);
+    $id      = (int)($data['id'] ?? 0);
+    $isAdmin = $user['role'] === 'admin';
+
+    if (!$id) { echo json_encode(['ok'=>false,'error'=>'Geen id']); exit; }
+
+    if (!$isAdmin) {
+        $stmt = $db->prepare('SELECT band_id FROM setlists WHERE id=?');
+        $stmt->execute([$id]);
+        $sl = $stmt->fetch();
+        if ($sl && !slIsBandLeader($db, (int)$sl['band_id'], (int)$user['id'])) {
+            echo json_encode(['ok'=>false,'error'=>'Alleen de bandleider mag setlists verwijderen']); exit;
+        }
+    }
+
     $db->prepare('DELETE FROM setlists WHERE id=?')->execute([$id]);
     echo json_encode(['ok'=>true]);
     exit;

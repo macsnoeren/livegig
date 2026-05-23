@@ -168,5 +168,32 @@ if ($method === 'DELETE') {
     echo json_encode(['ok' => false, 'error' => 'Geen id']); exit;
 }
 
+/* ---- PATCH (change member role) ---- */
+
+if ($method === 'PATCH') {
+    $data   = json_decode(file_get_contents('php://input'), true);
+    $bandId = (int)($data['band_id'] ?? 0);
+    $uid    = (int)($data['user_id'] ?? 0);
+    $role   = trim($data['role'] ?? '');
+
+    if (!in_array($role, ['leader', 'member'], true)) {
+        echo json_encode(['ok' => false, 'error' => 'Ongeldige rol']); exit;
+    }
+    if (!$bandId || !$uid) {
+        echo json_encode(['ok' => false, 'error' => 'Ongeldige invoer']); exit;
+    }
+    if (!$isAdmin && !isBandLeader($db, $bandId, $user['id'])) {
+        echo json_encode(['ok' => false, 'error' => 'Alleen de bandleider of admin mag rollen wijzigen']); exit;
+    }
+    if (!isBandMember($db, $bandId, $uid)) {
+        echo json_encode(['ok' => false, 'error' => 'Gebruiker is geen lid van deze band']); exit;
+    }
+
+    $db->prepare('UPDATE band_members SET role=? WHERE band_id=? AND user_id=?')
+       ->execute([$role, $bandId, $uid]);
+
+    echo json_encode(['ok' => true]); exit;
+}
+
 http_response_code(405);
 echo json_encode(['ok' => false, 'error' => 'Method not allowed']);
