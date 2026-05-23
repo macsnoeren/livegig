@@ -531,29 +531,28 @@ body.page-dashboard #page-content {
     flex: 1;
     min-height: 0;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     padding: 10px 12px;
-    gap: 0;
+    gap: 8px;
+    overflow: hidden;
 }
 
-/* Bootstrap .row inside db-wrap: make it fill
-   remaining height. Force columns to be flex-columns
-   so cards can grow into them. */
-.db-wrap > .row {
-    flex: 1;
-    min-height: 0;
-    /* Remove default Bootstrap row min-height */
-    align-items: stretch;
-}
-
-.db-wrap > .row > [class*="col"] {
+.db-col-left {
+    flex: 0 0 33%;
+    min-width: 0;
     display: flex;
     flex-direction: column;
-    min-height: 0;
+}
+
+.db-col-right {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
     gap: 8px;
 }
 
-/* A card that should stretch to fill its column */
+/* A card that fills its column */
 .db-card {
     flex: 1;
     min-height: 0;
@@ -561,9 +560,21 @@ body.page-dashboard #page-content {
     flex-direction: column;
 }
 
-/* The scrollable list inside a db-card */
+/* Scrollable list inside a db-card */
 .db-list {
     flex: 1;
     min-height: 0;
     overflow-y: auto;
+}
+
+@media (max-width: 991.98px) {
+    .db-wrap {
+        flex-direction: column;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+    .db-col-left {
+        flex: 0 0 auto;
+        height: 35vh;
+    }
 }
