@@ -130,7 +130,14 @@ function renderSetlists(lists) {
                 + \'<span class="bpm-badge">\' + (s.bpm || "--") + \'</span>\'
                 + \'</button>\';
         });
-        html += \'</div></div></div>\';
+        var dur = calcSetlistDuration(songs);
+        var durTxt = songs.length ? (dur.estimated ? "~" : "") + fmtSecs(dur.totalSecs) : "";
+        var estTip = dur.estimated ? " — " + dur.estimated + " nummer(s) zonder duur, geschat op gemiddeld " + fmtSecs(dur.avg) : "";
+        var estIcon = dur.estimated ? \' <i class="bi bi-dash-circle text-warning ms-1" title="Geschatte duur\' + estTip + \'"></i>\' : "";
+        html += \'</div><div class="card-footer text-muted small d-flex justify-content-between align-items-center">\' +
+            \'<span>\' + songs.length + \' nummer\' + (songs.length !== 1 ? \'s\' : \'\') + \'</span>\' +
+            (durTxt ? \'<span><i class="bi bi-clock me-1"></i>\' + durTxt + estIcon + \'</span>\' : \'\') +
+            \'</div></div></div>\';
         c.append(html);
     });
 }
@@ -224,16 +231,41 @@ function renderSlSelected() {
     updateSlTime();
 }
 
-function updateSlTime() {
-    var total = 0;
-    _slSongs.forEach(function(s) {
-        if (s.duration) {
-            var parts = s.duration.split(":");
-            if (parts.length === 2) total += parseInt(parts[0])*60 + parseInt(parts[1]);
-        }
+function parseDurSecs(str) {
+    if (!str) return null;
+    var p = str.split(":");
+    if (p.length !== 2) return null;
+    var m = parseInt(p[0], 10), s = parseInt(p[1], 10);
+    if (isNaN(m) || isNaN(s)) return null;
+    return m * 60 + s;
+}
+
+function calcSetlistDuration(songs) {
+    var knownSecs = [], unknown = 0;
+    songs.forEach(function(s) {
+        var secs = parseDurSecs(s.duration);
+        if (secs !== null) knownSecs.push(secs);
+        else unknown++;
     });
-    var m = Math.floor(total/60), sec = total%60;
-    $("#sl-total-time").text(_slSongs.length + " nummers · " + m + ":" + (sec<10?"0":"") + sec);
+    var total = knownSecs.reduce(function(a, b) { return a + b; }, 0);
+    var avg = knownSecs.length ? Math.round(total / knownSecs.length) : 0;
+    total += unknown * avg;
+    return { totalSecs: total, estimated: unknown, avg: avg, known: knownSecs.length };
+}
+
+function fmtSecs(secs) {
+    var m = Math.floor(secs / 60), s = secs % 60;
+    return m + ":" + (s < 10 ? "0" : "") + s;
+}
+
+function updateSlTime() {
+    var r = calcSetlistDuration(_slSongs);
+    var txt = _slSongs.length + " nummers";
+    if (_slSongs.length) {
+        txt += " · " + (r.estimated ? "~" : "") + fmtSecs(r.totalSecs);
+        if (r.estimated) txt += " (" + r.estimated + " geschat)";
+    }
+    $("#sl-total-time").text(txt);
 }
 
 function saveSetlist() {
